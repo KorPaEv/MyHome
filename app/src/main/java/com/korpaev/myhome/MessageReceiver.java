@@ -33,12 +33,10 @@ public class MessageReceiver extends WakefulBroadcastReceiver
             for (int i = 0; i < pduArray.length; i++) {
                 messages[i] = SmsMessage.createFromPdu((byte[]) pduArray[i]);
             }
-
             //короче получили 1 смс и вывели номер и текст
             SmsMessage sms = messages[0];
             smsFrom = messages[0].getDisplayOriginatingAddress();
             smsBody = messages[0].getMessageBody();
-
             //Здесь мы составляем текст сообщения (в случае, когда сообщение было длинным
             // и пришло в нескольких смс-ках, каждая отдельная часть хранится в messages[i]) и вызываем метод abortBroadcast(),
             // чтобы предотвратить дальнейшую обработку сообщения другими приложениями.
@@ -62,24 +60,25 @@ public class MessageReceiver extends WakefulBroadcastReceiver
             {
 
             }
-
             //Дальше проверим какой нить флаг что это нужная смс и если нужная то запустим сервис где будет парсинг смс
             if (smsBody.contains("SmartHome"))
             {
+                //Стартуем сервис для обработки смс
                 Intent service = new Intent(context, MessageService.class);
 
                 service.putExtra("sms_from", smsFrom);
                 service.putExtra("sms_body", smsBody);
 
                 startWakefulService(context, service);
+                //прерываем обработку смс стандартным манагером
                 abortBroadcast();
+                //вернули звук
                 SetMute(audioManager, true);
             }
             else SetMute(audioManager, true);
         }
         else SetMute(audioManager, true);
     }
-
     public void SetMute(AudioManager manager, Boolean flag)
     {
         manager.setStreamMute(AudioManager.STREAM_NOTIFICATION, flag);
