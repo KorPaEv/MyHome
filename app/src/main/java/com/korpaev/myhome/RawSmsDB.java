@@ -16,9 +16,7 @@ public class RawSmsDB extends RealmObject
     private boolean _stateRelay; // состояние реле
 
     public int getSmsPackNum() { return _smsPackNum; }
-    public int getIdSms(){
-        return _idSms;
-    }
+    public int getIdSms(){ return _idSms; }
     public String getLocationNameSensor(){
         return _locationSensor;
     }
@@ -53,16 +51,11 @@ public class RawSmsDB extends RealmObject
     public void setNumRelay(String numRelay){
         _numRelay = numRelay;
     }
-    public void getLocationNameRelay(String locationRelay){
+    public void setLocationNameRelay(String locationRelay){
         _locationRelay = locationRelay;
     }
     public void setPinRelay(String pinRelay){
         _pinRelay = pinRelay;
     }
-    public void setStateRelay(String stateRelay){
-        if (stateRelay.contains("ON"))
-            _stateRelay = true;
-        if (stateRelay.contains("OFF"))
-            _stateRelay = false;
-    }
+    public void setStateRelay(boolean stateRelay){ _stateRelay = stateRelay; }
 }

@@ -33,6 +33,15 @@ public class MessageService extends IntentService
 
             RawSms rawSms = new RawSms();
             rawSms.ParseSms(smsBody);
+            RawSmsDB rawSmsDB = new RawSmsDB();
+            rawSmsDB.setSmsPackNum(rawSms.getSmsPackNum());
+            rawSmsDB.setIdSms(rawSms.getIdSms());
+            rawSmsDB.setLocationNameSensor(rawSms.getLocationNameSensor());
+            rawSmsDB.setValSensor(rawSms.getValSensor());
+            rawSmsDB.setNumRelay(rawSms.getNumRelay());
+            rawSmsDB.setLocationNameRelay(rawSms.getLocationNameRelay());
+            rawSmsDB.setPinRelay(rawSms.getPinRelay());
+            rawSmsDB.setStateRelay(rawSms.getStateRelay());
 
             //Realm realm = Realm.getInstance(getBaseContext());
             //realm.beginTransaction();
