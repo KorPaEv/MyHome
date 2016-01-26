@@ -61,7 +61,7 @@ public class MessageReceiver extends WakefulBroadcastReceiver
 
             }
             //Дальше проверим какой нить флаг что это нужная смс и если нужная то запустим сервис где будет парсинг смс
-            if (smsBody.contains("SmartHome"))
+            if (smsBody.contains("SH"))
             {
                 //Стартуем сервис для обработки смс
                 Intent service = new Intent(context, MessageService.class);
