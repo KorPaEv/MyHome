@@ -1,6 +1,7 @@
 package com.korpaev.myhome;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class RawSmsDB extends RealmObject
 {
@@ -13,40 +14,18 @@ public class RawSmsDB extends RealmObject
     private boolean _stateRelay; // состояние реле
 
     public int getIdSms(){ return _idSms; }
-    public String getLocationNameSensor(){
-        return _locationSensor;
-    }
-    public String getValSensor(){
-        return _valSensor;
-    }
-    public String getNumRelay(){
-        return _numRelay;
-    }
-    public String getLocationNameRelay(){
-        return _locationRelay;
-    }
-    public String getPinRelay(){
-        return _pinRelay;
-    }
-    public boolean getStateRelay(){ return _stateRelay; }
+    public String getLocationNameSensor() { return _locationSensor; }
+    public String getValSensor() { return _valSensor; }
+    public String getNumRelay() { return _numRelay; }
+    public String getLocationNameRelay() { return _locationRelay; }
+    public String getPinRelay() { return _pinRelay; }
+    public boolean getStateRelay() { return _stateRelay; }
 
-    public void setIdSms(int idSms){
-        _idSms = idSms;
-    }
-    public void setLocationNameSensor(String locationSensor){
-        _locationSensor = locationSensor;
-    }
-    public void setValSensor(String valSensor){
-        _valSensor = valSensor;
-    }
-    public void setNumRelay(String numRelay){
-        _numRelay = numRelay;
-    }
-    public void setLocationNameRelay(String locationRelay){
-        _locationRelay = locationRelay;
-    }
-    public void setPinRelay(String pinRelay){
-        _pinRelay = pinRelay;
-    }
-    public void setStateRelay(boolean stateRelay){ _stateRelay = stateRelay; }
+    public void setIdSms(int idSms) { this._idSms = idSms; }
+    public void setLocationNameSensor(String locationSensor) { this._locationSensor = locationSensor; }
+    public void setValSensor(String valSensor) { this._valSensor = valSensor; }
+    public void setNumRelay(String numRelay) { this._numRelay = numRelay; }
+    public void setLocationNameRelay(String locationRelay) { this._locationRelay = locationRelay; }
+    public void setPinRelay(String pinRelay) { this._pinRelay = pinRelay; }
+    public void setStateRelay(boolean stateRelay){ this._stateRelay = stateRelay; }
 }

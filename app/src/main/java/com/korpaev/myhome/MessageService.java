@@ -48,15 +48,15 @@ public class MessageService extends IntentService
                 rawSmsDB.setLocationNameRelay(rawSms.getLocationNameRelay());
                 rawSmsDB.setPinRelay(rawSms.getPinRelay());
                 rawSmsDB.setStateRelay(rawSms.getStateRelay());
+
+                //Далее отписываем в БД то, что распарсили
+                Realm realm = Realm.getInstance(getBaseContext());
+                realm.beginTransaction();
+                realm.copyToRealm(rawSmsDB);
+                realm.commitTransaction();
             }
 
-            //Realm realm = Realm.getInstance(getBaseContext());
-            //realm.beginTransaction();
-            //realm.copyToRealm();
-            //realm.commitTransaction();
-
             //---------------------------------------ДОПИСАТЬ
-            //Далее отписываем в БД то, что распарсили
             //Запускаем главный активити с переданными из БД данными
             // Intent intentMain = new Intent(getBaseContext(), MainActivity.class);
             // intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);         // Pass in data
