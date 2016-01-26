@@ -23,25 +23,32 @@ public class MessageService extends IntentService
         Bundle extras = intent.getExtras();
         if(extras != null)
         {
+            // получили текст и номер сообщения
             smsBody = extras.getString("sms_body");
             smsFrom = extras.getString("sms_from");
-            //Парсим смс
-            //Формат передаваемой строки: 0001;1;SmartHome;BoilerRoom;27C;4;Boiler;25;OFF
-            //                        или 0001;1;SmartHome;BoilerRoom;27C;RN
-            //                    или газ 0001;6;SmartHome;GasSensor;150;2;GasRoom;22;ON
-            //                            0001;6;SmartHome;GasSensor;150;RN
+            //Разбиваем смс на строки
+            String[] splitSmsBodyLines;
+            splitSmsBodyLines = smsBody.split("\n");
 
-            RawSms rawSms = new RawSms();
-            rawSms.ParseSms(smsBody);
-            RawSmsDB rawSmsDB = new RawSmsDB();
-            rawSmsDB.setSmsPackNum(rawSms.getSmsPackNum());
-            rawSmsDB.setIdSms(rawSms.getIdSms());
-            rawSmsDB.setLocationNameSensor(rawSms.getLocationNameSensor());
-            rawSmsDB.setValSensor(rawSms.getValSensor());
-            rawSmsDB.setNumRelay(rawSms.getNumRelay());
-            rawSmsDB.setLocationNameRelay(rawSms.getLocationNameRelay());
-            rawSmsDB.setPinRelay(rawSms.getPinRelay());
-            rawSmsDB.setStateRelay(rawSms.getStateRelay());
+            //Формат передаваемой строки: 1;SH;BR;27C;4;BLR;25;0
+            //                        или 1;SH;BR;27C;RN
+            //                    или газ 6;SH;GAS;150;2;GR;22;1
+            //                            6;SH;GAS;150;RN
+            //Парсим смс построчно и создаем объекты
+            for (int i = 0; i < splitSmsBodyLines.length; i++)
+            {
+                RawSms rawSms = new RawSms();
+                rawSms.ParseSms(splitSmsBodyLines[i]);
+
+                RawSmsDB rawSmsDB = new RawSmsDB();
+                rawSmsDB.setIdSms(rawSms.getIdSms());
+                rawSmsDB.setLocationNameSensor(rawSms.getLocationNameSensor());
+                rawSmsDB.setValSensor(rawSms.getValSensor());
+                rawSmsDB.setNumRelay(rawSms.getNumRelay());
+                rawSmsDB.setLocationNameRelay(rawSms.getLocationNameRelay());
+                rawSmsDB.setPinRelay(rawSms.getPinRelay());
+                rawSmsDB.setStateRelay(rawSms.getStateRelay());
+            }
 
             //Realm realm = Realm.getInstance(getBaseContext());
             //realm.beginTransaction();

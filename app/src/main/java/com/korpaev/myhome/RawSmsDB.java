@@ -1,12 +1,9 @@
 package com.korpaev.myhome;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 public class RawSmsDB extends RealmObject
 {
-
-    private int _smsPackNum; //порядковый номер пакета смс
     private int _idSms; // порядковый номер смс
     private String _locationSensor; // расположение датчика
     private String _valSensor; // значение датчика
@@ -15,7 +12,6 @@ public class RawSmsDB extends RealmObject
     private String _pinRelay; // пин реле
     private boolean _stateRelay; // состояние реле
 
-    public int getSmsPackNum() { return _smsPackNum; }
     public int getIdSms(){ return _idSms; }
     public String getLocationNameSensor(){
         return _locationSensor;
@@ -32,13 +28,8 @@ public class RawSmsDB extends RealmObject
     public String getPinRelay(){
         return _pinRelay;
     }
-    public boolean getStateRelay(){
-        return _stateRelay;
-    }
+    public boolean getStateRelay(){ return _stateRelay; }
 
-    public void setSmsPackNum(int smsPackNum){
-        _smsPackNum = smsPackNum;
-    }
     public void setIdSms(int idSms){
         _idSms = idSms;
     }

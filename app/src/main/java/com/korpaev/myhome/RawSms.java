@@ -2,12 +2,11 @@ package com.korpaev.myhome;
 
 public class RawSms
 {
-    //                           _smsPackNum  _idSms;                _locationSensor;  _valSensor;   _numRelay;  _locationRelay;     _pinRelay;       _stateRelay
-    //Формат передаваемой строки:   0001;       1;         SmartHome;   BoilerRoom;      27C;          4;          Boiler;           25;           OFF
+    //                            _idSms;                  locationSensor;  _valSensor;   _numRelay; _locationRelay;  _pinRelay;    _stateRelay
+    //Формат передаваемой строки:    1;         SHome;           BR;           27C;          4;          BLR;           25;           0
     //                        или 1;SmartHome;BoilerRoom;27C;RN
     //                    или газ 6;SmartHome;GasSensor;150;2;GasRoom;22;ON
     //
-    private int _smsPackNum; //порядковый номер пакета смс
     private int _idSms; // порядковый номер смс
     private String _locationSensor; // расположение датчика
     private String _valSensor; // значение датчика
@@ -16,7 +15,6 @@ public class RawSms
     private String _pinRelay; // пин реле
     private boolean _stateRelay; // состояние реле
 
-    public int getSmsPackNum() { return _smsPackNum; }
     public int getIdSms(){
         return _idSms;
     }
@@ -35,13 +33,8 @@ public class RawSms
     public String getPinRelay(){
         return _pinRelay;
     }
-    public boolean getStateRelay(){
-        return _stateRelay;
-    }
+    public boolean getStateRelay(){ return _stateRelay; }
 
-    public void setSmsPackNum(int smsPackNum){
-        _smsPackNum = smsPackNum;
-    }
     public void setIdSms(int idSms){
         _idSms = idSms;
     }
@@ -60,36 +53,30 @@ public class RawSms
     public void setPinRelay(String pinRelay){
         _pinRelay = pinRelay;
     }
-    public void setStateRelay(String stateRelay){
-        if (stateRelay.contains("ON"))
-            _stateRelay = true;
-        if (stateRelay.contains("OFF"))
-            _stateRelay = false;
-    }
+    public void setStateRelay(String stateRelay){ _stateRelay = Boolean.getBoolean(stateRelay); }
 
     public void ParseSms(String smsBody)
     {
         String[] splitSmsBody;
         splitSmsBody = smsBody.split(";");
 
-        setSmsPackNum(Integer.parseInt(splitSmsBody[0].trim()));
-        setIdSms(Integer.parseInt(splitSmsBody[1].trim()));
-        setLocationNameSensor(splitSmsBody[3].trim());
-        setValSensor(splitSmsBody[4].trim());
+        setIdSms(Integer.parseInt(splitSmsBody[0].trim()));
+        setLocationNameSensor(splitSmsBody[2].trim());
+        setValSensor(splitSmsBody[3].trim());
 
-        if (splitSmsBody[5].trim().contains("RN"))
+        if (splitSmsBody[4].trim().contains("RN"))
         {
-            setNumRelay(splitSmsBody[5].trim());
+            setNumRelay(splitSmsBody[4].trim());
             setLocationNameRelay("RN");
             setPinRelay("RN");
-            setStateRelay("OFF");
+            setStateRelay("0");
         }
         else
         {
-            setNumRelay(splitSmsBody[5].trim());
-            setLocationNameRelay(splitSmsBody[6].trim());
-            setPinRelay(splitSmsBody[7].trim());
-            setStateRelay(splitSmsBody[8].trim());
+            setNumRelay(splitSmsBody[4].trim());
+            setLocationNameRelay(splitSmsBody[5].trim());
+            setPinRelay(splitSmsBody[6].trim());
+            setStateRelay(splitSmsBody[7].trim());
         }
     }
 }
