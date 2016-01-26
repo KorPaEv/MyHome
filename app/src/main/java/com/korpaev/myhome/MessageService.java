@@ -41,6 +41,8 @@ public class MessageService extends IntentService
             realm.beginTransaction();
             //Посмотрим что лежит в БД
             RealmResults<RawSmsDB> results = realm.where(RawSmsDB.class).findAll();
+            //Очистим БД от старых данных
+            realm.where(RawSmsDB.class).findAll().clear();
 
             for (int i = 0; i < splitSmsBodyLines.length; i++)
             {
@@ -57,7 +59,7 @@ public class MessageService extends IntentService
                 rawSmsDB.set_stateRelay(rawSms.get_stateRelay());
 
                 //Далее отписываем в БД то, что распарсили
-                realm.copyToRealmOrUpdate(rawSmsDB);
+                realm.copyToRealm(rawSmsDB);
             }
             //коммитим
             realm.commitTransaction();
