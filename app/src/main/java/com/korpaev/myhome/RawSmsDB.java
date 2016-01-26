@@ -13,6 +13,7 @@ public class RawSmsDB extends RealmObject
     private String _pinRelay; // пин реле
     private boolean _stateRelay; // состояние реле
 
+    //Тут имена полей и имена методов get и set должны совпадать!!! Это особенность либы
     public int get_idSms(){ return _idSms; }
     public String get_locationSensor() { return _locationSensor; }
     public String get_valSensor() { return _valSensor; }
