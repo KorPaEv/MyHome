@@ -41,13 +41,13 @@ public class MessageService extends IntentService
                 rawSms.ParseSms(splitSmsBodyLines[i]);
 
                 RawSmsDB rawSmsDB = new RawSmsDB();
-                rawSmsDB.setIdSms(rawSms.getIdSms());
-                rawSmsDB.setLocationNameSensor(rawSms.getLocationNameSensor());
-                rawSmsDB.setValSensor(rawSms.getValSensor());
-                rawSmsDB.setNumRelay(rawSms.getNumRelay());
-                rawSmsDB.setLocationNameRelay(rawSms.getLocationNameRelay());
-                rawSmsDB.setPinRelay(rawSms.getPinRelay());
-                rawSmsDB.setStateRelay(rawSms.getStateRelay());
+                rawSmsDB.set_idSms(rawSms.getIdSms());
+                rawSmsDB.set_locationSensor(rawSms.getLocationNameSensor());
+                rawSmsDB.set_valSensor(rawSms.getValSensor());
+                rawSmsDB.set_numRelay(rawSms.getNumRelay());
+                rawSmsDB.set_locationRelay(rawSms.getLocationNameRelay());
+                rawSmsDB.set_pinRelay(rawSms.getPinRelay());
+                rawSmsDB.set_stateRelay(rawSms.getStateRelay());
 
                 //Далее отписываем в БД то, что распарсили
                 Realm realm = Realm.getInstance(getBaseContext());
