@@ -3,18 +3,15 @@ package com.korpaev.myhome;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MessageService extends IntentService
 {
     String smsFrom = "", smsBody = "";
-    int idSms = 0;
-    public MessageService() {
+
+    public MessageService()
+    {
         super("MessageService");
     }
     @Override
