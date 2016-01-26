@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MessageService extends IntentService
 {
@@ -35,6 +36,12 @@ public class MessageService extends IntentService
             //                    или газ 6;SH;GAS;150;2;GR;22;1
             //                            6;SH;GAS;150;RN
             //Парсим смс построчно и создаем объекты
+
+            Realm realm = Realm.getInstance(getBaseContext());
+            realm.beginTransaction();
+            //Посмотрим что лежит в БД
+            RealmResults<RawSmsDB> results = realm.where(RawSmsDB.class).findAll();
+
             for (int i = 0; i < splitSmsBodyLines.length; i++)
             {
                 RawSms rawSms = new RawSms();
@@ -50,11 +57,10 @@ public class MessageService extends IntentService
                 rawSmsDB.set_stateRelay(rawSms.get_stateRelay());
 
                 //Далее отписываем в БД то, что распарсили
-                Realm realm = Realm.getInstance(getBaseContext());
-                realm.beginTransaction();
-                realm.copyToRealm(rawSmsDB);
-                realm.commitTransaction();
+                realm.copyToRealmOrUpdate(rawSmsDB);
             }
+            //коммитим
+            realm.commitTransaction();
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
