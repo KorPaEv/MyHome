@@ -9,6 +9,7 @@ import io.realm.RealmResults;
 public class MessageService extends IntentService
 {
     String smsFrom = "", smsBody = "";
+    Realm realm;
 
     public MessageService()
     {
@@ -28,38 +29,10 @@ public class MessageService extends IntentService
             String[] splitSmsBodyLines;
             splitSmsBodyLines = smsBody.split("\n");
 
-            //Формат передаваемой строки: 1;SH;BR;27C;4;BLR;25;0
-            //                        или 1;SH;BR;27C;RN
-            //                    или газ 6;SH;GAS;150;2;GR;22;1
-            //                            6;SH;GAS;150;RN
-            //Парсим смс построчно и создаем объекты
-
-            Realm realm = Realm.getInstance(getBaseContext());
-            realm.beginTransaction();
-            //Посмотрим что лежит в БД
+            //Парсим и пишем в БД данные смс
+            WriteDataToDB(splitSmsBodyLines);
+            //Посмотрим что лежит в БД после записи данных
             RealmResults<RawSmsDB> results = realm.where(RawSmsDB.class).findAll();
-            //Очистим БД от старых данных
-            realm.where(RawSmsDB.class).findAll().clear();
-
-            for (int i = 0; i < splitSmsBodyLines.length; i++)
-            {
-                RawSms rawSms = new RawSms();
-                rawSms.ParseSms(splitSmsBodyLines[i]);
-
-                RawSmsDB rawSmsDB = new RawSmsDB();
-                rawSmsDB.set_idSms(rawSms.get_idSms());
-                rawSmsDB.set_locationSensor(rawSms.get_locationSensor());
-                rawSmsDB.set_valSensor(rawSms.get_valSensor());
-                rawSmsDB.set_numRelay(rawSms.get_numRelay());
-                rawSmsDB.set_locationRelay(rawSms.get_locationRelay());
-                rawSmsDB.set_pinRelay(rawSms.get_pinRelay());
-                rawSmsDB.set_stateRelay(rawSms.get_stateRelay());
-
-                //Далее отписываем в БД то, что распарсили
-                realm.copyToRealm(rawSmsDB);
-            }
-            //коммитим
-            realm.commitTransaction();
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
@@ -69,6 +42,41 @@ public class MessageService extends IntentService
             //---------------------------------------ДОПИСАТЬ
         }
         MessageReceiver.completeWakefulIntent(intent);
+    }
+
+    private void WriteDataToDB(String[] string)
+    {
+        //Формат передаваемой строки: 1;SH;BR;27C;4;BLR;25;0
+        //                        или 1;SH;BR;27C;RN
+        //                    или газ 6;SH;GAS;150;2;GR;22;1
+        //                            6;SH;GAS;150;RN
+        //Парсим смс построчно и пишем в БД
+        realm = Realm.getInstance(getBaseContext());
+        realm.beginTransaction();
+        //Очистим БД от старых данных
+        realm.where(RawSmsDB.class).findAll().clear();
+
+        for (int i = 0; i < string.length; i++)
+        {
+            RawSms rawSms = new RawSms();
+            //Парсим отдельную строку из всех строк смс
+            rawSms.ParseSms(string[i]);
+
+            //Объект для БД
+            RawSmsDB rawSmsDB = new RawSmsDB();
+            rawSmsDB.set_idSms(rawSms.get_idSms());
+            rawSmsDB.set_locationSensor(rawSms.get_locationSensor());
+            rawSmsDB.set_valSensor(rawSms.get_valSensor());
+            rawSmsDB.set_numRelay(rawSms.get_numRelay());
+            rawSmsDB.set_locationRelay(rawSms.get_locationRelay());
+            rawSmsDB.set_pinRelay(rawSms.get_pinRelay());
+            rawSmsDB.set_stateRelay(rawSms.get_stateRelay());
+
+            //Далее отписываем в БД то, что распарсили
+            realm.copyToRealm(rawSmsDB);
+        }
+        //коммитим
+        realm.commitTransaction();
     }
 }
 

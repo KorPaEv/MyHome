@@ -3,7 +3,7 @@ package com.korpaev.myhome;
 public class RawSms
 {
     //                            _idSms;                  locationSensor;  _valSensor;   _numRelay; _locationRelay;  _pinRelay;    _stateRelay
-    //Формат передаваемой строки:    1;         SHome;           BR;           27C;          4;          BLR;           25;           0
+    //Формат передаваемой строки:    1;         SH;           BR;           27C;          4;          BLR;           25;           0
     //                        или 1;SmartHome;BoilerRoom;27C;RN
     //                    или газ 6;SmartHome;GasSensor;150;2;GasRoom;22;ON
     //
@@ -41,9 +41,7 @@ public class RawSms
     public void set_locationSensor(String locationSensor){
         _locationSensor = locationSensor;
     }
-    public void set_valSensor(String valSensor){
-        _valSensor = valSensor;
-    }
+    public void set_valSensor(String valSensor){ _valSensor = valSensor; }
     public void set_numRelay(String numRelay){
         _numRelay = numRelay;
     }
