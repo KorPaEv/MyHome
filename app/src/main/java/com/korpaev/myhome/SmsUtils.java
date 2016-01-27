@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.provider.Telephony.Sms.Intents;
 
 public final class SmsUtils
 {
@@ -17,8 +18,8 @@ public final class SmsUtils
         Bundle bundle = intent.getExtras();
         //Здесь мы получаем сообщение с помощью метода intent.getExtras().get("pdus"),
         // который возвращает массив объектов в формате PDU — эти объекты мы потом приводим к типу SmsMessage с помощью метода createFromPdu().
-        if (intent != null && intent.getAction() != null &&
-            "android.provider.Telephony.SMS_RECEIVED".compareToIgnoreCase(intent.getAction()) == 0)
+        if ( intent != null && intent.getAction() != null &&
+                Intents.SMS_RECEIVED_ACTION.compareToIgnoreCase(intent.getAction()) == 0)
         {
             Object[] pduArray = (Object[]) bundle.get("pdus");
             SmsMessage[] messages = new SmsMessage[pduArray.length];
@@ -35,8 +36,8 @@ public final class SmsUtils
             }
             //короче получили 1 смс и вывели номер и текст
             SmsMessage sms = messages[0];
-            String address = messages[0].getDisplayOriginatingAddress();
-            String message;
+            String smsFrom = messages[0].getDisplayOriginatingAddress();
+            String smsBody;
             //Здесь мы составляем текст сообщения (в случае, когда сообщение было длинным
             // и пришло в нескольких смс-ках, каждая отдельная часть хранится в messages[i]) и вызываем метод abortBroadcast(),
             // чтобы предотвратить дальнейшую обработку сообщения другими приложениями.
@@ -44,7 +45,7 @@ public final class SmsUtils
             {
                 if (messages.length == 1 || sms.isReplace())
                 {
-                    message = sms.getMessageBody();
+                    smsBody = sms.getMessageBody();
                 }
                 else
                 {
@@ -53,9 +54,9 @@ public final class SmsUtils
                     {
                         bodyText.append(messages[i].getMessageBody());
                     }
-                    message = bodyText.toString();
+                    smsBody = bodyText.toString();
                 }
-                return new LongSms(address, message);
+                return new LongSms(smsFrom, smsBody);
             }
             catch (Exception e)
             {

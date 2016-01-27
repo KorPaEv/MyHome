@@ -20,18 +20,21 @@ public class MessageReceiver extends WakefulBroadcastReceiver
         //Проверяем что нам пришла смс
         longSms = SmsUtils.extractFromIntent(intent);
 
-        //Дальше проверим флаг что это нужная смс и если нужная то запустим сервис где будет парсинг смс
-        if (longSms.getMessage().contains("SH") && longSms.getMessage() != null)
+        if (longSms != null)
         {
-            //Стартуем сервис для обработки смс
-            Intent service = new Intent(context, MessageService.class);
+            String message = longSms.getMessage();
+            if (message != null && message.contains("SH"))
+            {
+                //Стартуем сервис для обработки смс
+                Intent service = new Intent(context, MessageService.class);
 
-            service.putExtra("sms_from", longSms.getNumber());
-            service.putExtra("sms_body", longSms.getMessage());
+                service.putExtra("sms_from", longSms.getNumber());
+                service.putExtra("sms_body", message);
 
-            startWakefulService(context, service);
-            //прерываем обработку смс стандартным манагером
-            abortBroadcast();
+                startWakefulService(context, service);
+                //прерываем обработку смс стандартным манагером
+                abortBroadcast();
+            }
         }
         soundManage.SetSoundOn();
     }
