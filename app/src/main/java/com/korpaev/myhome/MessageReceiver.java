@@ -1,21 +1,14 @@
 package com.korpaev.myhome;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import android.telephony.SmsMessage;
 
 //В этом классе реализуется абстрактный метод onReceive(), который вызывается системой каждый раз при получении сообщения.
 public class MessageReceiver extends WakefulBroadcastReceiver
 {
     SoundManage soundManage;
-    SmsCheckPDUS smsCheckPDUS;
+    LongSms longSms;
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -25,16 +18,16 @@ public class MessageReceiver extends WakefulBroadcastReceiver
         soundManage.SetSoundOff();
 
         //Проверяем что нам пришла смс
-        smsCheckPDUS = new SmsCheckPDUS(intent);
+        longSms = SmsUtils.extractFromIntent(intent);
 
         //Дальше проверим флаг что это нужная смс и если нужная то запустим сервис где будет парсинг смс
-        if (smsCheckPDUS.get_smsBody().contains("SH") && smsCheckPDUS.get_smsBody() != null)
+        if (longSms.getMessage().contains("SH") && longSms.getMessage() != null)
         {
             //Стартуем сервис для обработки смс
             Intent service = new Intent(context, MessageService.class);
 
-            service.putExtra("sms_from", smsCheckPDUS.get_smsFrom());
-            service.putExtra("sms_body", smsCheckPDUS.get_smsBody());
+            service.putExtra("sms_from", longSms.getNumber());
+            service.putExtra("sms_body", longSms.getMessage());
 
             startWakefulService(context, service);
             //прерываем обработку смс стандартным манагером
