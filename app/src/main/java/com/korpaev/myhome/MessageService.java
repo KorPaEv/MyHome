@@ -36,9 +36,9 @@ public class MessageService extends IntentService
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
-            // Intent intentMain = new Intent(getBaseContext(), MainActivity.class);
-            // intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);         // Pass in data
-            //getApplication().startActivity(intentMain);
+            Intent intentMain = new Intent(getBaseContext(), MainActivity.class);
+            intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);         // Pass in data
+            getApplication().startActivity(intentMain);
             //---------------------------------------ДОПИСАТЬ
         }
         MessageReceiver.completeWakefulIntent(intent);
