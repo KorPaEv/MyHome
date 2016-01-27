@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.WakefulBroadcastReceiver;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -42,7 +44,7 @@ public class MessageService extends IntentService
             getApplication().startActivity(intentMain);
             //---------------------------------------ДОПИСАТЬ
         }
-        MessageReceiver.completeWakefulIntent(intent);
+        WakefulBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     private void WriteDataToDB(String[] string)
