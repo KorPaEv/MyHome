@@ -26,11 +26,7 @@ public class MessageReceiver extends WakefulBroadcastReceiver
             if (message != null && message.contains("SH"))
             {
                 //Стартуем сервис для обработки смс
-                Intent service = new Intent(context, MessageService.class);
-
-                service.putExtra("sms_from", longSms.getNumber());
-                service.putExtra("sms_body", message);
-
+                Intent service = MessageService.getIntentForLongSms(context, longSms);
                 startWakefulService(context, service);
                 //прерываем обработку смс стандартным манагером
                 abortBroadcast();

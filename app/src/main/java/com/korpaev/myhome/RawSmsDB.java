@@ -3,7 +3,7 @@ package com.korpaev.myhome;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class RawSmsDB extends RealmObject
+public class RawSmsDb extends RealmObject
 {
     private int _idSms; // порядковый номер смс
     private String _locationSensor; // расположение датчика

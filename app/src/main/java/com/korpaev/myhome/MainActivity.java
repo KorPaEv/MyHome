@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
         //Посмотрим что лежит в БД после записи данных
-        RealmResults<RawSmsDB> results = realm.where(RawSmsDB.class).findAll();
+        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
         realm.commitTransaction();
     }
 }

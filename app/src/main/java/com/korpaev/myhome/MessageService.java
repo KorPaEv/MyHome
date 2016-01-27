@@ -1,6 +1,7 @@
 package com.korpaev.myhome;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import io.realm.Realm;
@@ -32,7 +33,7 @@ public class MessageService extends IntentService
             //Парсим и пишем в БД данные смс
             WriteDataToDB(splitSmsBodyLines);
             //Посмотрим что лежит в БД после записи данных
-            RealmResults<RawSmsDB> results = realm.where(RawSmsDB.class).findAll();
+            RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
@@ -54,7 +55,7 @@ public class MessageService extends IntentService
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
         //Очистим БД от старых данных
-        realm.where(RawSmsDB.class).findAll().clear();
+        realm.where(RawSmsDb.class).findAll().clear();
 
         for (int i = 0; i < string.length; i++)
         {
@@ -63,7 +64,7 @@ public class MessageService extends IntentService
             rawSms.ParseSms(string[i]);
 
             //Объект для БД
-            RawSmsDB rawSmsDB = new RawSmsDB();
+            RawSmsDb rawSmsDB = new RawSmsDb();
             rawSmsDB.set_idSms(rawSms.get_idSms());
             rawSmsDB.set_locationSensor(rawSms.get_locationSensor());
             rawSmsDB.set_valSensor(rawSms.get_valSensor());
@@ -77,6 +78,15 @@ public class MessageService extends IntentService
         }
         //коммитим
         realm.commitTransaction();
+    }
+
+    public static Intent getIntentForLongSms (Context context, LongSms longSms)
+    {
+        Intent service = new Intent(context, MessageService.class);
+
+        service.putExtra("sms_from", longSms.getNumber());
+        service.putExtra("sms_body", longSms.getMessage());
+        return service;
     }
 }
 
