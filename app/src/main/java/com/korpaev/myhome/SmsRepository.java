@@ -41,6 +41,7 @@ public class SmsRepository
 
     public RawSms findSms(int smsId)
     {
-
+        RawSms rawSms = new RawSms();
+        return rawSms;
     }
 }
