@@ -42,7 +42,6 @@ public class SmsRepository
     public RawSms findSmsStr(int smsId)
     {
         realm = Realm.getInstance(context);
-        realm.beginTransaction();
         RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).equalTo("_idSms", smsId).findAll();
         RawSms rawSms = new RawSms();
         for (RawSmsDb rawSmsDb : results)
@@ -55,7 +54,6 @@ public class SmsRepository
             rawSms.set_pinRelay(rawSmsDb.get_pinRelay());
             rawSms.set_stateRelay(Boolean.toString(rawSmsDb.get_stateRelay()));
         }
-        realm.commitTransaction();
         return rawSms;
     }
 }
