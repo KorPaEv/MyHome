@@ -26,7 +26,7 @@ public class MessageService extends IntentService
             smsFrom = extras.getString("sms_from");
             //Разбиваем смс на строки
             String[] splitSmsBodyLines;
-            splitSmsBodyLines = smsBody.split("\n");
+            splitSmsBodyLines = smsBody.split("SH");
 
             //Парсим и пишем в БД данные смс
             WriteDataToDB(splitSmsBodyLines);
@@ -43,13 +43,15 @@ public class MessageService extends IntentService
 
     private void WriteDataToDB(String[] string)
     {
-        //Формат передаваемой строки: 1;SH;BR;27C;4;BLR;25;0
-        //                        или 1;SH;BR;27C;RN
-        //                    или газ 6;SH;GAS;150;2;GR;22;1
-        //                            6;SH;GAS;150;RN
+        //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
+        //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
         //Парсим смс построчно и пишем в БД
         for (int i = 0; i < string.length; i++)
         {
+            if (string[i] == "")
+            {
+                continue;
+            }
             RawSms rawSms = new RawSms();
             //Парсим отдельную строку из всех строк смс
             rawSms.ParseSms(string[i]);

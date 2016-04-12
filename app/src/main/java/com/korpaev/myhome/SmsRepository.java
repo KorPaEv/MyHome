@@ -36,24 +36,12 @@ public class SmsRepository
         //коммитим
         realm.commitTransaction();
         //Посмотрим что лежит в БД после записи данных
-        //RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
+        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
     }
 
-    public RawSms findSmsStr(int smsId)
+    public RawSms findSms(int smsId)
     {
-        realm = Realm.getInstance(context);
-        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).equalTo("_idSms", smsId).findAll();
         RawSms rawSms = new RawSms();
-        for (RawSmsDb rawSmsDb : results)
-        {
-            rawSms.set_idSms(rawSmsDb.get_idSms());
-            rawSms.set_locationSensor(rawSmsDb.get_locationSensor());
-            rawSms.set_valSensor(rawSmsDb.get_valSensor());
-            rawSms.set_numRelay(rawSmsDb.get_numRelay());
-            rawSms.set_locationRelay(rawSmsDb.get_locationRelay());
-            rawSms.set_pinRelay(rawSmsDb.get_pinRelay());
-            rawSms.set_stateRelay(Boolean.toString(rawSmsDb.get_stateRelay()));
-        }
         return rawSms;
     }
 }

@@ -22,6 +22,8 @@ public final class SmsUtils
                 Intents.SMS_RECEIVED_ACTION.compareToIgnoreCase(intent.getAction()) == 0)
         {
             Object[] pduArray = (Object[]) bundle.get("pdus");
+            //Object[] pduArray = {0x00, 0x11, 0x00, 0x0B,
+            //                     0x91, 0x97, 0x32, 0x460419F80004AA1a534800000001f9580a57000000060b4741533b3939393b393939};
             SmsMessage[] messages = new SmsMessage[pduArray.length];
             for (int i = 0; i < pduArray.length; i++) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -36,6 +38,10 @@ public final class SmsUtils
             }
             //короче получили 1 смс и вывели номер и текст
             SmsMessage sms = messages[0];
+
+            //Положили в массив данные тела смс в пду
+            byte[] usrDataArr = sms.getUserData();
+
             String smsFrom = messages[0].getDisplayOriginatingAddress();
             String smsBody;
             //Здесь мы составляем текст сообщения (в случае, когда сообщение было длинным
@@ -43,19 +49,8 @@ public final class SmsUtils
             // чтобы предотвратить дальнейшую обработку сообщения другими приложениями.
             try
             {
-                if (messages.length == 1 || sms.isReplace())
-                {
-                    smsBody = sms.getMessageBody();
-                }
-                else
-                {
-                    StringBuilder bodyText = new StringBuilder();
-                    for (int i = 0; i < messages.length; i++)
-                    {
-                        bodyText.append(messages[i].getMessageBody());
-                    }
-                    smsBody = bodyText.toString();
-                }
+                SmsUserDataPdu smsUserDataPdu = new SmsUserDataPdu();
+                smsBody = smsUserDataPdu.ConvertPduToGsm(usrDataArr); //Парсим пду формат в читаемый вид
                 return new LongSms(smsFrom, smsBody);
             }
             catch (Exception e)

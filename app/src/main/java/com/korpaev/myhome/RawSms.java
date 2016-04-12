@@ -2,11 +2,8 @@ package com.korpaev.myhome;
 
 public class RawSms
 {
-    //                            _idSms;                  locationSensor;  _valSensor;   _numRelay; _locationRelay;  _pinRelay;    _stateRelay
-    //Формат передаваемой строки:    1;         SH;           BR;           27C;          4;          BLR;           25;           0
-    //                        или 1;SmartHome;BoilerRoom;27C;RN
-    //                    или газ 6;SmartHome;GasSensor;150;2;GasRoom;22;ON
-    //
+    //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
+    //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
     private int _idSms; // порядковый номер смс
     private String _locationSensor; // расположение датчика
     private String _valSensor; // значение датчика
