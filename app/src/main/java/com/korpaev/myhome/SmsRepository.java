@@ -18,18 +18,20 @@ public class SmsRepository
     {
         realm = Realm.getInstance(context);
         realm.beginTransaction();
-        //Очистим БД от старых данных
-        realm.where(RawSmsDb.class).findAll().clear();
 
         //Объект для БД
         RawSmsDb rawSmsDB = new RawSmsDb();
-        rawSmsDB.set_idSms(rawSms.get_idSms());
-        rawSmsDB.set_locationSensor(rawSms.get_locationSensor());
-        rawSmsDB.set_valSensor(rawSms.get_valSensor());
-        rawSmsDB.set_numRelay(rawSms.get_numRelay());
-        rawSmsDB.set_locationRelay(rawSms.get_locationRelay());
-        rawSmsDB.set_pinRelay(rawSms.get_pinRelay());
-        rawSmsDB.set_stateRelay(rawSms.get_stateRelay());
+        rawSmsDB.set_hProtocolVer(rawSms.get_hProtocolVer());
+        rawSmsDB.set_hTimeStamp(rawSms.get_hTimeStamp());
+        rawSmsDB.set_hNumSensor(rawSms.get_hNumSensor());
+        rawSmsDB.set_hLenBody(rawSms.get_hLenBody());
+
+        rawSmsDB.set_bLocationSensor(rawSms.get_bLocationSensor());
+        rawSmsDB.set_bValSensor(rawSms.get_bValSensor());
+        rawSmsDB.set_bNumRelay(rawSms.get_bNumRelay());
+        rawSmsDB.set_bLocationRelay(rawSms.get_bLocationRelay());
+        rawSmsDB.set_bPinRelay(rawSms.get_bPinRelay());
+        rawSmsDB.set_bStateRelay(rawSms.get_bStateRelay());
 
         //Далее отписываем в БД то, что распарсили
         realm.copyToRealm(rawSmsDB);

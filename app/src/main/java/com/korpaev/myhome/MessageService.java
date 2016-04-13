@@ -24,12 +24,8 @@ public class MessageService extends IntentService
             // получили текст и номер сообщения
             smsBody = extras.getString("sms_body");
             smsFrom = extras.getString("sms_from");
-            //Разбиваем смс на строки
-            String[] splitSmsBodyLines;
-            splitSmsBodyLines = smsBody.split("SH");
-
             //Парсим и пишем в БД данные смс
-            WriteDataToDB(splitSmsBodyLines);
+            //WriteDataToDB(smsBody);
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
@@ -41,21 +37,25 @@ public class MessageService extends IntentService
         WakefulBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void WriteDataToDB(String[] string)
+    public void WriteDataToDB(String string, Context context)
     {
+        //Разбиваем смс на строки
+        String[] splitSmsBodyLines;
+        splitSmsBodyLines = string.split("SH");
         //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
         //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
         //Парсим смс построчно и пишем в БД
-        for (int i = 0; i < string.length; i++)
+        for (int i = 0; i < splitSmsBodyLines.length; i++)
         {
-            if (string[i] == "")
+            if (splitSmsBodyLines[i].isEmpty())
             {
                 continue;
             }
             RawSms rawSms = new RawSms();
             //Парсим отдельную строку из всех строк смс
-            rawSms.ParseSms(string[i]);
-            SmsRepository smsRepository = new SmsRepository(getBaseContext());
+            rawSms.ParseSms(splitSmsBodyLines[i]);
+            //SmsRepository smsRepository = new SmsRepository(getBaseContext());
+            SmsRepository smsRepository = new SmsRepository(context);
             smsRepository.addSms(rawSms);
         }
     }

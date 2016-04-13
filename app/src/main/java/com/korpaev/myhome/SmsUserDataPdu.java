@@ -34,10 +34,10 @@ public class SmsUserDataPdu
     public String HeadAndBodyGsmFromPdu(byte[] bytes)
     {
         //Пишем первые 2 байта SH
-        str += String.valueOf((char)bytes[ind++]) + String.valueOf((char)bytes[ind++]) + ";";
+        str += String.valueOf((char)bytes[ind++]) + String.valueOf((char)bytes[ind++]);
 
         //Пишем следующие 4 байта - версия протокола но числом и как текст - было 0001 - стало 1
-        str += toInt32(bytes, ind);
+        str += toInt32(bytes, ind) + ";";
         ind += 4;
 
         //Переворачиваем следующие 4 байта в массиве - время - потому что в ардуино видимо неверно модуль присылает
@@ -67,6 +67,7 @@ public class SmsUserDataPdu
             str += String.valueOf((char)bytes[i]);
         }
         ind = lenMsg;
+        str += ";";
         if (lenMsg != bytes.length)
         {
             HeadAndBodyGsmFromPdu(bytes);

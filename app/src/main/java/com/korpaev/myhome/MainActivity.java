@@ -14,6 +14,14 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        realm = Realm.getInstance(getBaseContext());
+        realm.beginTransaction();
+        //Очистим БД от старых данных
+        realm.where(RawSmsDb.class).findAll().clear();
+        realm.commitTransaction();
+        MessageService ms = new MessageService();
+        String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
+        ms.WriteDataToDB(str, getBaseContext());
         FillData();
     }
 
