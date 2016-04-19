@@ -29,7 +29,7 @@ public class MessageService extends IntentService
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
-            Intent intentMain = new Intent(getBaseContext(), MainActivity.class);
+            Intent intentMain = new Intent(getBaseContext(), MainActivityTabs.class);
             intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);         // Pass in data
             getApplication().startActivity(intentMain);
             //---------------------------------------ДОПИСАТЬ
@@ -70,4 +70,3 @@ public class MessageService extends IntentService
         return service;
     }
 }
-
