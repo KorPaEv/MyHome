@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:clickable="true">
+
+    <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollViewRelayManage" >
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#cd535353" android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/tvRelayOneName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:text="@string/tvRelayOneName" android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"/>
+                <ToggleButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tgbRelayOne" android:layout_column="2" android:textOn="Включено"
+                    android:textOff="Выключено" />
+            </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayTwoName"
+                    android:id="@+id/tvRelayTwoName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
+                <ToggleButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tgbRelayTwo" android:layout_column="2" android:textOff="Выключено"
+                    android:textOn="Включено" />
+            </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayThreeName"
+                    android:id="@+id/tvRelayThreeName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
+                <ToggleButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tgbRelayThree" android:layout_column="2" android:textOn="Включено"
+                    android:textOff="Выключено" />
+            </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayFourName"
+                    android:id="@+id/tvRelayFourName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
+                <ToggleButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tgbRelayFour" android:layout_column="2" android:textOff="Выключено"
+                    android:textOn="Включено" />
+            </TableRow>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#cd535353" android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+        </TableLayout>
+    </ScrollView>
+
+</LinearLayout>
