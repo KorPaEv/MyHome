@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:clickable="true"
+              android:focusable="true"
+              android:focusableInTouchMode="true" tools:context=".GeneralSettingsActivity">
+
+    <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px" />
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:layout_gravity="top"
+            android:id="@+id/scrollViewSettings"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" android:layout_marginTop="10dp">
+        <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Датчик"
+                        android:id="@+id/textView3" android:layout_marginLeft="10dp" android:layout_marginRight="5dp"/>
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Псевдоним"
+                        android:id="@+id/textView4" android:layout_marginLeft="5dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorOneName"
+                    android:layout_column="0"
+                    android:id="@+id/tvSensorNameOne"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/eConfRenameSensorOne" android:layout_marginLeft="5dp" android:layout_marginRight="10dp"
+                        android:layout_column="1" android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorTwoName"
+                    android:id="@+id/tvSensorNameTwo"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameSensorTwo"
+                          android:layout_marginLeft="5dp" android:layout_marginRight="10dp" android:layout_column="1"
+                          android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorThreeName"
+                    android:id="@+id/tvSensorNameThree"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameSensorThree"
+                          android:layout_marginLeft="5dp" android:layout_marginRight="10dp" android:layout_column="1"
+                          android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorFourName"
+                    android:id="@+id/tvSensorNameFour"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameSensorFour"
+                          android:layout_marginLeft="5dp" android:layout_marginRight="10dp" android:layout_column="1"
+                          android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorFiveName"
+                    android:id="@+id/tvSensorNameFive"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameSensorFive"
+                          android:layout_marginLeft="5dp" android:layout_marginRight="10dp" android:layout_column="1"
+                          android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfSensorSixName"
+                    android:id="@+id/tvSensorNameSix"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameSensorSix"
+                          android:layout_marginLeft="5dp" android:layout_marginRight="10dp" android:layout_column="1"
+                          android:layout_span="2" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#cd535353" android:layout_marginTop="5dp"/>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginTop="5dp">
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Реле"
+                        android:id="@+id/tvSettingNameRelay" android:layout_marginRight="5dp"
+                        android:layout_marginLeft="10dp"/>
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Псевдоним"
+                        android:id="@+id/tvSettingsPinRelay" android:layout_marginLeft="5dp" android:layout_gravity="left"
+                        />
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfRelayOneName"
+                    android:id="@+id/tvRelayNameOne"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/eConfRenameRelayOne" android:layout_column="1"
+                    android:layout_marginLeft="5dp" android:layout_span="2" android:layout_marginRight="10dp"
+                        android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfRelayOneName"
+                    android:id="@+id/tvRelayNameTwo"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/eConfRenameRelayTwo" android:layout_column="1"
+                    android:layout_marginLeft="5dp" android:layout_span="2" android:layout_marginRight="10dp"
+                    android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfRelayThreeName"
+                    android:id="@+id/tvRelayNameThree"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameRelayThree"
+                          android:layout_column="1"
+                    android:layout_marginLeft="5dp"
+                          android:layout_span="2" android:layout_marginRight="10dp" android:hint="Введите имя"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvConfRelayFourName"
+                    android:id="@+id/tvRelayNameFour"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp" />
+
+                <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+                          android:id="@+id/eConfRenameRelayFour"
+                          android:layout_column="1"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp" android:hint="Введите имя"
+                    android:layout_span="2"
+                    android:inputType="textCapSentences" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Сохранить настройки"
+                android:id="@+id/bSaveConf"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="bottom" />
+    </LinearLayout>
+
+</LinearLayout>
