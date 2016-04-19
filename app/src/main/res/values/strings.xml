@@ -1,3 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Мой дом</string>
+    <string name="deleteItem">Удалить</string>
+    <string name="editItem">Редактировать</string>
+
+    <string name="aboutTextHead">Версия приложения: <b>1.0</b></string>
+    <string name="aboutGeneralText">По всем вопросам обращаться:</string>
+
+    <string name="main_inf">Контроль</string>
+    <string name="conf">Конфигурация</string>
+    <string name="about">О приложении</string>
+    <string name="devices">Мои устройства</string>
+    <string name="history">История</string>
+    <string name="relay_manage">Управление</string>
+
+    <string name="tvSensorSixVal">SensorSixVal</string>
+    <string name="tvSensorFiveVal">SensorFiveVal</string>
+    <string name="tvSensorFourVal">SensorFourVal</string>
+    <string name="tvSensorThreeVal">SensorThreeVal</string>
+    <string name="tvSensorTwoVal">SensorTwoVal</string>
+    <string name="tvSensorOneVal">SensorOneVal</string>
+
+    <string name="tvSensorSixName">SensorSix:</string>
+    <string name="tvSensorFiveName">SensorFive:</string>
+    <string name="tvSensorFourName">SensorFour:</string>
+    <string name="tvSensorThreeName">SensorThree:</string>
+    <string name="tvSensorTwoName">SensorTwo:</string>
+    <string name="tvSensorOneName">SensorOne:</string>
+
+    <string name="tvRelayFourName">RelayFour:</string>
+    <string name="tvRelayThreeName">RelayThree:</string>
+    <string name="tvRelayTwoName">RelayTwo:</string>
+    <string name="tvRelayOneName">RelayOne:</string>
+
+    <string name="tvConfSensorSixName">SensorSix:</string>
+    <string name="tvConfSensorFiveName">SensorFive:</string>
+    <string name="tvConfSensorFourName">SensorFour:</string>
+    <string name="tvConfSensorThreeName">SensorThree:</string>
+    <string name="tvConfSensorTwoName">SensorTwo:</string>
+    <string name="tvConfSensorOneName">SensorOne:</string>
+
+    <string name="tvConfRelayFourName">RelayFour:</string>
+    <string name="tvConfRelayThreeName">RelayThree:</string>
+    <string name="tvConfRelayTwoName">RelayTwo:</string>
+    <string name="tvConfRelayOneName">RelayOne:</string>
+    <string name="tvLastSaveTime">Информация актуальна на:</string>
 </resources>
