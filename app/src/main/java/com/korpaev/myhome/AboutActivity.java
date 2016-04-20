@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class AboutActivity extends Activity {
+//Класс Об устройстве
+public class AboutActivity extends Activity
+{
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

@@ -3,7 +3,6 @@ package com.korpaev.myhome;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import io.realm.Realm;
@@ -23,8 +21,8 @@ public class DevicesActivity extends Activity
     Realm realm;
     Button bNewDevice;
     private ListView _listViewDevices;
-    private ArrayList<String> _arrListDevices;
-    private ArrayAdapter<String> _arrAdapter;
+    private ArrayList<DeviceInfoRow> _arrListDevices = new ArrayList<DeviceInfoRow>();
+    DeviceInfoAdapter deviceInfoAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -32,12 +30,11 @@ public class DevicesActivity extends Activity
         setContentView(R.layout.activity_devices);
 
         FindViews();
-        _arrListDevices = new ArrayList<>();
-        _arrAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, _arrListDevices);
-        // Here, you set the data in your ListView
-        _listViewDevices.setAdapter(_arrAdapter);
+        ReadRowsDb();
+        deviceInfoAdapter = new DeviceInfoAdapter(this, _arrListDevices);
+        _listViewDevices.setAdapter(deviceInfoAdapter);
         registerForContextMenu(_listViewDevices);
-        ReadRawsDb();
+
     }
 
     private void FindViews()
@@ -46,27 +43,26 @@ public class DevicesActivity extends Activity
         _listViewDevices = (ListView)findViewById(R.id.listViewDevices);
     }
 
-    public void ReadRawsDb()
+    public void ReadRowsDb()
     {
         if (Realm.getInstance(getBaseContext()) != null)
         {
+            String _idDeviseBase64;
             String _nameDevice;
+
             realm = Realm.getInstance(getBaseContext());
             realm.beginTransaction();
+
             RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).findAll();
             for (int i = 0; i < results.size(); i++)
             {
+                _idDeviseBase64 = results.get(i).get_idDevice();
                 _nameDevice = results.get(i).get_nameDevice();
-                AddRawToListView(_nameDevice);
+                DeviceInfoRow dir = new DeviceInfoRow(_idDeviseBase64, _nameDevice);
+                _arrListDevices.add(dir);
             }
             realm.commitTransaction();
         }
-    }
-
-    private void AddRawToListView(Object val)
-    {
-        _arrListDevices.add(val.toString());
-        _arrAdapter.notifyDataSetChanged();
     }
 
     public void NewDeviceButtonClick(View view)
