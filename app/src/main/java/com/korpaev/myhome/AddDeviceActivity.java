@@ -6,6 +6,7 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,19 +16,25 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+//Класс Добавить новое устройство
 public class AddDeviceActivity extends Activity
 {
-    final String PROTOCOLVERFIELD = "_hProtocolVer";
+    final int LENPHONENUM = 10;
+    final String PHONENUMARDUINO = "_phoneNumbArduino";
     Realm realm;
     Button bCancel, bAddDevice;
     EditText etPhoneArduino, etNameDevice, etLocationAddr, etProtocolVer,
              etAutorizePhoneOne, etAutorizePhoneTwo, etAutorizePhoneThree, etAutorizePhoneFour;
 
+    //Переменные для хранения значений из текст-боксов
     String _sPhoneArduino, _sNameDevice, _sLocationAddr, _sProtocolVer,
-           _sAutorizePhoneOne, _sAutorizePhoneTwo, _sAutorizePhoneThree, _sAutorizePhoneFour;
+           _sAutorizePhoneOne, _sAutorizePhoneTwo, _sAutorizePhoneThree, _sAutorizePhoneFour,
+           _sIdDeviceBase64;
 
     final String[] sAutorizePhoneArray = {_sAutorizePhoneOne, _sAutorizePhoneTwo, _sAutorizePhoneThree, _sAutorizePhoneFour};
 
@@ -36,9 +43,8 @@ public class AddDeviceActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
+        //Ищем вьюхи на экране
         FindViews();
-        etProtocolVer.setText(String.valueOf(SetMaxProtocolVer()));
-        etProtocolVer.setEnabled(false);
     }
 
     private void FindViews()
@@ -55,32 +61,18 @@ public class AddDeviceActivity extends Activity
         etAutorizePhoneFour = (EditText)findViewById(R.id.eAutorizePhoneFour);
     }
 
-    private int SetMaxProtocolVer()
-    {
-        realm = Realm.getInstance(getBaseContext());
-        RealmResults res = realm.where(DevicesInfoDb.class).findAll();
-        int maxProtocolV;
-        if (res.max(PROTOCOLVERFIELD) == null)
-        {
-            return 1;
-        }
-        else
-        {
-            maxProtocolV = res.max(PROTOCOLVERFIELD).intValue();
-            maxProtocolV++;
-        }
-        return maxProtocolV;
-    }
-
     public void CancelButtonClick(View v)
     {
         AddDeviceActivity.this.finish();
     }
 
+    //Добавление нового утсройства
     public void AddDeviceButtonClick(View v)
     {
-        if (CheckEmptyViews())
+        //Проверяем заполнены ли все обязательные вьюхи
+        if (CheckViews())
         {
+            //Пишем в БД если все в порядке
             WriteDbRaws();
             Intent intent;
             intent = new Intent(getBaseContext(), MainActivityTabs.class);
@@ -92,12 +84,21 @@ public class AddDeviceActivity extends Activity
         }
     }
 
-    private boolean CheckEmptyViews()
+    private boolean CheckViews()
     {
         GetTextViews();
-        if(TextUtils.isEmpty(_sPhoneArduino))
+        if (TextUtils.isEmpty(_sPhoneArduino))
         {
             etPhoneArduino.setError("Обязательно к заполнению!");
+            return false;
+        }
+        else if (CheckUniquePhoneNum(_sPhoneArduino))
+        {
+            etPhoneArduino.setError("Такой номер уже используется!");
+        }
+        else if (TextUtils.isEmpty(_sProtocolVer))
+        {
+            etProtocolVer.setError("Обязательно к заполнению!");
             return false;
         }
         else if (TextUtils.isEmpty(_sNameDevice))
@@ -120,31 +121,44 @@ public class AddDeviceActivity extends Activity
         return false;
     }
 
+    private boolean CheckUniquePhoneNum(String phone)
+    {
+        realm = Realm.getInstance(getBaseContext());
+        realm.beginTransaction();
+        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).equalTo(PHONENUMARDUINO, phone).findAll();
+        realm.commitTransaction();
+        return (results.size() > 0);
+    }
+
     public void WriteDbRaws()
     {
+        Integer iProtocolV;
+        //Переводим русский текст в транслит для отправки на ардуинку
         String _translitNameDevice = Translit.RusToLat(_sNameDevice);
         String _translitAddress = Translit.RusToLat(_sLocationAddr);
 
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
 
-        Integer iProtocolV = Integer.parseInt(_sProtocolVer);
         DevicesInfoDb deviceInfo = new DevicesInfoDb();
+
+        deviceInfo.set_idDevice(_sIdDeviceBase64);
+        iProtocolV = Integer.parseInt(_sProtocolVer);
+        deviceInfo.set_hProtocolVer(iProtocolV);
         deviceInfo.set_phoneNumbArduino(_sPhoneArduino);
         deviceInfo.set_nameDevice(_sNameDevice);
         deviceInfo.set_nameDeviceTranslit(_translitNameDevice);
         deviceInfo.set_address(_sLocationAddr);
         deviceInfo.set_addressTranslit(_translitAddress);
-        deviceInfo.set_hProtocolVer(iProtocolV);
 
         for (int i = 0; i < 4; i++)
         {
-            AutorizedPhonesDb autorizedPhonesDb = new AutorizedPhonesDb();
             if (TextUtils.isEmpty(sAutorizePhoneArray[i]))
             {
                 continue;
             }
-            autorizedPhonesDb.set_hProtocolVer(iProtocolV);
+            AutorizedPhonesDb autorizedPhonesDb = new AutorizedPhonesDb();
+            autorizedPhonesDb.set_idDevice(_sIdDeviceBase64);
             autorizedPhonesDb.set_phoneNumber(sAutorizePhoneArray[i]);
             realm.copyToRealm(autorizedPhonesDb);
         }
@@ -167,5 +181,26 @@ public class AddDeviceActivity extends Activity
         sAutorizePhoneArray[1] = _sAutorizePhoneTwo;
         sAutorizePhoneArray[2] = _sAutorizePhoneThree;
         sAutorizePhoneArray[3] = _sAutorizePhoneFour;
+        _sIdDeviceBase64 = CreateIdDevice(_sPhoneArduino, _sProtocolVer);
+    }
+
+    //Пишем ид устройства - телефон устройства + версия протокола в текстовом формате в base64 без кода страны
+    private String CreateIdDevice(String phone, String protocol)
+    {
+        String res;
+        byte[] base64DataArr = {0};
+        int lenPhone = phone.length();
+        res = phone.substring(lenPhone - LENPHONENUM, lenPhone);//убираем код страны - берем последние 10 цифр - наш момер
+        res += protocol;//добавляем к номеру версию протокола
+        try
+        {
+            base64DataArr = res.getBytes("UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        res = Base64.encodeToString(base64DataArr, Base64.NO_WRAP); //Получаем base64 строку
+        return res.trim();
     }
 }
