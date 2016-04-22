@@ -1,22 +1,26 @@
 package com.korpaev.myhome;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class DevicesActivity extends Activity
+public class DevicesActivity extends Activity implements OnItemClickListener
 {
+
     final String IDFIELDNAME = "_idDevice"; //Имя поля БД
 
     Realm realm;
@@ -24,6 +28,7 @@ public class DevicesActivity extends Activity
     private ListView _listViewDevices;
     private ArrayList<DeviceInfoRow> _arrListDevices;
     DeviceInfoAdapter deviceInfoAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -33,6 +38,14 @@ public class DevicesActivity extends Activity
         FindViews();
         FillData();
         registerForContextMenu(_listViewDevices);
+        _listViewDevices.setOnItemClickListener(this);
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+    {
+        Toast.makeText(this, "ТЫ СУКА НАЖАЛ НА ITEM!!!", Toast.LENGTH_SHORT).show();
     }
 
     private void FindViews()

@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent" android:clickable="true">
 
-    <LinearLayout
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:layout_width="0px"
-            android:layout_height="0px" />
-
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/listViewDevices"
-        android:layout_above="@+id/newDeviceButton" />
+        android:layout_above="@+id/newDeviceButton"
+        android:layout_weight="1" />
 
     <Button
         android:layout_width="match_parent"
@@ -27,4 +22,4 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-</RelativeLayout>
+</LinearLayout>
