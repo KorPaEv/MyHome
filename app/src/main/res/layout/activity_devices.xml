@@ -13,7 +13,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/listViewDevices"
         android:layout_above="@+id/newDeviceButton" />
 
@@ -22,7 +22,9 @@
         android:layout_height="wrap_content"
         android:text="Новое устройство"
         android:id="@+id/newDeviceButton"
+        android:onClick="NewDeviceButtonClick"
         android:layout_alignParentBottom="true"
-        android:onClick="NewDeviceButtonClick" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

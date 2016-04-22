@@ -25,53 +25,65 @@ import android.widget.ToggleButton;
 import java.io.UnsupportedEncodingException;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 //Класс Добавить новое устройство
 public class AddDeviceActivity extends Activity
 {
+    //region КОНСТАНТЫ
+    final int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
+    final int COUNTAUTORIZED = 4; //количество разрешенных номеров
+    final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
+    final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    final String ETHINTTEXT = "Введите значение";
+    //endregion
+
+    //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
     Realm realm;
     Button bCancel, bAddDevice;
     ToggleButton rootToggleB;
     ImageButton getDeviceInfoButton;
-
-    final int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
-    final int COUNTAUTORIZED = 4; //количество разрешенных номеров
-    final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
-    final String ETHINTTEXT = "Введите значение";
-
     EditText etPhoneArduino, etNameDevice, etLocationAddr, etProtocolVer;
+    //endregion
 
+    //region МАССИВЫ ID ВЬЮХ АКТИВИТИ
     final int[] rIdAutorizedNumArr = {R.id.eAutorizePhoneOne, R.id.eAutorizePhoneTwo, R.id.eAutorizePhoneThree, R.id.eAutorizePhoneFour};
     final int[] rIdChbSendSmsArr = {R.id.sendSmsChBOne, R.id.sendSmsChBTwo, R.id.sendSmsChBThree, R.id.sendSmsChBFour};
     final int[] rIdChbSendCallArr = {R.id.sendCallChBOne, R.id.sendCallChBTwo, R.id.sendCallChBThree, R.id.sendCallChBFour};
     final int[] rIdChbIsAdmNumbArr = {R.id.isAdminChBOne, R.id.isAdminChBTwo, R.id.isAdminChBThree, R.id.isAdminChBFour};
     final int[] rIdTextViewArr = {R.id.autorizeNumTvOne, R.id.autorizeNumTvTwo, R.id.autorizeNumTvThree, R.id.autorizeNumTvFour};
+    //endregion
 
+    //region МАССИВЫ ВЬЮХ АКТИВИТИ
     final EditText[] etAutorizedPhoneArr = new EditText[COUNTAUTORIZED];
     final TextView[] tvAutorizedPhoneArr = new TextView[COUNTAUTORIZED];
     final CheckBox[] chbSendSmsArray = new CheckBox[COUNTAUTORIZED];
     final CheckBox[] chbSendCallArray = new CheckBox[COUNTAUTORIZED];
     final CheckBox[] chbIsAdminNumArray = new CheckBox[COUNTAUTORIZED];
+    //endregion
 
-    //Переменные для хранения значений вьюх
+    //region Переменные и массивы для хранения значений вьюх
     String _sPhoneArduino, _sNameDevice, _sLocationAddr, _sProtocolVer,
-           _sIdDeviceBase64;
+            _sIdDeviceBase64,
+            _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити - если редактируем то его надо подменять
     final String[] sAutorizePhoneArray = new String[COUNTAUTORIZED];
     final boolean[] bSendSmsRightArr = new boolean[COUNTAUTORIZED];
     final boolean[] bSendCallRightArr = new boolean[COUNTAUTORIZED];
     final boolean[] bIsAdmNumArr = new boolean[COUNTAUTORIZED];
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
-        //Ищем вьюхи на экране
-        FindViews();
-        InfoButtonCheckEnable();
-        SetVisibleViews(false);
 
+        FindViews(); //Ищем вьюхи на экране и заполняем массивы объектами
+        InfoButtonCheckEnable(); //Проверка состояния кнопки для получения инфы о девайсе
+        SetVisibleViews(false); //По умолчанию режим рута выключается - прячем ненужные вьюхи
+
+        //Событие на edittext номера ардуины - если там не пусто то кнопка инфы активна
         etPhoneArduino.addTextChangedListener(textWatcher);
 
         //region Обработчик нажатия на кнопку получения данных и сохранения номера - меняем картинку при нажатии
@@ -82,7 +94,7 @@ public class AddDeviceActivity extends Activity
                 switch (eventaction) {
                     case MotionEvent.ACTION_DOWN:
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_1);
-                        //HeadButtonsClick(v);
+                        //GetdeviceInfoButtonClick(v);
                         return true;
 
                     case MotionEvent.ACTION_UP:
@@ -93,9 +105,50 @@ public class AddDeviceActivity extends Activity
                 return false;
             }
         });
+        //endregion
 
+        FillData(); //Заполняем вьюхи данными - если пришли данные на редактирование текущего устройства вьюхи заполнятся
     }
 
+    //region FindViews() Поиск вьюх и заполнение массивов дл этих вьюх
+    private void FindViews()
+    {
+        getDeviceInfoButton = (ImageButton)findViewById(R.id.getDeviceInfoImButton);
+        rootToggleB = (ToggleButton)findViewById(R.id.rootRightsToggleB);
+        bAddDevice = (Button)findViewById(R.id.addDeviceButton);
+        bCancel = (Button)findViewById(R.id.cancelButton);
+        etPhoneArduino = (EditText)findViewById(R.id.ePhoneNumber);
+        etNameDevice = (EditText)findViewById(R.id.eNameDevice);
+        etLocationAddr = (EditText)findViewById(R.id.eAddressDevice);
+        etProtocolVer = (EditText)findViewById(R.id.eProtocolVerDevice);
+        for (int i = 0; i < COUNTAUTORIZED; i++)
+        {
+            etAutorizedPhoneArr[i] = (EditText)findViewById(rIdAutorizedNumArr[i]);
+            chbSendSmsArray[i] = (CheckBox)findViewById(rIdChbSendSmsArr[i]);
+            chbSendCallArray[i] = (CheckBox)findViewById(rIdChbSendCallArr[i]);
+            chbIsAdminNumArray[i] = (CheckBox)findViewById(rIdChbIsAdmNumbArr[i]);
+            tvAutorizedPhoneArr[i] = (TextView)findViewById(rIdTextViewArr[i]);
+        }
+    }
+    //endregion
+
+    //region InfoButtonCheckEnable() Проверка состояния кнопки получения инфы о девайсе
+    private void InfoButtonCheckEnable()
+    {
+        if (TextUtils.isEmpty(etPhoneArduino.getText()))
+        {
+            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_disable);
+            getDeviceInfoButton.setEnabled(false);
+        }
+        else
+        {
+            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
+            getDeviceInfoButton.setEnabled(true);
+        }
+    }
+    //endregion
+
+    //region addTextChangedListener Событие на edittext
     TextWatcher textWatcher = new TextWatcher()
     {
         @Override
@@ -116,41 +169,57 @@ public class AddDeviceActivity extends Activity
 
         }
     };
+    //endregion
 
-    private void InfoButtonCheckEnable()
+    //region FillData() Заполняем вьюхи данными
+    private void FillData()
     {
-        if (TextUtils.isEmpty(etPhoneArduino.getText()))
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
         {
-            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_disable);
-            getDeviceInfoButton.setEnabled(false);
-        }
-        else
-        {
-            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
-            getDeviceInfoButton.setEnabled(true);
+            _sBundleIdDevice = extras.getString(IDFIELDNAME);
+            if (_sBundleIdDevice != null)
+            {
+                FillViews(_sBundleIdDevice);
+            }
         }
     }
 
-    private void FindViews()
+    private void FillViews(String idRow)
     {
-        getDeviceInfoButton = (ImageButton)findViewById(R.id.getDeviceInfoImButton);
-        rootToggleB = (ToggleButton)findViewById(R.id.rootRightsToggleB);
-        bAddDevice = (Button)findViewById(R.id.addDeviceButton);
-        bCancel = (Button)findViewById(R.id.cancelButton);
-        etPhoneArduino = (EditText)findViewById(R.id.ePhoneNumber);
-        etNameDevice = (EditText)findViewById(R.id.eNameDevice);
-        etLocationAddr = (EditText)findViewById(R.id.eAddressDevice);
-        etProtocolVer = (EditText)findViewById(R.id.eProtocolVerDevice);
-        for (int i = 0; i < COUNTAUTORIZED; i++)
+        realm = Realm.getInstance(getBaseContext());
+        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+        RealmList<AutorizedPhonesDb> autorizedPhonesDbs = new RealmList<>();
+        for (int i = 0; i < results.size(); i++)
         {
-            etAutorizedPhoneArr[i] = (EditText)findViewById(rIdAutorizedNumArr[i]);
-            chbSendSmsArray[i] = (CheckBox)findViewById(rIdChbSendSmsArr[i]);
-            chbSendCallArray[i] = (CheckBox)findViewById(rIdChbSendCallArr[i]);
-            chbIsAdminNumArray[i] = (CheckBox)findViewById(rIdChbIsAdmNumbArr[i]);
-            tvAutorizedPhoneArr[i] = (TextView)findViewById(rIdTextViewArr[i]);
+            _sPhoneArduino = results.get(i).get_phoneNumbArduino();
+            _sNameDevice = results.get(i).get_nameDevice();
+            _sLocationAddr = results.get(i).get_address();
+            _sProtocolVer = String.valueOf(results.get(i).get_hProtocolVer());
+
+            etPhoneArduino.setText(_sPhoneArduino);
+            etNameDevice.setText(_sNameDevice);
+            etLocationAddr.setText(_sLocationAddr);
+            etProtocolVer.setText(_sProtocolVer);
+
+            autorizedPhonesDbs = results.get(i).get_autorizedPhoneNumRaws();
+            for (int j = 0; j < autorizedPhonesDbs.size(); j++)
+            {
+                sAutorizePhoneArray[i] = autorizedPhonesDbs.get(j).get_phoneNumber();
+                bSendSmsRightArr[i] = autorizedPhonesDbs.get(j).get_sendSmsRights();
+                bSendCallRightArr[i] = autorizedPhonesDbs.get(j).get_callRights();
+                bIsAdmNumArr[i] = autorizedPhonesDbs.get(j).get_isAdmNumb();
+
+                etAutorizedPhoneArr[i].setText(sAutorizePhoneArray[i]);
+                chbSendSmsArray[i].setChecked(bSendSmsRightArr[i]);
+                chbSendCallArray[i].setChecked(bSendCallRightArr[i]);
+                chbIsAdminNumArray[i].setChecked(bIsAdmNumArr[i]);
+            }
         }
     }
+    //endregion
 
+    //region SetVisibleViews(TRUE or FALSE) Установка видимости вьюх
     private void SetVisibleViews(boolean isVisible)
     {
         if (!isVisible)
@@ -190,7 +259,9 @@ public class AddDeviceActivity extends Activity
             }
         }
     }
+    //endregion
 
+    //region Обработчик нажатия на кнопку RootToggleButton
     public void RootToggleButtonClick(View v)
     {
         if (rootToggleB.isChecked())
@@ -199,20 +270,22 @@ public class AddDeviceActivity extends Activity
         }
         else SetVisibleViews(false);
     }
+    //endregion
 
+    //region Кнопа отмены действий CancelButton
     public void CancelButtonClick(View v)
     {
-        AddDeviceActivity.this.finish();
+        this.finish();
     }
+    //endregion
 
-    //Добавление нового утсройства
+    //region Кнопка Сохранить addDeviceButton
     public void SaveDeviceButtonClick(View v)
     {
         //Проверяем заполнены ли все обязательные вьюхи
         if (CheckViews())
         {
-            //Пишем в БД если все в порядке
-            WriteDbRaws();
+            WriteDbRaws(); //Пишем в БД если все в порядке
             Intent intent;
             intent = new Intent(getBaseContext(), MainActivityTabs.class);
             startActivity(intent);
@@ -222,10 +295,12 @@ public class AddDeviceActivity extends Activity
             Toast.makeText(this, "Заполните хотя бы один разрешенный номер", Toast.LENGTH_SHORT).show();
         }
     }
+    //endregion
 
+    //region CheckViews() Проверка валидности введенных данных вьюх
     private boolean CheckViews()
     {
-        GetTextViews();
+        GetTextViews(); //Получаем данные вьюх
         if (TextUtils.isEmpty(_sPhoneArduino))
         {
             etPhoneArduino.setError("Обязательно к заполнению!");
@@ -250,31 +325,55 @@ public class AddDeviceActivity extends Activity
             etLocationAddr.setError("Обязательно к заполнению!");
             return false;
         }
-        else IsNotEmptyAutorizedNumArray();
-        return false;
-    }
-
-    private boolean IsNotEmptyAutorizedNumArray()
-    {
-        for (int i = 0; i < COUNTAUTORIZED; i++)
+        else if (!TextUtils.isEmpty(sAutorizePhoneArray[0]) ||
+                !TextUtils.isEmpty(sAutorizePhoneArray[1]) ||
+                !TextUtils.isEmpty(sAutorizePhoneArray[2]) ||
+                !TextUtils.isEmpty(sAutorizePhoneArray[3]))
         {
-            if (!TextUtils.isEmpty(sAutorizePhoneArray[i]))
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }
+    //endregion
 
+    //region GetTextViews() Получаем значения введенные во вьюхи
+    private void GetTextViews()
+    {
+        _sPhoneArduino = etPhoneArduino.getText().toString().trim();
+        _sNameDevice = etNameDevice.getText().toString().trim();
+        _sLocationAddr = etLocationAddr.getText().toString().trim();
+        _sProtocolVer = etProtocolVer.getText().toString().trim();
+        for (int i = 0; i < COUNTAUTORIZED; i++)
+        {
+            sAutorizePhoneArray[i] = etAutorizedPhoneArr[i].getText().toString().trim();
+            bSendSmsRightArr[i] = chbSendSmsArray[i].isChecked();
+            bSendCallRightArr[i] = chbSendCallArray[i].isChecked();
+            bIsAdmNumArr[i] = chbIsAdminNumArray[i].isChecked();
+        }
+        //Если мы редактируем текущую запись то ИД берем тот который редактируем, иначе генерируем новый
+        if (_sBundleIdDevice != null)
+        {
+            _sIdDeviceBase64 = _sBundleIdDevice;
+        }
+        else _sIdDeviceBase64 = CreateIdDevice(_sPhoneArduino, _sProtocolVer);
+    }
+    //endregion
+
+    //region CheckUniquePhoneNum(String phone) Проверка что такой номер устройства уже есть в БД
     private boolean CheckUniquePhoneNum(String phone)
     {
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
-        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).equalTo(PHONENUMARDUINO, phone).findAll();
+        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class)
+                .equalTo(PHONENUMARDUINO, phone)
+                .notEqualTo(IDFIELDNAME, _sIdDeviceBase64)
+                .findAll();
         realm.commitTransaction();
         return (results.size() > 0);
     }
+    //endregion
 
+    //region WriteDbRaws() Пишем в БД если все в порядке
     public void WriteDbRaws()
     {
         Integer iProtocolV;
@@ -285,7 +384,8 @@ public class AddDeviceActivity extends Activity
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
 
-        DevicesInfoDb deviceInfo = new DevicesInfoDb();
+        DevicesInfoDb deviceInfo = new DevicesInfoDb(); //Объект таблички Инфы об устройстве
+        RealmList<AutorizedPhonesDb> listAutorizedPhones = new RealmList<>(); //Дочерняя табличка номеров разрешенных
 
         deviceInfo.set_idDevice(_sIdDeviceBase64);
         iProtocolV = Integer.parseInt(_sProtocolVer);
@@ -308,30 +408,22 @@ public class AddDeviceActivity extends Activity
             autorizedPhonesDb.set_sendSmsRights(bSendSmsRightArr[i]);
             autorizedPhonesDb.set_callRights(bSendCallRightArr[i]);
             autorizedPhonesDb.set_isAdmNumb(bIsAdmNumArr[i]);
-            realm.copyToRealm(autorizedPhonesDb);
-        }
+            listAutorizedPhones.add(autorizedPhonesDb);
 
-        realm.copyToRealm(deviceInfo);
+            //Создаем записи только в случае новой записи
+            if (_sBundleIdDevice == null)
+            {
+                realm.copyToRealm(autorizedPhonesDb);
+            }
+        }
+        deviceInfo.set_autorizedPhoneNumRaws(listAutorizedPhones);
+
+        realm.copyToRealmOrUpdate(deviceInfo);
         realm.commitTransaction();
     }
+    //endregion
 
-    private void GetTextViews()
-    {
-        _sPhoneArduino = etPhoneArduino.getText().toString().trim();
-        _sNameDevice = etNameDevice.getText().toString().trim();
-        _sLocationAddr = etLocationAddr.getText().toString().trim();
-        _sProtocolVer = etProtocolVer.getText().toString().trim();
-        for (int i = 0; i < COUNTAUTORIZED; i++)
-        {
-            sAutorizePhoneArray[i] = etAutorizedPhoneArr[i].getText().toString().trim();
-            bSendSmsRightArr[i] = chbSendSmsArray[i].isChecked();
-            bSendCallRightArr[i] = chbSendCallArray[i].isChecked();
-            bIsAdmNumArr[i] = chbIsAdminNumArray[i].isChecked();
-        }
-        _sIdDeviceBase64 = CreateIdDevice(_sPhoneArduino, _sProtocolVer);
-    }
-
-    //Пишем ид устройства - телефон устройства + версия протокола в текстовом формате в base64 без кода страны
+    //region CreateIdDevice(phone, protocol) ID устройства - телефон устройства + версия протокола в текстовом формате в base64 без кода страны
     private String CreateIdDevice(String phone, String protocol)
     {
         String res;
@@ -350,4 +442,5 @@ public class AddDeviceActivity extends Activity
         res = Base64.encodeToString(base64DataArr, Base64.NO_WRAP); //Получаем base64 строку
         return res.trim();
     }
+    //endregion
 }

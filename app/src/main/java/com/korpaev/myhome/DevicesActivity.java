@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -18,10 +17,12 @@ import io.realm.RealmResults;
 
 public class DevicesActivity extends Activity
 {
+    final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+
     Realm realm;
     Button bNewDevice;
     private ListView _listViewDevices;
-    private ArrayList<DeviceInfoRow> _arrListDevices = new ArrayList<DeviceInfoRow>();
+    private ArrayList<DeviceInfoRow> _arrListDevices;
     DeviceInfoAdapter deviceInfoAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,11 +31,8 @@ public class DevicesActivity extends Activity
         setContentView(R.layout.activity_devices);
 
         FindViews();
-        ReadRowsDb();
-        deviceInfoAdapter = new DeviceInfoAdapter(this, _arrListDevices);
-        _listViewDevices.setAdapter(deviceInfoAdapter);
+        FillData();
         registerForContextMenu(_listViewDevices);
-
     }
 
     private void FindViews()
@@ -43,8 +41,9 @@ public class DevicesActivity extends Activity
         _listViewDevices = (ListView)findViewById(R.id.listViewDevices);
     }
 
-    public void ReadRowsDb()
+    public void FillData()
     {
+        _arrListDevices = new ArrayList<DeviceInfoRow>();
         if (Realm.getInstance(getBaseContext()) != null)
         {
             String _idDeviseBase64;
@@ -63,6 +62,8 @@ public class DevicesActivity extends Activity
             }
             realm.commitTransaction();
         }
+        deviceInfoAdapter = new DeviceInfoAdapter(this, _arrListDevices);
+        _listViewDevices.setAdapter(deviceInfoAdapter);
     }
 
     public void NewDeviceButtonClick(View view)
@@ -116,15 +117,37 @@ public class DevicesActivity extends Activity
 
     public boolean onContextItemSelected(MenuItem item)
     {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int indexRow = info.position;
+        String idRow = _arrListDevices.get(indexRow).getId();
+
         if(item.getTitle() == getString(R.string.editItem))
         {
-
+            Intent intent;
+            intent = new Intent(getBaseContext(), AddDeviceActivity.class);
+            intent.putExtra(IDFIELDNAME, idRow);
+            startActivity(intent);
         }
         if(item.getTitle() == getString(R.string.deleteItem))
         {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int index = info.position;
+            RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+            RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+            realm.beginTransaction();
+            for (int i = 0; i < resDevInfo.size(); i++)
+            {
+                for (int j = 0; j < resAutorized.size(); j++)
+                {
+                    AutorizedPhonesDb autP = resAutorized.get(j);
+                    autP.removeFromRealm();
+                    resAutorized.clear();
+                }
+                DevicesInfoDb di = resDevInfo.get(i);
+                di.removeFromRealm();
+                resDevInfo.clear();
+            }
+            realm.commitTransaction();
         }
+        FillData();
         return true;
     }
 }
