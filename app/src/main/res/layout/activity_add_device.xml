@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:clickable="true">
+              android:layout_height="match_parent" android:clickable="true"
+    android:weightSum="1">
 
     <LinearLayout
             android:focusable="true"
@@ -11,9 +12,35 @@
             android:layout_width="0px"
             android:layout_height="0px" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/getDeviceInfoImButton"
+            android:src="@mipmap/ic_bupd"
+            android:background="#00ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rootRightsToggleB"
+            android:textOff="Root OFF"
+            android:textOn="Root ON"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="RootToggleButtonClick" />
+    </RelativeLayout>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="384dp"
         android:id="@+id/scrollViewDevices"
         android:layout_alignParentTop="false"
         android:layout_alignParentLeft="true"
@@ -43,7 +70,8 @@
                     android:text="Номер устройства:"
                     android:id="@+id/textView7"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -51,7 +79,8 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/ePhoneNumber"
-                    android:hint="Введите номер" />
+                    android:hint="Введите номер"
+                    android:layout_column="1" />
 
             </TableRow>
 
@@ -66,14 +95,16 @@
                     android:text="Имя устройства:"
                     android:id="@+id/textView"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/eNameDevice"
                     android:hint="Введите значение"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    android:layout_column="1" />
 
             </TableRow>
 
@@ -88,14 +119,16 @@
                     android:text="Адрес:"
                     android:id="@+id/textView5"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/eAddressDevice"
                     android:hint="Введите значение"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    android:layout_column="1" />
 
             </TableRow>
 
@@ -110,7 +143,8 @@
                     android:text="Версия протокола:"
                     android:id="@+id/textView6"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -118,7 +152,8 @@
                     android:inputType="number"
                     android:ems="10"
                     android:id="@+id/eProtocolVerDevice"
-                    android:hint="Введите значение" />
+                    android:hint="Введите значение"
+                    android:layout_column="1" />
 
             </TableRow>
 
@@ -136,9 +171,10 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Разрешенный номер:"
-                    android:id="@+id/textView8"
+                    android:id="@+id/autorizeNumTvOne"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -146,8 +182,46 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/eAutorizePhoneOne"
-                    android:hint="Введите номер" />
+                    android:hint="Введите номер"
+                    android:layout_column="1" />
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_span="2">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="СМС"
+                        android:id="@+id/sendSmsChBOne"
+                        android:layout_column="0"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ЗВОНОК"
+                        android:id="@+id/sendCallChBOne"
+                        android:layout_column="1"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="АДМИН"
+                        android:id="@+id/isAdminChBOne"
+                        android:layout_column="2"
+                        android:layout_marginRight="0dp" />
+                </LinearLayout>
             </TableRow>
 
             <TableRow
@@ -159,9 +233,10 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Разрешенный номер:"
-                    android:id="@+id/textView9"
+                    android:id="@+id/autorizeNumTvTwo"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -169,7 +244,45 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/eAutorizePhoneTwo"
-                    android:hint="Введите номер" />
+                    android:hint="Введите номер"
+                    android:layout_column="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_span="2" >
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="СМС"
+                        android:id="@+id/sendSmsChBTwo"
+                        android:layout_column="0"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ЗВОНОК"
+                        android:id="@+id/sendCallChBTwo"
+                        android:layout_column="1"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="АДМИН"
+                        android:id="@+id/isAdminChBTwo"
+                        android:layout_column="2"
+                        android:layout_marginRight="0dp" />
+                </LinearLayout>
             </TableRow>
 
             <TableRow
@@ -181,9 +294,10 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Разрешенный номер:"
-                    android:id="@+id/textView10"
+                    android:id="@+id/autorizeNumTvThree"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -191,7 +305,45 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/eAutorizePhoneThree"
-                    android:hint="Введите номер" />
+                    android:hint="Введите номер"
+                    android:layout_column="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_span="2" >
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="СМС"
+                        android:id="@+id/sendSmsChBThree"
+                        android:layout_column="0"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ЗВОНОК"
+                        android:id="@+id/sendCallChBThree"
+                        android:layout_column="1"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="АДМИН"
+                        android:id="@+id/isAdminChBThree"
+                        android:layout_column="2"
+                        android:layout_marginRight="0dp" />
+                </LinearLayout>
             </TableRow>
 
             <TableRow
@@ -203,9 +355,10 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Разрешенный номер:"
-                    android:id="@+id/textView11"
+                    android:id="@+id/autorizeNumTvFour"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:layout_column="0" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -213,7 +366,45 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/eAutorizePhoneFour"
-                    android:hint="Введите номер" />
+                    android:hint="Введите номер"
+                    android:layout_column="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_span="2" >
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="СМС"
+                        android:id="@+id/sendSmsChBFour"
+                        android:layout_column="0"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ЗВОНОК"
+                        android:id="@+id/sendCallChBFour"
+                        android:layout_column="1"
+                        android:layout_marginRight="0dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="АДМИН"
+                        android:id="@+id/isAdminChBFour"
+                        android:layout_column="2"
+                        android:layout_marginRight="0dp" />
+                </LinearLayout>
             </TableRow>
 
             <View
@@ -224,20 +415,31 @@
         </TableLayout>
     </ScrollView>
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Добавить устройство"
-        android:id="@+id/addDeviceButton"
-        android:layout_alignParentBottom="true"
-        android:onClick="AddDeviceButtonClick" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Отменить"
-        android:id="@+id/cancelButton"
-        android:layout_column="1"
-        android:onClick="CancelButtonClick" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Сохранить"
+            android:id="@+id/addDeviceButton"
+            android:onClick="SaveDeviceButtonClick"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Вернуться"
+            android:id="@+id/cancelButton"
+            android:layout_column="1"
+            android:onClick="CancelButtonClick"
+            android:layout_gravity="right"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 
 </LinearLayout>
