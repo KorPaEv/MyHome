@@ -41,22 +41,29 @@ public class MessageService extends IntentService
     {
         //Разбиваем смс на строки
         String[] splitSmsBodyLines;
-        splitSmsBodyLines = string.split("SH");
-        //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
-        //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
-        //Парсим смс построчно и пишем в БД
-        for (int i = 0; i < splitSmsBodyLines.length; i++)
+        if (string.startsWith("SH", 0))
         {
-            if (splitSmsBodyLines[i].isEmpty())
+            splitSmsBodyLines = string.split("SH");
+            //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
+            //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
+            //Парсим смс построчно и пишем в БД
+            for (int i = 0; i < splitSmsBodyLines.length; i++)
             {
-                continue;
+                if (splitSmsBodyLines[i].isEmpty())
+                {
+                    continue;
+                }
+                RawSms rawSms = new RawSms();
+                //Парсим отдельную строку из всех строк смс
+                rawSms.ParseSms(splitSmsBodyLines[i]);
+                //SmsRepository smsRepository = new SmsRepository(getBaseContext());
+                SmsRepository smsRepository = new SmsRepository(context);
+                smsRepository.addSms(rawSms);
             }
-            RawSms rawSms = new RawSms();
-            //Парсим отдельную строку из всех строк смс
-            rawSms.ParseSms(splitSmsBodyLines[i]);
-            //SmsRepository smsRepository = new SmsRepository(getBaseContext());
-            SmsRepository smsRepository = new SmsRepository(context);
-            smsRepository.addSms(rawSms);
+        }
+        else if (string.startsWith("INFSH", 0))
+        {
+            //Формат передаваемой строки: INFSH;Dom;Dimitrova;1;+79998887766;1;1;1;+79998886655;1;1;1;"";0;0;0;"";0;0;0
         }
     }
 
