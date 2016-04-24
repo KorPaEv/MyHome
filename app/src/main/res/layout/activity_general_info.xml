@@ -36,10 +36,97 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:gravity="top" android:layout_gravity="top">
+
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="#cd535353" android:layout_marginTop="5dp"/>
+                android:background="#cd535353" android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Номер устройства:"
+                    android:id="@+id/textView8"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/tvPhoneArdGenInf"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical|right"
+                    android:text="@string/tvPhoneArdGenInf"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Имя устройства:"
+                    android:id="@+id/textView9"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/tvNameAdrGenInf"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical|right"
+                    android:text="@string/tvNameArdGenInf"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Адрес устройства:"
+                    android:id="@+id/textView10"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/tvAddressArdGenInf"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical|right"
+                    android:text="@string/tvAddressArdGenInf"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#cd535353" android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
@@ -58,6 +145,7 @@
                     android:id="@+id/tvSensorOneVal" android:layout_column="2"
                     android:text="@string/tvSensorOneVal" android:layout_gravity="center_vertical|right"/>
             </TableRow>
+
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">

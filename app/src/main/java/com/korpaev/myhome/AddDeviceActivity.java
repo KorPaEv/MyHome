@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -32,15 +33,16 @@ import io.realm.RealmResults;
 public class AddDeviceActivity extends Activity
 {
     //region КОНСТАНТЫ
-    final int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
-    final int COUNTAUTORIZED = 4; //количество разрешенных номеров
-    final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
-    final String IDFIELDNAME = "_idDevice"; //Имя поля БД
-    final String ETHINTTEXT = "Введите значение";
+    private final int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
+    private final int COUNTAUTORIZED = 4; //количество разрешенных номеров
+    private final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
+    private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String ETHINTTEXT = "Введите значение";
     //endregion
 
     //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
     Realm realm;
+    SharedPreferences sharedPref;
     Button bCancel, bAddDevice;
     ToggleButton rootToggleB;
     ImageButton getDeviceInfoButton;
@@ -64,9 +66,9 @@ public class AddDeviceActivity extends Activity
     //endregion
 
     //region Переменные и массивы для хранения значений вьюх
-    String _sPhoneArduino, _sNameDevice, _sLocationAddr, _sProtocolVer,
-            _sIdDeviceBase64,
-            _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити - если редактируем то его надо подменять
+    private String _sPhoneArduino, _sNameDevice, _sLocationAddr, _sProtocolVer,
+                   _sIdDeviceBase64,
+                   _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити - если редактируем то его надо подменять
     final String[] sAutorizePhoneArray = new String[COUNTAUTORIZED];
     final boolean[] bSendSmsRightArr = new boolean[COUNTAUTORIZED];
     final boolean[] bSendCallRightArr = new boolean[COUNTAUTORIZED];
@@ -286,6 +288,7 @@ public class AddDeviceActivity extends Activity
         if (CheckViews())
         {
             WriteDbRaws(); //Пишем в БД если все в порядке
+            SaveSharedPref();
             Intent intent;
             intent = new Intent(getBaseContext(), MainActivityTabs.class);
             startActivity(intent);
@@ -333,6 +336,19 @@ public class AddDeviceActivity extends Activity
             return true;
         }
         return false;
+    }
+    //endregion
+
+    //region SaveSharedPref() Сохраняем ID текущего устройства в SharedPref
+    private void SaveSharedPref()
+    {
+        Toast.makeText(this, "Сохраняем...", Toast.LENGTH_SHORT).show();
+        //Создаем объект Editor для создания пар имя-значение:
+        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        //Создаем объект Editor для создания пар имя-значение:
+        SharedPreferences.Editor shpEditor = sharedPref.edit();
+        shpEditor.putString(IDFIELDNAME, _sIdDeviceBase64);
+        shpEditor.commit();
     }
     //endregion
 

@@ -2,30 +2,40 @@ package com.korpaev.myhome;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class GeneralInfoActivity extends Activity
 {
-    //region Основные переменные
+    private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String EMPTYDATA = "Данные отсутствуют";
+
     ImageButton ibUpdate;
     Realm realm;
+    SharedPreferences sharedPref;
+    TextView tvPhoneArdGenInf, tvNameAdrGenInf, tvAddressArdGenInf;
+
+    private String _sPhoneArdGenInf, _sNameAdrGenInf, _sAddressArdGenInf,
+                   _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general_info);
+
         FindViews();
+
         //region Обработчик нажатия на кнопку получения данных и сохранения номера - меняем картинку при нажатии
         ibUpdate.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -54,27 +64,68 @@ public class GeneralInfoActivity extends Activity
         //MessageService ms = new MessageService();
         //String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
         //ms.WriteDataToDB(str, getBaseContext());
-        //FillData();
+        FillData();
     }
 
-    public void FillData()
+    //region FillData() Заполняем вьюхи данными
+    private void FillData()
     {
-        Date date;
-        SimpleDateFormat sdf;
-        String formattedDate;
+        //Используем созданный файл данных SharedPreferences:
+        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        _sBundleIdDevice = sharedPref.getString(IDFIELDNAME, null);
+
+        if (!TextUtils.isEmpty(_sBundleIdDevice))
+        {
+            FillViews(_sBundleIdDevice);
+        }
+        else SetDefaultValDeviceInfo();
+    }
+
+    private void FillViews(String idRow)
+    {
         realm = Realm.getInstance(getBaseContext());
-        realm.beginTransaction();
-        //Посмотрим что лежит в БД после записи данных
-        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
+        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
         for (int i = 0; i < results.size(); i++)
         {
-            int tS = results.get(i).get_hTimeStamp();
-            date = new Date(tS * 1000L); // *1000 is to convert seconds to milliseconds
-            sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            formattedDate = sdf.format(date);
+            _sPhoneArdGenInf = results.get(i).get_phoneNumbArduino();
+            _sNameAdrGenInf = results.get(i).get_nameDevice();
+            _sAddressArdGenInf = results.get(i).get_address();
+
+            tvPhoneArdGenInf.setText(_sPhoneArdGenInf);
+            tvNameAdrGenInf.setText(_sNameAdrGenInf);
+            tvAddressArdGenInf.setText(_sAddressArdGenInf);
         }
-        realm.commitTransaction();
     }
+
+    private void SetDefaultValDeviceInfo()
+    {
+        if (TextUtils.isEmpty(_sPhoneArdGenInf))
+            tvPhoneArdGenInf.setText(EMPTYDATA);
+        if (TextUtils.isEmpty(_sNameAdrGenInf))
+            tvNameAdrGenInf.setText(EMPTYDATA);
+        if (TextUtils.isEmpty(_sAddressArdGenInf))
+            tvAddressArdGenInf.setText(EMPTYDATA);
+    }
+    //endregion
+
+//    public void FillData()
+//    {
+//        Date date;
+//        SimpleDateFormat sdf;
+//        String formattedDate;
+//        realm = Realm.getInstance(getBaseContext());
+//        realm.beginTransaction();
+//        //Посмотрим что лежит в БД после записи данных
+//        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
+//        for (int i = 0; i < results.size(); i++)
+//        {
+//            int tS = results.get(i).get_hTimeStamp();
+//            date = new Date(tS * 1000L); // *1000 is to convert seconds to milliseconds
+//            sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//            formattedDate = sdf.format(date);
+//        }
+//        realm.commitTransaction();
+//    }
 
     //region Создаем меню и обрабатываем действие при выборе пункта меню
     @Override
@@ -88,7 +139,7 @@ public class GeneralInfoActivity extends Activity
         return true;
     }
 
-    //событие на выбранный пункт меню
+    //событие на выбранный пункт меню onOptionsItemSelected(MenuItem item)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // получаем все пункты меню
@@ -115,10 +166,31 @@ public class GeneralInfoActivity extends Activity
     }
     //endregion
 
-    //region Поиск всех объектов на экране
+    //region FindViews() Поиск всех объектов на экране
     protected void FindViews()
     {
         ibUpdate = (ImageButton) findViewById(R.id.bUpd);
+        tvPhoneArdGenInf = (TextView)findViewById(R.id.tvPhoneArdGenInf);
+        tvNameAdrGenInf = (TextView)findViewById(R.id.tvNameAdrGenInf);
+        tvAddressArdGenInf = (TextView)findViewById(R.id.tvAddressArdGenInf);
     }
     //endregion
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SaveSharedPref(null);
+    }
+
+    private void SaveSharedPref(View v)
+    {
+        Toast.makeText(this, "Сохраняем...", Toast.LENGTH_SHORT).show();
+        //Создаем объект Editor для создания пар имя-значение:
+        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        //Создаем объект Editor для создания пар имя-значение:
+        SharedPreferences.Editor shpEditor = sharedPref.edit();
+        shpEditor.putString(IDFIELDNAME, _sBundleIdDevice);
+        shpEditor.commit();
+    }
 }

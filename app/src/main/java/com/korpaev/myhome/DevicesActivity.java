@@ -1,8 +1,8 @@
 package com.korpaev.myhome;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import io.realm.Realm;
@@ -24,10 +23,13 @@ public class DevicesActivity extends Activity implements OnItemClickListener
     final String IDFIELDNAME = "_idDevice"; //Имя поля БД
 
     Realm realm;
+    SharedPreferences sharedPref;
     Button bNewDevice;
     private ListView _listViewDevices;
     private ArrayList<DeviceInfoRow> _arrListDevices;
     DeviceInfoAdapter deviceInfoAdapter;
+
+    private String _idDeviseBase64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +47,11 @@ public class DevicesActivity extends Activity implements OnItemClickListener
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        Toast.makeText(this, "ТЫ СУКА НАЖАЛ НА ITEM!!!", Toast.LENGTH_SHORT).show();
+        _idDeviseBase64 = _arrListDevices.get(position).getId();
+        SaveSharedPref(null);
+        Intent intentStart;
+        intentStart = new Intent(getBaseContext(), MainActivityTabs.class);
+        startActivity(intentStart);
     }
 
     private void FindViews()
@@ -59,8 +65,8 @@ public class DevicesActivity extends Activity implements OnItemClickListener
         _arrListDevices = new ArrayList<DeviceInfoRow>();
         if (Realm.getInstance(getBaseContext()) != null)
         {
-            String _idDeviseBase64;
             String _nameDevice;
+            String _idDevice;
 
             realm = Realm.getInstance(getBaseContext());
             realm.beginTransaction();
@@ -68,9 +74,9 @@ public class DevicesActivity extends Activity implements OnItemClickListener
             RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).findAll();
             for (int i = 0; i < results.size(); i++)
             {
-                _idDeviseBase64 = results.get(i).get_idDevice();
+                _idDevice = results.get(i).get_idDevice();
                 _nameDevice = results.get(i).get_nameDevice();
-                DeviceInfoRow dir = new DeviceInfoRow(_idDeviseBase64, _nameDevice);
+                DeviceInfoRow dir = new DeviceInfoRow(_idDevice, _nameDevice);
                 _arrListDevices.add(dir);
             }
             realm.commitTransaction();
@@ -132,19 +138,19 @@ public class DevicesActivity extends Activity implements OnItemClickListener
     {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int indexRow = info.position;
-        String idRow = _arrListDevices.get(indexRow).getId();
+        _idDeviseBase64 = _arrListDevices.get(indexRow).getId();
 
         if(item.getTitle() == getString(R.string.editItem))
         {
             Intent intent;
             intent = new Intent(getBaseContext(), AddDeviceActivity.class);
-            intent.putExtra(IDFIELDNAME, idRow);
+            intent.putExtra(IDFIELDNAME, _idDeviseBase64);
             startActivity(intent);
         }
         if(item.getTitle() == getString(R.string.deleteItem))
         {
-            RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-            RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+            RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
+            RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             realm.beginTransaction();
             for (int i = 0; i < resDevInfo.size(); i++)
             {
@@ -162,5 +168,15 @@ public class DevicesActivity extends Activity implements OnItemClickListener
         }
         FillData();
         return true;
+    }
+
+    private void SaveSharedPref(View v)
+    {
+        //Создаем объект Editor для создания пар имя-значение:
+        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        //Создаем объект Editor для создания пар имя-значение:
+        SharedPreferences.Editor shpEditor = sharedPref.edit();
+        shpEditor.putString(IDFIELDNAME, _idDeviseBase64);
+        shpEditor.commit();
     }
 }
