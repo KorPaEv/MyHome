@@ -14,6 +14,10 @@
     <string name="history">История</string>
     <string name="relay_manage">Управление</string>
 
+    <string name="tvPhoneArdGenInf">PhoneArdGenInf</string>
+    <string name="tvNameArdGenInf">NameArdGenInf</string>
+    <string name="tvAddressArdGenInf">AddressArdGenInf</string>
+
     <string name="tvSensorSixVal">SensorSixVal</string>
     <string name="tvSensorFiveVal">SensorFiveVal</string>
     <string name="tvSensorFourVal">SensorFourVal</string>
