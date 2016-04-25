@@ -1,6 +1,7 @@
 package com.korpaev.myhome;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import android.content.Context;
 
@@ -14,36 +15,60 @@ public class SmsRepository
         this.context = context;
     }
 
-    public void addSms(RawSms rawSms)
+    public void addRowSensorsInfoToDb(SensorsInfoRow sensorsInfoRow)
     {
         realm = Realm.getInstance(context);
         realm.beginTransaction();
 
         //Объект для БД
-        RawSmsDb rawSmsDB = new RawSmsDb();
-        rawSmsDB.set_hProtocolVer(rawSms.get_hProtocolVer());
-        rawSmsDB.set_hTimeStamp(rawSms.get_hTimeStamp());
-        rawSmsDB.set_hNumSensor(rawSms.get_hNumSensor());
-        rawSmsDB.set_hLenBody(rawSms.get_hLenBody());
+        SensorsInfoDb sensorsInfoDB = new SensorsInfoDb();
+        sensorsInfoDB.set_idDevice(sensorsInfoRow.getId());
+        sensorsInfoDB.set_hProtocolVer(sensorsInfoRow.get_hProtocolVer());
+        sensorsInfoDB.set_hTimeStamp(sensorsInfoRow.get_hTimeStamp());
+        sensorsInfoDB.set_hNumSensor(sensorsInfoRow.get_hNumSensor());
+        sensorsInfoDB.set_hLenBody(sensorsInfoRow.get_hLenBody());
 
-        rawSmsDB.set_bLocationSensor(rawSms.get_bLocationSensor());
-        rawSmsDB.set_bValSensor(rawSms.get_bValSensor());
-        rawSmsDB.set_bNumRelay(rawSms.get_bNumRelay());
-        rawSmsDB.set_bLocationRelay(rawSms.get_bLocationRelay());
-        rawSmsDB.set_bPinRelay(rawSms.get_bPinRelay());
-        rawSmsDB.set_bStateRelay(rawSms.get_bStateRelay());
+        sensorsInfoDB.set_bLocationSensor(sensorsInfoRow.get_bLocationSensor());
+        sensorsInfoDB.set_bValSensor(sensorsInfoRow.get_bValSensor());
+        sensorsInfoDB.set_bNumRelay(sensorsInfoRow.get_bNumRelay());
+        sensorsInfoDB.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
+        sensorsInfoDB.set_bPinRelay(sensorsInfoRow.get_bPinRelay());
+        sensorsInfoDB.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
 
         //Далее отписываем в БД то, что распарсили
-        realm.copyToRealm(rawSmsDB);
+        realm.copyToRealmOrUpdate(sensorsInfoDB);
         //коммитим
         realm.commitTransaction();
-        //Посмотрим что лежит в БД после записи данных
-        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
     }
 
-    public RawSms findSms(int smsId)
+    public void addRowDeviceInfoToDb(DeviceInfoRow deviceInfoRow, RealmList<AutorizedPhonesDb> listAutorizedPhones)
     {
-        RawSms rawSms = new RawSms();
-        return rawSms;
+        realm = Realm.getInstance(context);
+        realm.beginTransaction();
+
+        //Объект для БД
+        DevicesInfoDb devicesInfoDb = new DevicesInfoDb();
+        devicesInfoDb.set_idDevice(deviceInfoRow.getId());
+        devicesInfoDb.set_hProtocolVer(deviceInfoRow.getProtovolVerDev());
+        devicesInfoDb.set_nameDevice(deviceInfoRow.getNameDevice());
+        devicesInfoDb.set_address(deviceInfoRow.getAddressDevice());
+        devicesInfoDb.set_phoneNumbArduino(deviceInfoRow.getPhoneArduino());
+        devicesInfoDb.set_autorizedPhoneNumRaws(listAutorizedPhones);
+
+        //Далее отписываем в БД то, что распарсили
+        realm.copyToRealmOrUpdate(devicesInfoDb);
+        //коммитим
+        realm.commitTransaction();
+    }
+
+    public AutorizedPhonesDb addAutorizedNumsToDb(AutorizedPhoneRow autorizedPhoneRow)
+    {
+        AutorizedPhonesDb autorizedPhonesDb = new AutorizedPhonesDb();
+        autorizedPhonesDb.set_idDevice(autorizedPhoneRow.getIdDevice());
+        autorizedPhonesDb.set_phoneNumber(autorizedPhoneRow.getPhoneNumber());
+        autorizedPhonesDb.set_sendSmsRights(autorizedPhoneRow.getSendSmsRights());
+        autorizedPhonesDb.set_callRights(autorizedPhoneRow.getCallRights());
+        autorizedPhonesDb.set_isAdmNumb(autorizedPhoneRow.getIsAdmNumb());
+        return autorizedPhonesDb;
     }
 }

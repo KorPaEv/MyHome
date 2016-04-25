@@ -59,10 +59,11 @@ public class GeneralInfoActivity extends Activity
         //realm = Realm.getInstance(getBaseContext());
         //realm.beginTransaction();
         //Очистим БД от старых данных
-        //realm.where(RawSmsDb.class).findAll().clear();
+        //realm.where(SensorsInfoDb.class).findAll().clear();
         //realm.commitTransaction();
         //MessageService ms = new MessageService();
         //String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
+        //String str = "INFSH;1;Dom;Dimitrova;+79998887766;1;1;1;+79998886655;1;1;1;\"\";0;0;0;\"\";0;0;0";
         //ms.WriteDataToDB(str, getBaseContext());
         FillData();
     }
@@ -99,12 +100,13 @@ public class GeneralInfoActivity extends Activity
 
     private void SetDefaultValDeviceInfo()
     {
-        if (TextUtils.isEmpty(_sPhoneArdGenInf))
-            tvPhoneArdGenInf.setText(EMPTYDATA);
-        if (TextUtils.isEmpty(_sNameAdrGenInf))
-            tvNameAdrGenInf.setText(EMPTYDATA);
-        if (TextUtils.isEmpty(_sAddressArdGenInf))
-            tvAddressArdGenInf.setText(EMPTYDATA);
+        _sPhoneArdGenInf = null;
+        _sNameAdrGenInf = null;
+        _sAddressArdGenInf = null;
+
+        tvPhoneArdGenInf.setText(EMPTYDATA);
+        tvNameAdrGenInf.setText(EMPTYDATA);
+        tvAddressArdGenInf.setText(EMPTYDATA);
     }
     //endregion
 
@@ -116,7 +118,7 @@ public class GeneralInfoActivity extends Activity
 //        realm = Realm.getInstance(getBaseContext());
 //        realm.beginTransaction();
 //        //Посмотрим что лежит в БД после записи данных
-//        RealmResults<RawSmsDb> results = realm.where(RawSmsDb.class).findAll();
+//        RealmResults<SensorsInfoDb> results = realm.where(SensorsInfoDb.class).findAll();
 //        for (int i = 0; i < results.size(); i++)
 //        {
 //            int tS = results.get(i).get_hTimeStamp();
@@ -177,12 +179,20 @@ public class GeneralInfoActivity extends Activity
     //endregion
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+        FillData();
+    }
+
+    @Override
     protected void onPause()
     {
         super.onPause();
         SaveSharedPref(null);
     }
 
+    //region SaveSharedPref(View v) Сохраняем ИД текущий с которым сейчас работаем
     private void SaveSharedPref(View v)
     {
         Toast.makeText(this, "Сохраняем...", Toast.LENGTH_SHORT).show();
@@ -193,4 +203,5 @@ public class GeneralInfoActivity extends Activity
         shpEditor.putString(IDFIELDNAME, _sBundleIdDevice);
         shpEditor.commit();
     }
+    //endregion
 }

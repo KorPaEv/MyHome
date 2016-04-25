@@ -2,9 +2,9 @@ package com.korpaev.myhome;
 
 import io.realm.RealmObject;
 
-public class RawSmsDb extends RealmObject
+public class SensorsInfoDb extends RealmObject
 {
-    private int _idDevice;
+    private String _idDevice;
     private int _hProtocolVer; // версия протокола
     private int _hTimeStamp; // время юниксовое - передавалось в секундах uint32
     private int _hNumSensor; // номер датчика
@@ -18,7 +18,7 @@ public class RawSmsDb extends RealmObject
     private boolean _bStateRelay; // состояние реле
 
     //Тут имена полей и имена методов get и set должны совпадать!!! Это особенность либы
-    public int get_idDevice() { return _idDevice; }
+    public String get_idDevice() { return _idDevice; }
     public int get_hProtocolVer() { return _hProtocolVer; }
     public int get_hTimeStamp() { return _hTimeStamp; }
     public int get_hNumSensor() { return _hNumSensor; }
@@ -31,7 +31,7 @@ public class RawSmsDb extends RealmObject
     public String get_bPinRelay() { return _bPinRelay; }
     public boolean get_bStateRelay() { return _bStateRelay; }
 
-    public void set_idDevice(int idDevice) { this._idDevice = idDevice; }
+    public void set_idDevice(String idDevice) { this._idDevice = idDevice; }
     public void set_hProtocolVer(int hProtocolVer) { this._hProtocolVer = hProtocolVer; }
     public void set_hTimeStamp(int hTimeStamp) { this._hTimeStamp = hTimeStamp; }
     public void set_hNumSensor(int hNumSensor) { this._hNumSensor = hNumSensor; }

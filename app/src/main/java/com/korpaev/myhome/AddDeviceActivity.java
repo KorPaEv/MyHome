@@ -33,7 +33,7 @@ import io.realm.RealmResults;
 public class AddDeviceActivity extends Activity
 {
     //region КОНСТАНТЫ
-    private final int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
+    private static int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
     private final int COUNTAUTORIZED = 4; //количество разрешенных номеров
     private final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
@@ -96,7 +96,7 @@ public class AddDeviceActivity extends Activity
                 switch (eventaction) {
                     case MotionEvent.ACTION_DOWN:
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_1);
-                        //GetdeviceInfoButtonClick(v);
+                        GetDeviceInfoButtonClick(v);
                         return true;
 
                     case MotionEvent.ACTION_UP:
@@ -207,15 +207,15 @@ public class AddDeviceActivity extends Activity
             autorizedPhonesDbs = results.get(i).get_autorizedPhoneNumRaws();
             for (int j = 0; j < autorizedPhonesDbs.size(); j++)
             {
-                sAutorizePhoneArray[i] = autorizedPhonesDbs.get(j).get_phoneNumber();
-                bSendSmsRightArr[i] = autorizedPhonesDbs.get(j).get_sendSmsRights();
-                bSendCallRightArr[i] = autorizedPhonesDbs.get(j).get_callRights();
-                bIsAdmNumArr[i] = autorizedPhonesDbs.get(j).get_isAdmNumb();
+                sAutorizePhoneArray[j] = autorizedPhonesDbs.get(j).get_phoneNumber();
+                bSendSmsRightArr[j] = autorizedPhonesDbs.get(j).get_sendSmsRights();
+                bSendCallRightArr[j] = autorizedPhonesDbs.get(j).get_callRights();
+                bIsAdmNumArr[j] = autorizedPhonesDbs.get(j).get_isAdmNumb();
 
-                etAutorizedPhoneArr[i].setText(sAutorizePhoneArray[i]);
-                chbSendSmsArray[i].setChecked(bSendSmsRightArr[i]);
-                chbSendCallArray[i].setChecked(bSendCallRightArr[i]);
-                chbIsAdminNumArray[i].setChecked(bIsAdmNumArr[i]);
+                etAutorizedPhoneArr[j].setText(sAutorizePhoneArray[j]);
+                chbSendSmsArray[j].setChecked(bSendSmsRightArr[j]);
+                chbSendCallArray[j].setChecked(bSendCallRightArr[j]);
+                chbIsAdminNumArray[j].setChecked(bIsAdmNumArr[j]);
             }
         }
     }
@@ -440,7 +440,7 @@ public class AddDeviceActivity extends Activity
     //endregion
 
     //region CreateIdDevice(phone, protocol) ID устройства - телефон устройства + версия протокола в текстовом формате в base64 без кода страны
-    private String CreateIdDevice(String phone, String protocol)
+    public static String CreateIdDevice(String phone, String protocol)
     {
         String res;
         byte[] base64DataArr = {0};
@@ -459,4 +459,12 @@ public class AddDeviceActivity extends Activity
         return res.trim();
     }
     //endregion
+
+    private void GetDeviceInfoButtonClick(View v)
+    {
+        MessageService ms = new MessageService();
+        //String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
+        String str = "INFSH;1;Dom;Dimitrova;+79998887766;1;1;1;+79998886655;1;1;1;";
+        ms.WriteDataToDB(str, getBaseContext());
+    }
 }

@@ -147,7 +147,7 @@ public class DevicesActivity extends Activity implements OnItemClickListener
             intent.putExtra(IDFIELDNAME, _idDeviseBase64);
             startActivity(intent);
         }
-        if(item.getTitle() == getString(R.string.deleteItem))
+        else if(item.getTitle() == getString(R.string.deleteItem))
         {
             RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
@@ -164,9 +164,11 @@ public class DevicesActivity extends Activity implements OnItemClickListener
                 di.removeFromRealm();
                 resDevInfo.clear();
             }
+            _idDeviseBase64 = null;
             realm.commitTransaction();
         }
         FillData();
+        SaveSharedPref(null);
         return true;
     }
 

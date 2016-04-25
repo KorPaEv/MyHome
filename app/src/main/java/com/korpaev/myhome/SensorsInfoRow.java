@@ -1,10 +1,12 @@
 package com.korpaev.myhome;
 
-public class RawSms {
+public class SensorsInfoRow
+{
     //Формат передаваемой строки ДАЛЛАС: Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay;locationR;relayPin;pinState
     //                           или     Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay(RN UNDEFINE)
     //Формат передаваемой строки ГАЗ:    Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
     //                           или     Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay(RN UNDEFINE)
+    private String idDevice;
     private int _hProtocolVer; // версия протокола
     private int _hTimeStamp; // время юниксовое - передавалось в секундах uint32
     private int _hNumSensor; // номер датчика
@@ -16,6 +18,7 @@ public class RawSms {
     private String _bPinRelay; // пин реле
     private boolean _bStateRelay; // состояние реле
 
+    public String getId() { return idDevice; }
     public int get_hProtocolVer() { return _hProtocolVer; }
     public int get_hTimeStamp() { return _hTimeStamp; }
     public int get_hNumSensor() { return _hNumSensor; }
@@ -27,6 +30,7 @@ public class RawSms {
     public String get_bPinRelay() { return _bPinRelay; }
     public boolean get_bStateRelay() { return _bStateRelay; }
 
+    public void setId(String idDev) { idDevice = idDev; }
     public void set_hProtocolVer(int hProtocolVer) { _hProtocolVer = hProtocolVer; }
     public void set_hTimeStamp(int hTimeStamp) { _hTimeStamp = hTimeStamp; }
     public void set_hNumSensor(int hNumSensor) { _hNumSensor = hNumSensor; }

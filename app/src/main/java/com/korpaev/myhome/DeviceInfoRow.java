@@ -1,23 +1,43 @@
 package com.korpaev.myhome;
 
-public final class DeviceInfoRow
+public class DeviceInfoRow
 {
     private String idDevice;
-    private String name;
+    private String nameDevice;
+    private int protovolVerDev;
+    private String addressDevice;
+    private String phoneArduino;
 
-    public DeviceInfoRow (String idDevice, String name)
+    public DeviceInfoRow()
     {
-        this.idDevice = idDevice;
-        this.name = name;
+
     }
 
-    public String getId()
+    public DeviceInfoRow (String idDevice, String nameDevice)
     {
-        return idDevice;
+        setId(idDevice);
+        setNameDevice(nameDevice);
     }
 
-    public String getName()
+    public String getId() { return idDevice; }
+    public String getNameDevice() { return nameDevice; }
+    public String getAddressDevice() { return addressDevice; }
+    public int getProtovolVerDev() { return protovolVerDev; }
+    public String getPhoneArduino() { return phoneArduino; }
+
+    public void setId(String idDev) { idDevice = idDev; }
+    public void setNameDevice(String nameDev) { nameDevice = nameDev; }
+    public void setAddressDevice(String addrDev) { addressDevice = addrDev; }
+    public void setProtovolVerDev(int protovolV) { protovolVerDev = protovolV; }
+    public void setPhoneArduino(String phoneArd) { phoneArduino = phoneArd; }
+
+    //1;Dom;Dimitrova;
+    public void ParseRow(String row)
     {
-        return name;
+        String[] splitRows;
+        splitRows = row.split(";");
+        setProtovolVerDev(Integer.parseInt(splitRows[0]));
+        setNameDevice(splitRows[1]);
+        setAddressDevice(splitRows[2]);
     }
 }

@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class DevicesInfoDb extends RealmObject
 {
-    private RealmList<RawSmsDb> _stateSystemRaws; //возвращается лист из общей таблички инфы по датчикам для текущего устройства
+    private RealmList<SensorsInfoDb> _stateSystemRaws; //возвращается лист из общей таблички инфы по датчикам для текущего устройства
     private RealmList<AutorizedPhonesDb> _autorizedPhoneNumRaws; //лист разрешенных номеров для текущего устройства
     @PrimaryKey
     private String _idDevice;
@@ -26,7 +26,7 @@ public class DevicesInfoDb extends RealmObject
     public String get_address() { return _address; }
     public String get_addressTranslit() { return _addressTranslit; }
     public String get_phoneNumbArduino() { return _phoneNumbArduino; }
-    public RealmList<RawSmsDb> get_stateSystemRaws() { return _stateSystemRaws; }
+    public RealmList<SensorsInfoDb> get_stateSystemRaws() { return _stateSystemRaws; }
     public RealmList<AutorizedPhonesDb> get_autorizedPhoneNumRaws() { return _autorizedPhoneNumRaws; }
 
     public void set_idDevice(String idDevice) { this._idDevice = idDevice; }
@@ -36,6 +36,6 @@ public class DevicesInfoDb extends RealmObject
     public void set_address(String address) { this._address = address; }
     public void set_addressTranslit(String addressTranslit) { this._addressTranslit = addressTranslit; }
     public void set_phoneNumbArduino(String phoneNumbArduino) { this._phoneNumbArduino = phoneNumbArduino; }
-    public void set_stateSystemRaws(RealmList<RawSmsDb> stateSystemRaws) { this._stateSystemRaws = stateSystemRaws; }
+    public void set_stateSystemRaws(RealmList<SensorsInfoDb> stateSystemRaws) { this._stateSystemRaws = stateSystemRaws; }
     public void set_autorizedPhoneNumRaws(RealmList<AutorizedPhonesDb> autorizedPhoneNumRaws) { this._autorizedPhoneNumRaws = autorizedPhoneNumRaws; }
 }

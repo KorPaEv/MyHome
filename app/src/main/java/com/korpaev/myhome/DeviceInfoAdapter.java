@@ -53,7 +53,7 @@ public class DeviceInfoAdapter extends BaseAdapter
         DeviceInfoRow dir = getDeviceInfoRow(position);
 
         // заполняем View в пункте списка данными
-        ((TextView) view.findViewById(R.id.deviceInfoRowName)).setText(dir.getName());
+        ((TextView) view.findViewById(R.id.deviceInfoRowName)).setText(dir.getNameDevice());
         return view;
     }
 
