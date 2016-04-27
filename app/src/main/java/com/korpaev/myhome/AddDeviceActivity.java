@@ -38,6 +38,7 @@ public class AddDeviceActivity extends Activity
     private final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String ETHINTTEXT = "Введите значение";
+    private final String NAMESHAREDPREF= "IdDevicePref";
     //endregion
 
     //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
@@ -98,7 +99,6 @@ public class AddDeviceActivity extends Activity
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_1);
                         GetDeviceInfoButtonClick(v);
                         return true;
-
                     case MotionEvent.ACTION_UP:
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
                         break;
@@ -344,7 +344,7 @@ public class AddDeviceActivity extends Activity
     {
         Toast.makeText(this, "Сохраняем...", Toast.LENGTH_SHORT).show();
         //Создаем объект Editor для создания пар имя-значение:
-        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        sharedPref = getSharedPreferences(NAMESHAREDPREF, MODE_PRIVATE);
         //Создаем объект Editor для создания пар имя-значение:
         SharedPreferences.Editor shpEditor = sharedPref.edit();
         shpEditor.putString(IDFIELDNAME, _sIdDeviceBase64);

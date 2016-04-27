@@ -15,11 +15,8 @@ public class SmsRepository
         this.context = context;
     }
 
-    public void addRowSensorsInfoToDb(SensorsInfoRow sensorsInfoRow)
+    public SensorsInfoDb addRowSensorsInfoToDb(SensorsInfoRow sensorsInfoRow)
     {
-        realm = Realm.getInstance(context);
-        realm.beginTransaction();
-
         //Объект для БД
         SensorsInfoDb sensorsInfoDB = new SensorsInfoDb();
         sensorsInfoDB.set_idDevice(sensorsInfoRow.getId());
@@ -34,14 +31,10 @@ public class SmsRepository
         sensorsInfoDB.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
         sensorsInfoDB.set_bPinRelay(sensorsInfoRow.get_bPinRelay());
         sensorsInfoDB.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
-
-        //Далее отписываем в БД то, что распарсили
-        realm.copyToRealmOrUpdate(sensorsInfoDB);
-        //коммитим
-        realm.commitTransaction();
+        return sensorsInfoDB;
     }
 
-    public void addRowDeviceInfoToDb(DeviceInfoRow deviceInfoRow, RealmList<AutorizedPhonesDb> listAutorizedPhones)
+    public void addDevInfoToDb(DeviceInfoRow deviceInfoRow, RealmList<AutorizedPhonesDb> listAutorizedPhones, RealmList<SensorsInfoDb> listSensorsInfo)
     {
         realm = Realm.getInstance(context);
         realm.beginTransaction();
@@ -54,6 +47,7 @@ public class SmsRepository
         devicesInfoDb.set_address(deviceInfoRow.getAddressDevice());
         devicesInfoDb.set_phoneNumbArduino(deviceInfoRow.getPhoneArduino());
         devicesInfoDb.set_autorizedPhoneNumRaws(listAutorizedPhones);
+        devicesInfoDb.set_stateSystemRaws(listSensorsInfo);
 
         //Далее отписываем в БД то, что распарсили
         realm.copyToRealmOrUpdate(devicesInfoDb);

@@ -9,28 +9,63 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class GeneralInfoActivity extends Activity
 {
+    //region КОНСТАНТЫ
+    private final String NAMESHAREDPREF = "IdDevicePref";
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String EMPTYDATA = "Данные отсутствуют";
+    private final int COUNTSENSORS = 6;
+    private final String EMPTYDATASENSOR = "Нет данных";
+    private final String EMPTYNAMESENSOR = "Датчик №";
+    //endregion
 
+    //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
     ImageButton ibUpdate;
     Realm realm;
     SharedPreferences sharedPref;
     TextView tvPhoneArdGenInf, tvNameAdrGenInf, tvAddressArdGenInf;
+    //endregion
 
+    //region МАССИВЫ ID ВЬЮХ АКТИВИТИ
+    final int[] rIdSensorsNameArr = {R.id.tvSensorOneName,
+                                     R.id.tvSensorTwoName,
+                                     R.id.tvSensorThreeName,
+                                     R.id.tvSensorFourName,
+                                     R.id.tvSensorFiveName,
+                                     R.id.tvSensorSixName};
+    final int[] rIdSensorsValArr = {R.id.tvSensorOneVal,
+                                    R.id.tvSensorTwoVal,
+                                    R.id.tvSensorThreeVal,
+                                    R.id.tvSensorFourVal,
+                                    R.id.tvSensorFiveVal,
+                                    R.id.tvSensorSixVal};
+    //endregion
+
+    //region МАССИВЫ ВЬЮХ АКТИВИТИ
+    final TextView[] tvSensorsNameArr = new TextView[COUNTSENSORS];
+    final TextView[] tvSensorsValArr = new TextView[COUNTSENSORS];
+    //endregion
+
+    //region Переменные и массивы для хранения значений вьюх
     private String _sPhoneArdGenInf, _sNameAdrGenInf, _sAddressArdGenInf,
-                   _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити
+            _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити
+    final String[] sSensorsNameArr = new String[COUNTSENSORS];
+    final String[] sSensorsValArr = new String[COUNTSENSORS];
+    //endregion
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general_info);
 
@@ -44,8 +79,8 @@ public class GeneralInfoActivity extends Activity
                 switch (eventaction) {
                     case MotionEvent.ACTION_DOWN:
                         ibUpdate.setImageResource(R.mipmap.ic_bupd_1);
+                        GetSensorsInfoButtonClick(v);
                         return true;
-
                     case MotionEvent.ACTION_UP:
                         ibUpdate.setImageResource(R.mipmap.ic_bupd);
                         break;
@@ -56,23 +91,38 @@ public class GeneralInfoActivity extends Activity
         });
         //endregion
 
-        //realm = Realm.getInstance(getBaseContext());
-        //realm.beginTransaction();
-        //Очистим БД от старых данных
-        //realm.where(SensorsInfoDb.class).findAll().clear();
-        //realm.commitTransaction();
-        //MessageService ms = new MessageService();
-        //String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
-        //String str = "INFSH;1;Dom;Dimitrova;+79998887766;1;1;1;+79998886655;1;1;1;\"\";0;0;0;\"\";0;0;0";
-        //ms.WriteDataToDB(str, getBaseContext());
         FillData();
     }
+
+    //region FindViews() Поиск всех объектов на экране
+    protected void FindViews()
+    {
+        ibUpdate = (ImageButton) findViewById(R.id.bUpd);
+        tvPhoneArdGenInf = (TextView)findViewById(R.id.tvPhoneArdGenInf);
+        tvNameAdrGenInf = (TextView)findViewById(R.id.tvNameAdrGenInf);
+        tvAddressArdGenInf = (TextView)findViewById(R.id.tvAddressArdGenInf);
+        for (int i = 0; i < COUNTSENSORS; i++)
+        {
+            tvSensorsNameArr[i] = (TextView)findViewById(rIdSensorsNameArr[i]);
+            tvSensorsValArr[i] = (TextView)findViewById(rIdSensorsValArr[i]);
+        }
+    }
+    //endregion
+
+    //region GetSensorsInfoButtonClick(View v) Обработка нажатия на кнопку получения инфы по датчикам
+    private void GetSensorsInfoButtonClick(View v)
+    {
+        MessageService ms = new MessageService();
+        String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
+        ms.WriteDataToDB(str, getBaseContext());
+    }
+    //endregion
 
     //region FillData() Заполняем вьюхи данными
     private void FillData()
     {
         //Используем созданный файл данных SharedPreferences:
-        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        sharedPref = getSharedPreferences(NAMESHAREDPREF, MODE_PRIVATE);
         _sBundleIdDevice = sharedPref.getString(IDFIELDNAME, null);
 
         if (!TextUtils.isEmpty(_sBundleIdDevice))
@@ -85,16 +135,29 @@ public class GeneralInfoActivity extends Activity
     private void FillViews(String idRow)
     {
         realm = Realm.getInstance(getBaseContext());
-        RealmResults<DevicesInfoDb> results = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-        for (int i = 0; i < results.size(); i++)
+        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+        RealmList<SensorsInfoDb> sensorsInfoList = new RealmList<>();
+        RealmResults<AutorizedPhonesDb> autorizedPhonesDbs = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+        RealmResults<SensorsInfoDb> SensorsInfoDb = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+
+        for (int i = 0; i < devicesInfoDbs.size(); i++)
         {
-            _sPhoneArdGenInf = results.get(i).get_phoneNumbArduino();
-            _sNameAdrGenInf = results.get(i).get_nameDevice();
-            _sAddressArdGenInf = results.get(i).get_address();
+            _sPhoneArdGenInf = devicesInfoDbs.get(i).get_phoneNumbArduino();
+            _sNameAdrGenInf = devicesInfoDbs.get(i).get_nameDevice();
+            _sAddressArdGenInf = devicesInfoDbs.get(i).get_address();
 
             tvPhoneArdGenInf.setText(_sPhoneArdGenInf);
             tvNameAdrGenInf.setText(_sNameAdrGenInf);
             tvAddressArdGenInf.setText(_sAddressArdGenInf);
+
+            sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+            for (int j = 0; j < sensorsInfoList.size(); j++)
+            {
+                sSensorsNameArr[j] = sensorsInfoList.get(j).get_bLocationSensor();
+                sSensorsValArr[j] = sensorsInfoList.get(j).get_bValSensor();
+                tvSensorsNameArr[j].setText(sSensorsNameArr[j]);
+                tvSensorsValArr[j].setText(sSensorsValArr[j]);
+            }
         }
     }
 
@@ -107,6 +170,14 @@ public class GeneralInfoActivity extends Activity
         tvPhoneArdGenInf.setText(EMPTYDATA);
         tvNameAdrGenInf.setText(EMPTYDATA);
         tvAddressArdGenInf.setText(EMPTYDATA);
+
+        for (int i = 0; i < COUNTSENSORS; i++)
+        {
+            sSensorsNameArr[i] = null;
+            sSensorsValArr[i] = null;
+            tvSensorsNameArr[i].setText(EMPTYNAMESENSOR + String.valueOf(i));
+            tvSensorsValArr[i].setText(EMPTYDATASENSOR);
+        }
     }
     //endregion
 
@@ -165,16 +236,6 @@ public class GeneralInfoActivity extends Activity
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-    //endregion
-
-    //region FindViews() Поиск всех объектов на экране
-    protected void FindViews()
-    {
-        ibUpdate = (ImageButton) findViewById(R.id.bUpd);
-        tvPhoneArdGenInf = (TextView)findViewById(R.id.tvPhoneArdGenInf);
-        tvNameAdrGenInf = (TextView)findViewById(R.id.tvNameAdrGenInf);
-        tvAddressArdGenInf = (TextView)findViewById(R.id.tvAddressArdGenInf);
     }
     //endregion
 

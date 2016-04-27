@@ -50,9 +50,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorOneName"
+                    android:text="@string/tvSensorOneName"
                     android:layout_column="0"
-                    android:id="@+id/tvSensorNameOne"
+                    android:id="@+id/tvSensorConfNameOne"
                     android:layout_marginLeft="5dp" />
 
                 <EditText
@@ -70,8 +70,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorTwoName"
-                    android:id="@+id/tvSensorNameTwo"
+                    android:text="@string/tvSensorTwoName"
+                    android:id="@+id/tvSensorConfNameTwo"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -89,8 +89,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorThreeName"
-                    android:id="@+id/tvSensorNameThree"
+                    android:text="@string/tvSensorThreeName"
+                    android:id="@+id/tvSensorConfNameThree"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -108,8 +108,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorFourName"
-                    android:id="@+id/tvSensorNameFour"
+                    android:text="@string/tvSensorFourName"
+                    android:id="@+id/tvSensorConfNameFour"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -127,8 +127,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorFiveName"
-                    android:id="@+id/tvSensorNameFive"
+                    android:text="@string/tvSensorFiveName"
+                    android:id="@+id/tvSensorConfNameFive"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -146,8 +146,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfSensorSixName"
-                    android:id="@+id/tvSensorNameSix"
+                    android:text="@string/tvSensorSixName"
+                    android:id="@+id/tvSensorConfNameSix"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -187,7 +187,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfRelayOneName"
+                    android:text="@string/tvRelayOneName"
                     android:id="@+id/tvRelayNameOne"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
@@ -208,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfRelayOneName"
+                    android:text="@string/tvRelayOneName"
                     android:id="@+id/tvRelayNameTwo"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
@@ -229,7 +229,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfRelayThreeName"
+                    android:text="@string/tvRelayThreeName"
                     android:id="@+id/tvRelayNameThree"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
@@ -249,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/tvConfRelayFourName"
+                    android:text="@string/tvRelayFourName"
                     android:id="@+id/tvRelayNameFour"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />

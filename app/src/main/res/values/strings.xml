@@ -37,16 +37,5 @@
     <string name="tvRelayTwoName">RelayTwo:</string>
     <string name="tvRelayOneName">RelayOne:</string>
 
-    <string name="tvConfSensorSixName">SensorSix:</string>
-    <string name="tvConfSensorFiveName">SensorFive:</string>
-    <string name="tvConfSensorFourName">SensorFour:</string>
-    <string name="tvConfSensorThreeName">SensorThree:</string>
-    <string name="tvConfSensorTwoName">SensorTwo:</string>
-    <string name="tvConfSensorOneName">SensorOne:</string>
-
-    <string name="tvConfRelayFourName">RelayFour:</string>
-    <string name="tvConfRelayThreeName">RelayThree:</string>
-    <string name="tvConfRelayTwoName">RelayTwo:</string>
-    <string name="tvConfRelayOneName">RelayOne:</string>
     <string name="tvLastSaveTime">Информация актуальна на:</string>
 </resources>

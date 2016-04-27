@@ -8,15 +8,28 @@ import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.widget.Toast;
 
+import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.RealmResults;
 
 public class MessageService extends IntentService
 {
+    //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
     SharedPreferences sharedPref;
+    Realm realm;
+    //endregion
+
+    //region КОНСТАНТЫ
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String NAMESHAREDPREF= "IdDevicePref";
+    //endregion
+
+    //region Переменные и массивы
     String smsFrom = "", smsBody = "";
     private String[] splitSmsBodyLines;
     private String pVer, idDev;
+    //endregion
 
     public MessageService()
     {
@@ -47,6 +60,7 @@ public class MessageService extends IntentService
 
     public void WriteDataToDB(String string, Context context)
     {
+        realm = Realm.getInstance(context);
         smsFrom = "+79236440918"; //ДЛЯ ТЕСТОВ
 
         //Разбиваем смс на строки
@@ -69,6 +83,10 @@ public class MessageService extends IntentService
     private void WriteSensorsInfo(String string, Context context)
     {
         splitSmsBodyLines = string.split("SH");
+
+        SmsRepository smsRepository = new SmsRepository(context);
+        RealmList<SensorsInfoDb> listSensorsInfo = new RealmList<>(); //Дочерняя табличка инфы датчиков
+        RealmList<AutorizedPhonesDb> listAutorizedPhones = new RealmList<>(); //Дочерняя табличка номеров разрешенных
         //Формат передаваемой строки: Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay
         //                    или     Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
         //Парсим смс построчно и пишем в БД
@@ -87,9 +105,22 @@ public class MessageService extends IntentService
 
             sensorsInfoRow.setId(idDev);
             //SmsRepository smsRepository = new SmsRepository(getBaseContext());
-            SmsRepository smsRepository = new SmsRepository(context);
-            smsRepository.addRowSensorsInfoToDb(sensorsInfoRow);
+            listSensorsInfo.add(smsRepository.addRowSensorsInfoToDb(sensorsInfoRow));
         }
+        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idDev).findAll();
+        DeviceInfoRow deviceInfoRow = new DeviceInfoRow();
+        for (int j = 0; j < devicesInfoDbs.size(); j++)
+        {
+            deviceInfoRow.setId(devicesInfoDbs.get(j).get_idDevice());
+            deviceInfoRow.setPhoneArduino(smsFrom);
+            deviceInfoRow.setNameDevice(devicesInfoDbs.get(j).get_nameDevice());
+            deviceInfoRow.setAddressDevice(devicesInfoDbs.get(j).get_address());
+            deviceInfoRow.setProtovolVerDev(devicesInfoDbs.get(j).get_hProtocolVer());
+        }
+        DevicesInfoDb devicesInfoDb = devicesInfoDbs.get(0);
+        listAutorizedPhones = devicesInfoDb.get_autorizedPhoneNumRaws();
+
+        smsRepository.addDevInfoToDb(deviceInfoRow, listAutorizedPhones, listSensorsInfo);
     }
 
     private void WriteDeviceInfo(String string, Context context)
@@ -98,6 +129,7 @@ public class MessageService extends IntentService
         String subStrGenInf, subStrAutorizedNum;
         String[] splitAutorizedNums;
         RealmList<AutorizedPhonesDb> listAutorizedPhones = new RealmList<>(); //Дочерняя табличка номеров разрешенных
+        RealmList<SensorsInfoDb> listSensorsInfo = new RealmList<>(); //Дочерняя табличка инфы датчиков
         //Формат передаваемой строки: INFSH;1;Dom;Dimitrova;+79998887766;1;1;1;+79998886655;1;1;1
         for (int i = 0; i < splitSmsBodyLines.length; i++)
         {
@@ -135,7 +167,16 @@ public class MessageService extends IntentService
                 autorizedPhoneRow.ParseRow(splitAutorizedNums[j]);
                 listAutorizedPhones.add(smsRepository.addAutorizedNumsToDb(autorizedPhoneRow));
             }
-            smsRepository.addRowDeviceInfoToDb(dir, listAutorizedPhones);
+
+            RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idDev).findAll();
+            if (devicesInfoDbs.size() > 0)
+            {
+                DevicesInfoDb devicesInfoDb = devicesInfoDbs.get(0);
+                listSensorsInfo = devicesInfoDb.get_stateSystemRaws();
+            }
+            else listSensorsInfo = null;
+
+            smsRepository.addDevInfoToDb(dir, listAutorizedPhones, listSensorsInfo);
         }
     }
 
@@ -153,7 +194,7 @@ public class MessageService extends IntentService
     private void SaveSharedPref(Context context)
     {
         //Создаем объект Editor для создания пар имя-значение:
-        sharedPref = context.getSharedPreferences("IdDevicePref", context.MODE_PRIVATE);
+        sharedPref = context.getSharedPreferences(NAMESHAREDPREF, context.MODE_PRIVATE);
         //Создаем объект Editor для создания пар имя-значение:
         SharedPreferences.Editor shpEditor = sharedPref.edit();
         shpEditor.putString(IDFIELDNAME, idDev);

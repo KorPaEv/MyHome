@@ -2,6 +2,7 @@ package com.korpaev.myhome;
 
 public class SensorsInfoRow
 {
+    final String EMPTYDATA = "Не задано";
     //Формат передаваемой строки ДАЛЛАС: Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay;locationR;relayPin;pinState
     //                           или     Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay(RN UNDEFINE)
     //Формат передаваемой строки ГАЗ:    Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
@@ -51,14 +52,20 @@ public class SensorsInfoRow
         set_hTimeStamp(Integer.parseInt(splitSmsBody[1].trim()));
         set_hNumSensor(Integer.parseInt(splitSmsBody[2].trim()));
         set_hLenBody(Integer.parseInt(splitSmsBody[3].trim()));
-        set_bLocationSensor(splitSmsBody[4].trim());
+
+        if (splitSmsBody[4].trim().equals("RN"))
+        {
+            set_bLocationSensor(EMPTYDATA);
+        }
+        else set_bLocationSensor(splitSmsBody[4].trim());
+
         set_bValSensor(splitSmsBody[5].trim());
 
-        if (splitSmsBody[6].trim().contains("RN"))
+        if (splitSmsBody[6].trim().equals("RN"))
         {
-            set_bNumRelay(splitSmsBody[6].trim());
-            set_bLocationRelay("RN");
-            set_bPinRelay("RN");
+            set_bNumRelay(EMPTYDATA);
+            set_bLocationRelay(EMPTYDATA);
+            set_bPinRelay(EMPTYDATA);
             set_bStateRelay("0");
         }
         else

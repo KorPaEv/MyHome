@@ -21,6 +21,7 @@ public class DevicesActivity extends Activity implements OnItemClickListener
 {
 
     final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String NAMESHAREDPREF = "IdDevicePref";
 
     Realm realm;
     SharedPreferences sharedPref;
@@ -151,6 +152,7 @@ public class DevicesActivity extends Activity implements OnItemClickListener
         {
             RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
+            RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             realm.beginTransaction();
             for (int i = 0; i < resDevInfo.size(); i++)
             {
@@ -159,6 +161,12 @@ public class DevicesActivity extends Activity implements OnItemClickListener
                     AutorizedPhonesDb autP = resAutorized.get(j);
                     autP.removeFromRealm();
                     resAutorized.clear();
+                }
+                for (int k = 0; k < sensorsInfoDbs.size(); k++)
+                {
+                    SensorsInfoDb sensorsInfoDb = sensorsInfoDbs.get(k);
+                    sensorsInfoDb.removeFromRealm();
+                    sensorsInfoDbs.clear();
                 }
                 DevicesInfoDb di = resDevInfo.get(i);
                 di.removeFromRealm();
@@ -175,7 +183,7 @@ public class DevicesActivity extends Activity implements OnItemClickListener
     private void SaveSharedPref(View v)
     {
         //Создаем объект Editor для создания пар имя-значение:
-        sharedPref = getSharedPreferences("IdDevicePref", MODE_PRIVATE);
+        sharedPref = getSharedPreferences(NAMESHAREDPREF, MODE_PRIVATE);
         //Создаем объект Editor для создания пар имя-значение:
         SharedPreferences.Editor shpEditor = sharedPref.edit();
         shpEditor.putString(IDFIELDNAME, _idDeviseBase64);
