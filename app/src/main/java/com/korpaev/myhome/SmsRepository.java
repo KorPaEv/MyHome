@@ -34,27 +34,6 @@ public class SmsRepository
         return sensorsInfoDB;
     }
 
-    public void addDevInfoToDb(DeviceInfoRow deviceInfoRow, RealmList<AutorizedPhonesDb> listAutorizedPhones, RealmList<SensorsInfoDb> listSensorsInfo)
-    {
-        realm = Realm.getInstance(context);
-        realm.beginTransaction();
-
-        //Объект для БД
-        DevicesInfoDb devicesInfoDb = new DevicesInfoDb();
-        devicesInfoDb.set_idDevice(deviceInfoRow.getId());
-        devicesInfoDb.set_hProtocolVer(deviceInfoRow.getProtovolVerDev());
-        devicesInfoDb.set_nameDevice(deviceInfoRow.getNameDevice());
-        devicesInfoDb.set_address(deviceInfoRow.getAddressDevice());
-        devicesInfoDb.set_phoneNumbArduino(deviceInfoRow.getPhoneArduino());
-        devicesInfoDb.set_autorizedPhoneNumRaws(listAutorizedPhones);
-        devicesInfoDb.set_stateSystemRaws(listSensorsInfo);
-
-        //Далее отписываем в БД то, что распарсили
-        realm.copyToRealmOrUpdate(devicesInfoDb);
-        //коммитим
-        realm.commitTransaction();
-    }
-
     public AutorizedPhonesDb addAutorizedNumsToDb(AutorizedPhoneRow autorizedPhoneRow)
     {
         AutorizedPhonesDb autorizedPhonesDb = new AutorizedPhonesDb();

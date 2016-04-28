@@ -23,7 +23,7 @@ public class MessageReceiver extends WakefulBroadcastReceiver
         if (longSms != null)
         {
             String message = longSms.getMessage();
-            if (message != null && (message.startsWith("SH", 0) || message.startsWith("INFSH", 0)))
+            if (message != null && (message.startsWith("SH", 0)))
             {
                 //Стартуем сервис для обработки смс
                 Intent service = MessageService.getIntentForLongSms(context, longSms);

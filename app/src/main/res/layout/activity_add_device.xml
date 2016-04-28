@@ -80,7 +80,7 @@
                     android:inputType="phone"
                     android:ems="10"
                     android:id="@+id/ePhoneNumber"
-                    android:hint="Введите номер"
+                    android:hint="Формат (+7xxxxxxxxxx)"
                     android:layout_column="1" />
 
             </TableRow>
@@ -162,6 +162,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#cd535353" android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="РАЗРЕШЕННЫЕ НОМЕРА"
+                android:id="@+id/tvSectionAutorizedNums"
+                android:padding="10dp"
+                android:background="#c7060543"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:id="@+id/sectionAutorizedNums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
 
             <TableRow
                 android:layout_width="match_parent"
@@ -408,6 +426,8 @@
                 </LinearLayout>
             </TableRow>
 
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -438,7 +458,6 @@
             android:id="@+id/cancelButton"
             android:layout_column="1"
             android:onClick="CancelButtonClick"
-            android:layout_gravity="right"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"

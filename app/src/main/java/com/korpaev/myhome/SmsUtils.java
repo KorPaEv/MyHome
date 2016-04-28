@@ -22,8 +22,6 @@ public final class SmsUtils
                 Intents.SMS_RECEIVED_ACTION.compareToIgnoreCase(intent.getAction()) == 0)
         {
             Object[] pduArray = (Object[]) bundle.get("pdus");
-            //Object[] pduArray = {0x00, 0x11, 0x00, 0x0B,
-            //                     0x91, 0x97, 0x32, 0x460419F80004AA1a534800000001f9580a57000000060b4741533b3939393b393939};
             SmsMessage[] messages = new SmsMessage[pduArray.length];
             for (int i = 0; i < pduArray.length; i++) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -49,8 +47,19 @@ public final class SmsUtils
             // чтобы предотвратить дальнейшую обработку сообщения другими приложениями.
             try
             {
-                SmsUserDataPdu smsUserDataPdu = new SmsUserDataPdu();
-                smsBody = smsUserDataPdu.ConvertPduToGsm(usrDataArr); //Парсим пду формат в читаемый вид
+                //ТУТ ПОТОМ ПЕРЕДЕЛАТЬ ЧТОБЫ ИНФА ПО ДЕВАЙСУ ТОЖЕ ПРИХОДИЛА В ФОРМАТЕ 8 БИТ!!!! СЕЙЧАС ПОКА ТАКАЯ ГРАБЛЯ!!!
+                if (sms.getMessageBody().length() > 1)
+                {
+                    smsBody = sms.getMessageBody();
+                }
+                else
+                {
+
+                    //ДОПИСАТЬ ПРОВЕРКУ НА ВХОДЯЩИЙ НОМЕР С АРДУИНО В СРАВНЕНИИ С НОМЕРОМ В БД УСТРОЙСТВА!!!
+
+                    SmsUserDataPdu smsUserDataPdu = new SmsUserDataPdu();
+                    smsBody = smsUserDataPdu.ConvertPduToGsm(usrDataArr); //Парсим пду формат в читаемый вид
+                }
                 return new LongSms(smsFrom, smsBody);
             }
             catch (Exception e)

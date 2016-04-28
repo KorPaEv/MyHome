@@ -34,6 +34,7 @@ public class AddDeviceActivity extends Activity
 {
     //region КОНСТАНТЫ
     private static int LENPHONENUM = 10; //длина номера телефона без кода страны или 8ки
+    private static int LENPHONENUMFULL = 12; //длина номера телефона
     private final int COUNTAUTORIZED = 4; //количество разрешенных номеров
     private final String PHONENUMARDUINO = "_phoneNumbArduino"; //Имя поля БД
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
@@ -48,6 +49,7 @@ public class AddDeviceActivity extends Activity
     ToggleButton rootToggleB;
     ImageButton getDeviceInfoButton;
     EditText etPhoneArduino, etNameDevice, etLocationAddr, etProtocolVer;
+    View tvSectionAutorizedNumsHeader, vSectionAutorizedNums;
     //endregion
 
     //region МАССИВЫ ID ВЬЮХ АКТИВИТИ
@@ -83,21 +85,25 @@ public class AddDeviceActivity extends Activity
         setContentView(R.layout.activity_add_device);
 
         FindViews(); //Ищем вьюхи на экране и заполняем массивы объектами
-        InfoButtonCheckEnable(); //Проверка состояния кнопки для получения инфы о девайсе
-        SetVisibleViews(false); //По умолчанию режим рута выключается - прячем ненужные вьюхи
 
+        //InfoButtonCheckEnable(); //Проверка состояния кнопки для получения инфы о девайсе
         //Событие на edittext номера ардуины - если там не пусто то кнопка инфы активна
-        etPhoneArduino.addTextChangedListener(textWatcher);
+        //etPhoneArduino.addTextChangedListener(textWatcher);
+        getDeviceInfoButton.setEnabled(false); //Пока что не реализован толком функционал этой кнопы, ее скрываем
+        getDeviceInfoButton.setVisibility(View.INVISIBLE);
+
+        SetVisibleViews(false); //По умолчанию режим рута выключается - прячем ненужные вьюхи
 
         //region Обработчик нажатия на кнопку получения данных и сохранения номера - меняем картинку при нажатии
         getDeviceInfoButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onTouch(View v, MotionEvent event)
+            {
                 int eventaction = event.getAction();
                 switch (eventaction) {
                     case MotionEvent.ACTION_DOWN:
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_1);
-                        GetDeviceInfoButtonClick(v);
+                        //GetDeviceInfoButtonClick(v);
                         return true;
                     case MotionEvent.ACTION_UP:
                         getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
@@ -108,6 +114,25 @@ public class AddDeviceActivity extends Activity
             }
         });
         //endregion
+        //region Оработчик раскрытия списка разрешенных номеров
+        tvSectionAutorizedNumsHeader.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (vSectionAutorizedNums.getVisibility() == View.GONE)
+                {
+                    tvSectionAutorizedNumsHeader.setBackgroundColor(0xC73B3A48);
+                    vSectionAutorizedNums.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    tvSectionAutorizedNumsHeader.setBackgroundColor(0xC7060543);
+                    vSectionAutorizedNums.setVisibility(View.GONE);
+                }
+            }
+        });
+        //endregion
 
         FillData(); //Заполняем вьюхи данными - если пришли данные на редактирование текущего устройства вьюхи заполнятся
     }
@@ -115,6 +140,8 @@ public class AddDeviceActivity extends Activity
     //region FindViews() Поиск вьюх и заполнение массивов дл этих вьюх
     private void FindViews()
     {
+        tvSectionAutorizedNumsHeader = findViewById(R.id.tvSectionAutorizedNums);
+        vSectionAutorizedNums = findViewById(R.id.sectionAutorizedNums);
         getDeviceInfoButton = (ImageButton)findViewById(R.id.getDeviceInfoImButton);
         rootToggleB = (ToggleButton)findViewById(R.id.rootRightsToggleB);
         bAddDevice = (Button)findViewById(R.id.addDeviceButton);
@@ -135,42 +162,41 @@ public class AddDeviceActivity extends Activity
     //endregion
 
     //region InfoButtonCheckEnable() Проверка состояния кнопки получения инфы о девайсе
-    private void InfoButtonCheckEnable()
-    {
-        if (TextUtils.isEmpty(etPhoneArduino.getText()))
-        {
-            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_disable);
-            getDeviceInfoButton.setEnabled(false);
-        }
-        else
-        {
-            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
-            getDeviceInfoButton.setEnabled(true);
-        }
-    }
-    //endregion
-
-    //region addTextChangedListener Событие на edittext
-    TextWatcher textWatcher = new TextWatcher()
-    {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {
-            InfoButtonCheckEnable();
-        }
-
-        @Override
-        public void afterTextChanged(Editable s)
-        {
-
-        }
-    };
+//    private void InfoButtonCheckEnable()
+//    {
+//        if (TextUtils.isEmpty(etPhoneArduino.getText()))
+//        {
+//            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd_disable);
+//            getDeviceInfoButton.setEnabled(false);
+//        }
+//        else
+//        {
+//            getDeviceInfoButton.setImageResource(R.mipmap.ic_bupd);
+//            getDeviceInfoButton.setEnabled(true);
+//        }
+//    }
+//
+//    //Событие на edittext
+//    TextWatcher textWatcher = new TextWatcher()
+//    {
+//        @Override
+//        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+//        {
+//
+//        }
+//
+//        @Override
+//        public void onTextChanged(CharSequence s, int start, int before, int count)
+//        {
+//            InfoButtonCheckEnable();
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable s)
+//        {
+//
+//        }
+//    };
     //endregion
 
     //region FillData() Заполняем вьюхи данными
@@ -224,40 +250,47 @@ public class AddDeviceActivity extends Activity
     //region SetVisibleViews(TRUE or FALSE) Установка видимости вьюх
     private void SetVisibleViews(boolean isVisible)
     {
+        bAddDevice.setVisibility(View.VISIBLE);
+        etNameDevice.setEnabled(true);
+        etNameDevice.setHint(ETHINTTEXT);
+        etLocationAddr.setEnabled(true);
+        etLocationAddr.setHint(ETHINTTEXT);
+        etProtocolVer.setEnabled(true);
+        etProtocolVer.setHint(ETHINTTEXT);
         if (!isVisible)
         {
-            bAddDevice.setVisibility(View.INVISIBLE);
-            etNameDevice.setEnabled(false);
-            etNameDevice.setHint(null);
-            etLocationAddr.setEnabled(false);
-            etLocationAddr.setHint(null);
-            etProtocolVer.setEnabled(false);
-            etProtocolVer.setHint(null);
+            //bAddDevice.setVisibility(View.INVISIBLE);
+            //etNameDevice.setEnabled(false);
+            //etNameDevice.setHint(null);
+            //etLocationAddr.setEnabled(false);
+            //etLocationAddr.setHint(null);
+            //etProtocolVer.setEnabled(false);
+            //etProtocolVer.setHint(null);
             for (int i = 0; i < COUNTAUTORIZED; i++)
             {
-                etAutorizedPhoneArr[i].setVisibility(View.INVISIBLE);
-                chbSendSmsArray[i].setVisibility(View.INVISIBLE);
-                chbSendCallArray[i].setVisibility(View.INVISIBLE);
+//                tvAutorizedPhoneArr[i].setVisibility(View.INVISIBLE);
+//                etAutorizedPhoneArr[i].setVisibility(View.INVISIBLE);
+//                chbSendSmsArray[i].setVisibility(View.INVISIBLE);
+//                chbSendCallArray[i].setVisibility(View.INVISIBLE);
                 chbIsAdminNumArray[i].setVisibility(View.INVISIBLE);
-                tvAutorizedPhoneArr[i].setVisibility(View.INVISIBLE);
             }
         }
         else
         {
-            bAddDevice.setVisibility(View.VISIBLE);
-            etNameDevice.setEnabled(true);
-            etNameDevice.setHint(ETHINTTEXT);
-            etLocationAddr.setEnabled(true);
-            etLocationAddr.setHint(ETHINTTEXT);
-            etProtocolVer.setEnabled(true);
-            etProtocolVer.setHint(ETHINTTEXT);
+            //bAddDevice.setVisibility(View.VISIBLE);
+            //etNameDevice.setEnabled(true);
+            //etNameDevice.setHint(ETHINTTEXT);
+            //etLocationAddr.setEnabled(true);
+            //etLocationAddr.setHint(ETHINTTEXT);
+            //etProtocolVer.setEnabled(true);
+            //etProtocolVer.setHint(ETHINTTEXT);
             for (int i = 0; i < COUNTAUTORIZED; i++)
             {
-                etAutorizedPhoneArr[i].setVisibility(View.VISIBLE);
-                chbSendSmsArray[i].setVisibility(View.VISIBLE);
-                chbSendCallArray[i].setVisibility(View.VISIBLE);
+//                tvAutorizedPhoneArr[i].setVisibility(View.VISIBLE);
+//                etAutorizedPhoneArr[i].setVisibility(View.VISIBLE);
+//                chbSendSmsArray[i].setVisibility(View.VISIBLE);
+//                chbSendCallArray[i].setVisibility(View.VISIBLE);
                 chbIsAdminNumArray[i].setVisibility(View.VISIBLE);
-                tvAutorizedPhoneArr[i].setVisibility(View.VISIBLE);
             }
         }
     }
@@ -284,38 +317,52 @@ public class AddDeviceActivity extends Activity
     //region Кнопка Сохранить addDeviceButton
     public void SaveDeviceButtonClick(View v)
     {
-        //Проверяем заполнены ли все обязательные вьюхи
-        if (CheckViews())
+        GetTextViews(); //Получаем данные вьюх
+        if (CheckViews() && GenIdAndCheckUniqNum()) //Проверяем заполнены ли все обязательные вьюхи
         {
+            if (rootToggleB.isChecked())
+            {
+                //Тут дополнительно еще отправлять смс на ардуину при включенном руте
+            }
             WriteDbRaws(); //Пишем в БД если все в порядке
             SaveSharedPref();
             Intent intent;
             intent = new Intent(getBaseContext(), MainActivityTabs.class);
             startActivity(intent);
         }
-        else
+    }
+
+    private boolean GenIdAndCheckUniqNum()
+    {
+        //Генерируем ИД
+        //Если мы редактируем текущую запись то ИД берем тот который редактируем, иначе генерируем новый
+        if (_sBundleIdDevice != null)
         {
-            Toast.makeText(this, "Заполните хотя бы один разрешенный номер", Toast.LENGTH_SHORT).show();
+            _sIdDeviceBase64 = _sBundleIdDevice;
         }
+        else _sIdDeviceBase64 = CreateIdDevice(_sPhoneArduino, _sProtocolVer);
+
+        //Уникальность проверяем именно когда есть
+        if (CheckUniquePhoneNum(_sPhoneArduino))
+        {
+            etPhoneArduino.setError("Такой номер уже используется!");
+            return false;
+        }
+        return true;
     }
     //endregion
 
     //region CheckViews() Проверка валидности введенных данных вьюх
     private boolean CheckViews()
     {
-        GetTextViews(); //Получаем данные вьюх
         if (TextUtils.isEmpty(_sPhoneArduino))
         {
             etPhoneArduino.setError("Обязательно к заполнению!");
             return false;
         }
-        else if (CheckUniquePhoneNum(_sPhoneArduino))
+        else if (_sPhoneArduino.length() != LENPHONENUMFULL)
         {
-            etPhoneArduino.setError("Такой номер уже используется!");
-        }
-        else if (TextUtils.isEmpty(_sProtocolVer))
-        {
-            etProtocolVer.setError("Обязательно к заполнению!");
+            etPhoneArduino.setError("Введите корректный формат (+7xxxxxxxxxx)");
             return false;
         }
         else if (TextUtils.isEmpty(_sNameDevice))
@@ -328,14 +375,12 @@ public class AddDeviceActivity extends Activity
             etLocationAddr.setError("Обязательно к заполнению!");
             return false;
         }
-        else if (!TextUtils.isEmpty(sAutorizePhoneArray[0]) ||
-                !TextUtils.isEmpty(sAutorizePhoneArray[1]) ||
-                !TextUtils.isEmpty(sAutorizePhoneArray[2]) ||
-                !TextUtils.isEmpty(sAutorizePhoneArray[3]))
+        else if (TextUtils.isEmpty(_sProtocolVer))
         {
-            return true;
+            etProtocolVer.setError("Обязательно к заполнению!");
+            return false;
         }
-        return false;
+        return true;
     }
     //endregion
 
@@ -366,12 +411,6 @@ public class AddDeviceActivity extends Activity
             bSendCallRightArr[i] = chbSendCallArray[i].isChecked();
             bIsAdmNumArr[i] = chbIsAdminNumArray[i].isChecked();
         }
-        //Если мы редактируем текущую запись то ИД берем тот который редактируем, иначе генерируем новый
-        if (_sBundleIdDevice != null)
-        {
-            _sIdDeviceBase64 = _sBundleIdDevice;
-        }
-        else _sIdDeviceBase64 = CreateIdDevice(_sPhoneArduino, _sProtocolVer);
     }
     //endregion
 
@@ -400,9 +439,24 @@ public class AddDeviceActivity extends Activity
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
 
-        DevicesInfoDb deviceInfo = new DevicesInfoDb(); //Объект таблички Инфы об устройстве
+        //Получаем наш объект если он уже создан и хотим редактировать
+        DevicesInfoDb deviceInfo = new DevicesInfoDb();
+        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _sIdDeviceBase64).findAll();
+        if (devicesInfoDbs.size() > 0)
+        {
+            for (int k = 0; k < devicesInfoDbs.size(); k++)
+            {
+                deviceInfo = devicesInfoDbs.get(0); //Объект таблички Инфы об устройстве
+            }
+        }
+
+        //удаляем по нашему ИД все записи из разрешенных номеров - один фиг заново создаем этот лист
+        RealmResults<AutorizedPhonesDb> autorizedPhonesDbs = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, _sIdDeviceBase64).findAll();
+        autorizedPhonesDbs.clear();
+        //объявляем новый лист с разрешенными номерами который мы добавим в существующий или новый объект
         RealmList<AutorizedPhonesDb> listAutorizedPhones = new RealmList<>(); //Дочерняя табличка номеров разрешенных
 
+        //Заполняем или переписываем наш объект
         deviceInfo.set_idDevice(_sIdDeviceBase64);
         iProtocolV = Integer.parseInt(_sProtocolVer);
         deviceInfo.set_hProtocolVer(iProtocolV);
@@ -425,16 +479,13 @@ public class AddDeviceActivity extends Activity
             autorizedPhonesDb.set_callRights(bSendCallRightArr[i]);
             autorizedPhonesDb.set_isAdmNumb(bIsAdmNumArr[i]);
             listAutorizedPhones.add(autorizedPhonesDb);
-
-            //Создаем записи только в случае новой записи
-            if (_sBundleIdDevice == null)
-            {
-                realm.copyToRealm(autorizedPhonesDb);
-            }
         }
-        deviceInfo.set_autorizedPhoneNumRaws(listAutorizedPhones);
 
-        realm.copyToRealmOrUpdate(deviceInfo);
+        //дописываем измененный или старый лист с номерами
+        for (int j = 0; j < listAutorizedPhones.size(); j++)
+        {
+            deviceInfo.get_autorizedPhoneNumRaws().add(listAutorizedPhones.get(j));
+        }
         realm.commitTransaction();
     }
     //endregion
@@ -460,11 +511,15 @@ public class AddDeviceActivity extends Activity
     }
     //endregion
 
+    //region ЭТУ КНОПКУ ЗАПРОГРАММИРОВАТЬ В БУДУЩЕМ - ПОЛУЧЕНИЕ ИНФУ ОТ АРДУИНЫ!!! СЕЙЧАС ЗАРЕМАРИНА В КОНСТРУКТОРЕ
     private void GetDeviceInfoButtonClick(View v)
     {
+        //Смотри SmsUtils строка 50 - надо получать с ардуины в формате так же своем!!!
+        //Так же допиливать SmsUserDataPdu и MessageService
         MessageService ms = new MessageService();
         //String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
         String str = "INFSH;1;Dom;Dimitrova;+79998887766;1;1;1;+79998886655;1;1;1;";
         ms.WriteDataToDB(str, getBaseContext());
     }
+    //endregion
 }
