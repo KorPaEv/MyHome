@@ -1,10 +1,14 @@
 package com.korpaev.myhome;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.provider.Telephony.Sms.Intents;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public final class SmsUtils
 {
@@ -13,8 +17,9 @@ public final class SmsUtils
 
     }
 
-    public static LongSms extractFromIntent (Intent intent)
+    public static LongSms extractFromIntent (Context context, Intent intent)
     {
+        Realm realm;
         Bundle bundle = intent.getExtras();
         //Здесь мы получаем сообщение с помощью метода intent.getExtras().get("pdus"),
         // который возвращает массив объектов в формате PDU — эти объекты мы потом приводим к типу SmsMessage с помощью метода createFromPdu().
@@ -41,7 +46,7 @@ public final class SmsUtils
             byte[] usrDataArr = sms.getUserData();
 
             String smsFrom = messages[0].getDisplayOriginatingAddress();
-            String smsBody;
+            String smsBody = "";
             //Здесь мы составляем текст сообщения (в случае, когда сообщение было длинным
             // и пришло в нескольких смс-ках, каждая отдельная часть хранится в messages[i]) и вызываем метод abortBroadcast(),
             // чтобы предотвратить дальнейшую обработку сообщения другими приложениями.
@@ -54,11 +59,18 @@ public final class SmsUtils
                 }
                 else
                 {
-
-                    //ДОПИСАТЬ ПРОВЕРКУ НА ВХОДЯЩИЙ НОМЕР С АРДУИНО В СРАВНЕНИИ С НОМЕРОМ В БД УСТРОЙСТВА!!!
-
-                    SmsUserDataPdu smsUserDataPdu = new SmsUserDataPdu();
-                    smsBody = smsUserDataPdu.ConvertPduToGsm(usrDataArr); //Парсим пду формат в читаемый вид
+                    //Проверяем входящий номер с номерами заданными на андроиде для ардуины, если номер наш то парсим строку данных
+                    realm = Realm.getInstance(context);
+                    RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).findAll();
+                    for (int i = 0; i < devicesInfoDbs.size(); i++)
+                    {
+                        if (!devicesInfoDbs.get(i).get_phoneNumbArduino().equals(smsFrom))
+                        {
+                            continue;
+                        }
+                        SmsUserDataPdu smsUserDataPdu = new SmsUserDataPdu();
+                        smsBody = smsUserDataPdu.ConvertPduToGsm(usrDataArr); //Парсим пду формат в читаемый вид
+                    }
                 }
                 return new LongSms(smsFrom, smsBody);
             }

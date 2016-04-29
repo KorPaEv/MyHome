@@ -18,7 +18,7 @@ public class MessageReceiver extends WakefulBroadcastReceiver
         soundManage.SetSoundOff();
 
         //Проверяем что нам пришла смс
-        longSms = SmsUtils.extractFromIntent(intent);
+        longSms = SmsUtils.extractFromIntent(context, intent);
 
         if (longSms != null)
         {

@@ -23,7 +23,9 @@ public class GeneralInfoActivity extends Activity
 {
     //region КОНСТАНТЫ
     private final String NAMESHAREDPREF = "IdDevicePref";
+    private final String SENSORSINFOTABLENAME = "_stateSystemRaws";
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String TIMESTAMPFIELDNAME = "_hTimeStamp";
     private final String EMPTYDATA = "Данные отсутствуют";
     private final int COUNTSENSORS = 6;
     private final String EMPTYDATASENSOR = "Нет данных";
@@ -135,10 +137,17 @@ public class GeneralInfoActivity extends Activity
     private void FillViews(String idRow)
     {
         realm = Realm.getInstance(getBaseContext());
-        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList = new RealmList<>();
-        RealmResults<AutorizedPhonesDb> autorizedPhonesDbs = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-        RealmResults<SensorsInfoDb> SensorsInfoDb = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+
+        //Получаем максимальное время
+        RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
+        int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+        //Получаем только свежие записи по максимальному времени
+        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class)
+                                                          .equalTo(IDFIELDNAME, idRow)
+                                                          .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
+                                                          .findAll();
+        RealmList<SensorsInfoDb> sensorsInfoList;
 
         for (int i = 0; i < devicesInfoDbs.size(); i++)
         {

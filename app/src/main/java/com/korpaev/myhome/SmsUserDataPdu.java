@@ -1,5 +1,7 @@
 package com.korpaev.myhome;
 
+import io.realm.Realm;
+
 public class SmsUserDataPdu
 {
     public SmsUserDataPdu()
