@@ -31,6 +31,7 @@ public class SmsRepository
         sensorsInfoDB.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
         sensorsInfoDB.set_bPinRelay(sensorsInfoRow.get_bPinRelay());
         sensorsInfoDB.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
+        sensorsInfoDB.set_bManualManageRelay(sensorsInfoRow.get_bManualManageRelay());
         return sensorsInfoDB;
     }
 

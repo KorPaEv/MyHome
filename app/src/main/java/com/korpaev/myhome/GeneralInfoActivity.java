@@ -9,11 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -26,7 +27,7 @@ public class GeneralInfoActivity extends Activity
     private final String SENSORSINFOTABLENAME = "_stateSystemRaws";
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String TIMESTAMPFIELDNAME = "_hTimeStamp";
-    private final String EMPTYDATA = "Данные отсутствуют";
+    private final String EMPTYDATA = "Не задано";
     private final int COUNTSENSORS = 6;
     private final String EMPTYDATASENSOR = "Нет данных";
     private final String EMPTYNAMESENSOR = "Датчик №";
@@ -36,7 +37,7 @@ public class GeneralInfoActivity extends Activity
     ImageButton ibUpdate;
     Realm realm;
     SharedPreferences sharedPref;
-    TextView tvPhoneArdGenInf, tvNameAdrGenInf, tvAddressArdGenInf;
+    TextView tvPhoneArdGenInf, tvNameAdrGenInf, tvAddressArdGenInf, tvUpdateTime;
     //endregion
 
     //region МАССИВЫ ID ВЬЮХ АКТИВИТИ
@@ -61,7 +62,7 @@ public class GeneralInfoActivity extends Activity
 
     //region Переменные и массивы для хранения значений вьюх
     private String _sPhoneArdGenInf, _sNameAdrGenInf, _sAddressArdGenInf,
-            _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити
+                   _sBundleIdDevice; //Это ИД девайса который может прийти с другого активити
     final String[] sSensorsNameArr = new String[COUNTSENSORS];
     final String[] sSensorsValArr = new String[COUNTSENSORS];
     //endregion
@@ -99,7 +100,8 @@ public class GeneralInfoActivity extends Activity
     //region FindViews() Поиск всех объектов на экране
     protected void FindViews()
     {
-        ibUpdate = (ImageButton) findViewById(R.id.bUpd);
+        ibUpdate = (ImageButton)findViewById(R.id.bUpd);
+        tvUpdateTime = (TextView)findViewById(R.id.tvLastSaveTime);
         tvPhoneArdGenInf = (TextView)findViewById(R.id.tvPhoneArdGenInf);
         tvNameAdrGenInf = (TextView)findViewById(R.id.tvNameAdrGenInf);
         tvAddressArdGenInf = (TextView)findViewById(R.id.tvAddressArdGenInf);
@@ -115,7 +117,7 @@ public class GeneralInfoActivity extends Activity
     private void GetSensorsInfoButtonClick(View v)
     {
         MessageService ms = new MessageService();
-        String str = "SH1;1460473840;1;8;RN;0C;RN;SH1;1460473840;2;8;RN;0C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
+        String str = "SH1;1460473840;1;8;RN;15C;RN;SH1;1460473840;2;8;RN;12C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
         ms.WriteDataToDB(str, getBaseContext());
     }
     //endregion
@@ -126,52 +128,91 @@ public class GeneralInfoActivity extends Activity
         //Используем созданный файл данных SharedPreferences:
         sharedPref = getSharedPreferences(NAMESHAREDPREF, MODE_PRIVATE);
         _sBundleIdDevice = sharedPref.getString(IDFIELDNAME, null);
-
+        ibUpdate.setEnabled(false);
+        SetDefaultValDeviceInfo();
         if (!TextUtils.isEmpty(_sBundleIdDevice))
         {
+            ibUpdate.setEnabled(true);
             FillViews(_sBundleIdDevice);
         }
-        else SetDefaultValDeviceInfo();
+        else
+        {
+            ibUpdate.setEnabled(false);
+        }
     }
 
     private void FillViews(String idRow)
     {
         realm = Realm.getInstance(getBaseContext());
+        String timeStr = "Информация актуальна на: ";
 
-        //Получаем максимальное время
+        RealmResults<DevicesInfoDb> devicesInfoDbs;
         RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-        int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
-
-        //Получаем только свежие записи по максимальному времени
-        RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                                                          .equalTo(IDFIELDNAME, idRow)
-                                                          .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                                                          .findAll();
         RealmList<SensorsInfoDb> sensorsInfoList;
 
-        for (int i = 0; i < devicesInfoDbs.size(); i++)
+        if (sensorsInfoDbs.size() > 0)
         {
-            _sPhoneArdGenInf = devicesInfoDbs.get(i).get_phoneNumbArduino();
-            _sNameAdrGenInf = devicesInfoDbs.get(i).get_nameDevice();
-            _sAddressArdGenInf = devicesInfoDbs.get(i).get_address();
+            //Получаем максимальное время
+            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-            tvPhoneArdGenInf.setText(_sPhoneArdGenInf);
-            tvNameAdrGenInf.setText(_sNameAdrGenInf);
-            tvAddressArdGenInf.setText(_sAddressArdGenInf);
+            tvUpdateTime.setText(timeStr + GetUpdateTime(maxTimeStamp));
 
-            sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
-            for (int j = 0; j < sensorsInfoList.size(); j++)
+            //Получаем только свежие записи по максимальному времени
+            devicesInfoDbs = realm.where(DevicesInfoDb.class)
+                    .equalTo(IDFIELDNAME, idRow)
+                    .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
+                    .findAll();
+
+            for (int i = 0; i < devicesInfoDbs.size(); i++)
             {
-                sSensorsNameArr[j] = sensorsInfoList.get(j).get_bLocationSensor();
-                sSensorsValArr[j] = sensorsInfoList.get(j).get_bValSensor();
-                tvSensorsNameArr[j].setText(sSensorsNameArr[j]);
-                tvSensorsValArr[j].setText(sSensorsValArr[j]);
+                _sPhoneArdGenInf = devicesInfoDbs.get(i).get_phoneNumbArduino();
+                _sNameAdrGenInf = devicesInfoDbs.get(i).get_nameDevice();
+                _sAddressArdGenInf = devicesInfoDbs.get(i).get_address();
+
+                tvPhoneArdGenInf.setText(_sPhoneArdGenInf);
+                tvNameAdrGenInf.setText(_sNameAdrGenInf);
+                tvAddressArdGenInf.setText(_sAddressArdGenInf);
+
+                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+                for (int j = 0; j < sensorsInfoList.size(); j++)
+                {
+                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
+                    numSensor -= 1;
+                    if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bLocationSensorRus()))
+                    {
+                        sSensorsNameArr[numSensor] = sensorsInfoList.get(numSensor).get_bLocationSensorRus();
+                    }
+                    else sSensorsNameArr[numSensor] = sensorsInfoList.get(numSensor).get_bLocationSensor();
+                    tvSensorsNameArr[numSensor].setText(sSensorsNameArr[numSensor]);
+
+                    sSensorsValArr[j] = sensorsInfoList.get(j).get_bValSensor();
+                    tvSensorsValArr[j].setText(sSensorsValArr[j]);
+                }
+            }
+        }
+        else
+        {
+            //Получаем только записи для вывода инфы о текущем устройстве
+            devicesInfoDbs = realm.where(DevicesInfoDb.class)
+                    .equalTo(IDFIELDNAME, idRow)
+                    .findAll();
+            for (int i = 0; i < devicesInfoDbs.size(); i++)
+            {
+                _sPhoneArdGenInf = devicesInfoDbs.get(i).get_phoneNumbArduino();
+                _sNameAdrGenInf = devicesInfoDbs.get(i).get_nameDevice();
+                _sAddressArdGenInf = devicesInfoDbs.get(i).get_address();
+
+                tvPhoneArdGenInf.setText(_sPhoneArdGenInf);
+                tvNameAdrGenInf.setText(_sNameAdrGenInf);
+                tvAddressArdGenInf.setText(_sAddressArdGenInf);
             }
         }
     }
 
     private void SetDefaultValDeviceInfo()
     {
+        tvUpdateTime.setText(R.string.tvLastSaveTime);
+
         _sPhoneArdGenInf = null;
         _sNameAdrGenInf = null;
         _sAddressArdGenInf = null;
@@ -188,26 +229,18 @@ public class GeneralInfoActivity extends Activity
             tvSensorsValArr[i].setText(EMPTYDATASENSOR);
         }
     }
-    //endregion
 
-//    public void FillData()
-//    {
-//        Date date;
-//        SimpleDateFormat sdf;
-//        String formattedDate;
-//        realm = Realm.getInstance(getBaseContext());
-//        realm.beginTransaction();
-//        //Посмотрим что лежит в БД после записи данных
-//        RealmResults<SensorsInfoDb> results = realm.where(SensorsInfoDb.class).findAll();
-//        for (int i = 0; i < results.size(); i++)
-//        {
-//            int tS = results.get(i).get_hTimeStamp();
-//            date = new Date(tS * 1000L); // *1000 is to convert seconds to milliseconds
-//            sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-//            formattedDate = sdf.format(date);
-//        }
-//        realm.commitTransaction();
-//    }
+    public String GetUpdateTime(int timeStamp)
+    {
+        Date date;
+        SimpleDateFormat sdf;
+        //Посмотрим что лежит в БД после записи данных
+        RealmResults<SensorsInfoDb> results = realm.where(SensorsInfoDb.class).findAll();
+        date = new Date(timeStamp * 1000L); // *1000 is to convert seconds to milliseconds
+        sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return sdf.format(date);
+    }
+    //endregion
 
     //region Создаем меню и обрабатываем действие при выборе пункта меню
     @Override

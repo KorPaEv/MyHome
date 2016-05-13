@@ -446,7 +446,7 @@ public class AddDeviceActivity extends Activity
         {
             for (int k = 0; k < devicesInfoDbs.size(); k++)
             {
-                deviceInfo = devicesInfoDbs.get(0); //Объект таблички Инфы об устройстве
+                deviceInfo = devicesInfoDbs.get(k); //Объект таблички Инфы об устройстве
             }
         }
 
@@ -481,11 +481,16 @@ public class AddDeviceActivity extends Activity
             listAutorizedPhones.add(autorizedPhonesDb);
         }
 
-        //дописываем измененный или старый лист с номерами
-        for (int j = 0; j < listAutorizedPhones.size(); j++)
+        if (deviceInfo.get_autorizedPhoneNumRaws() != null)
         {
-            deviceInfo.get_autorizedPhoneNumRaws().add(listAutorizedPhones.get(j));
+            //дописываем измененный или старый лист с номерами
+            for (int j = 0; j < listAutorizedPhones.size(); j++)
+            {
+                deviceInfo.get_autorizedPhoneNumRaws().add(listAutorizedPhones.get(j));
+            }
         }
+        else deviceInfo.set_autorizedPhoneNumRaws(listAutorizedPhones);
+        realm.copyToRealm(deviceInfo);
         realm.commitTransaction();
     }
     //endregion

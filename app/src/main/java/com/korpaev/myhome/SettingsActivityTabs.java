@@ -23,14 +23,14 @@ public class SettingsActivityTabs extends TabActivity
         Intent intentMainConf = new Intent().setClass(this, GeneralSettingsActivity.class);
         TabSpec tabSpecMainConf = tabHost
                 .newTabSpec("MainConf")
-                .setIndicator("Основные настройки")
+                .setIndicator("Основные")
                 .setContent(intentMainConf);
         tabHost.addTab(tabSpecMainConf);
 
         Intent intentAddConf = new Intent().setClass(this, AdditionalySettingsActivity.class);
         TabSpec tabSpecAddConf = tabHost
                 .newTabSpec("AdditionalConf")
-                .setIndicator("Дополнительные настройки")
+                .setIndicator("Дополнительные")
                 .setContent(intentAddConf);
         tabHost.addTab(tabSpecAddConf);
     }

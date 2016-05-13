@@ -15,13 +15,14 @@
 
     <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="top"
             android:layout_gravity="top"
             android:id="@+id/scrollViewSettings"
             android:clickable="false"
             android:focusable="false"
-            android:focusableInTouchMode="false" android:layout_marginTop="10dp">
+            android:focusableInTouchMode="false" android:layout_marginTop="10dp"
+        android:layout_weight="1">
         <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -188,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayOneName"
-                    android:id="@+id/tvRelayNameOne"
+                    android:id="@+id/tvRelayConfNameOne"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -209,7 +210,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayOneName"
-                    android:id="@+id/tvRelayNameTwo"
+                    android:id="@+id/tvRelayConfNameTwo"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -230,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayThreeName"
-                    android:id="@+id/tvRelayNameThree"
+                    android:id="@+id/tvRelayConfNameThree"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -250,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayFourName"
-                    android:id="@+id/tvRelayNameFour"
+                    android:id="@+id/tvRelayConfNameFour"
                     android:layout_column="0"
                     android:layout_marginLeft="5dp" />
 
@@ -268,7 +269,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <Button
                 android:layout_width="fill_parent"
@@ -276,7 +277,8 @@
                 android:text="Сохранить настройки"
                 android:id="@+id/bSaveConf"
             android:layout_marginBottom="5dp"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"
+            android:onClick="SaveConfButtonClick" />
     </LinearLayout>
 
 </LinearLayout>

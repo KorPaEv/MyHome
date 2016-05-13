@@ -32,14 +32,24 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:id="@+id/tvRelayOneName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:id="@+id/tvRelayManageNameOne" android:layout_column="0" android:layout_marginLeft="10dp"
                     android:text="@string/tvRelayOneName" android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"/>
                 <ToggleButton
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tgbRelayOne" android:layout_column="2" android:textOn="Включено"
-                    android:textOff="Выключено" />
+                    android:id="@+id/tgbRelayManageOne" android:layout_column="2" android:textOn="Включено"
+                    android:textOff="Выключено"
+                    android:onClick="ToggleButtonClick" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Автоматика"
+                    android:id="@+id/chbRelayManageAutoOne"
+                    android:layout_column="3"
+                    android:onClick="CheckBoxAutoModeClick" />
+
             </TableRow>
             <TableRow
                 android:layout_width="fill_parent"
@@ -49,13 +59,22 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayTwoName"
-                    android:id="@+id/tvRelayTwoName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:id="@+id/tvRelayManageNameTwo" android:layout_column="0" android:layout_marginLeft="10dp"
                     android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
                 <ToggleButton
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tgbRelayTwo" android:layout_column="2" android:textOff="Выключено"
-                    android:textOn="Включено" />
+                    android:id="@+id/tgbRelayManageTwo" android:layout_column="2" android:textOff="Выключено"
+                    android:textOn="Включено"
+                    android:onClick="ToggleButtonClick" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Автоматика"
+                    android:id="@+id/chbRelayManageAutoTwo"
+                    android:layout_column="3"
+                    android:onClick="CheckBoxAutoModeClick" />
             </TableRow>
             <TableRow
                 android:layout_width="fill_parent"
@@ -65,13 +84,22 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayThreeName"
-                    android:id="@+id/tvRelayThreeName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:id="@+id/tvRelayManageNameThree" android:layout_column="0" android:layout_marginLeft="10dp"
                     android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
                 <ToggleButton
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tgbRelayThree" android:layout_column="2" android:textOn="Включено"
-                    android:textOff="Выключено" />
+                    android:id="@+id/tgbRelayManageThree" android:layout_column="2" android:textOn="Включено"
+                    android:textOff="Выключено"
+                    android:onClick="ToggleButtonClick" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Автоматика"
+                    android:id="@+id/chbRelayManageAutoThree"
+                    android:layout_column="3"
+                    android:onClick="CheckBoxAutoModeClick" />
             </TableRow>
             <TableRow
                 android:layout_width="fill_parent"
@@ -81,13 +109,22 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/tvRelayFourName"
-                    android:id="@+id/tvRelayFourName" android:layout_column="0" android:layout_marginLeft="10dp"
+                    android:id="@+id/tvRelayManageNameFour" android:layout_column="0" android:layout_marginLeft="10dp"
                     android:layout_gravity="center_vertical" android:layout_marginRight="5dp"/>
                 <ToggleButton
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tgbRelayFour" android:layout_column="2" android:textOff="Выключено"
-                    android:textOn="Включено" />
+                    android:id="@+id/tgbRelayManageFour" android:layout_column="2" android:textOff="Выключено"
+                    android:textOn="Включено"
+                    android:onClick="ToggleButtonClick" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Автоматика"
+                    android:id="@+id/chbRelayManageAutoFour"
+                    android:layout_column="3"
+                    android:onClick="CheckBoxAutoModeClick" />
             </TableRow>
 
             <View

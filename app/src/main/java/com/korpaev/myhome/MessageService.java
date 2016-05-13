@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import android.widget.Toast;
+import android.text.TextUtils;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 public class MessageService extends IntentService
@@ -108,13 +107,27 @@ public class MessageService extends IntentService
 
             //Добавляем в лист записи по датчикам
             listSensorsInfo.add(new SmsRepository(context).addRowSensorsInfoToDb(sensorsInfoRow));
+
+            if (!TextUtils.isEmpty(sensorsInfoRow.get_bNumRelay()))
+            {
+                RelayRenamesDb relayRenamesDb = new RelayRenamesDb();
+                relayRenamesDb.set_numRelay(Integer.parseInt(sensorsInfoRow.get_bNumRelay()));
+                relayRenamesDb.set_idDevice(idDev);
+                relayRenamesDb.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
+                relayRenamesDb.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
+                relayRenamesDb.set_isAutomaticModeR(sensorsInfoRow.get_bManualManageRelay());
+                realm.copyToRealmOrUpdate(relayRenamesDb);
+            }
         }
 
+        //Получаем текущее устройство по которому пришли данные
         RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idDev).findAll();
         for (int k = 0; k <  devicesInfoDbs.size(); k++)
         {
             DevicesInfoDb devicesInfoDb = devicesInfoDbs.get(k);
 
+            //Вычищаем на всякий случай все записи  которые если что есть по такому же времени и номерам датчиков
+            //но время уникально вряд ли записи продублируются
             for (int j = 0; j < listSensorsInfo.size(); j++)
             {
                 RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class)
@@ -122,6 +135,14 @@ public class MessageService extends IntentService
                         .equalTo(TIMEFIELDNAME, listSensorsInfo.get(j).get_hTimeStamp())
                         .equalTo(NUMSENSORFIELDNAME, listSensorsInfo.get(j).get_hNumSensor())
                         .findAll();
+
+                //Перед тем как старые записи необходимо сохранить в новый список русские имена которые мы раньше завели
+                for (int m = 0; m < sensorsInfoDbs.size(); m++)
+                {
+                    listSensorsInfo.get(j).set_bLocationSensorRus(sensorsInfoDbs.get(m).get_bLocationSensorRus());
+                    listSensorsInfo.get(j).set_bLocationRelayRus(sensorsInfoDbs.get(m).get_bLocationRelayRus());
+                }
+
                 sensorsInfoDbs.clear();
                 devicesInfoDb.get_stateSystemRaws().add(listSensorsInfo.get(j));
             }
