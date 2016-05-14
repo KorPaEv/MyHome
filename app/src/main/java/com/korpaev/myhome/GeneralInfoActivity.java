@@ -128,16 +128,12 @@ public class GeneralInfoActivity extends Activity
         //Используем созданный файл данных SharedPreferences:
         sharedPref = getSharedPreferences(NAMESHAREDPREF, MODE_PRIVATE);
         _sBundleIdDevice = sharedPref.getString(IDFIELDNAME, null);
-        ibUpdate.setEnabled(false);
         SetDefaultValDeviceInfo();
         if (!TextUtils.isEmpty(_sBundleIdDevice))
         {
             ibUpdate.setEnabled(true);
+            ibUpdate.setImageResource(R.mipmap.ic_bupd);
             FillViews(_sBundleIdDevice);
-        }
-        else
-        {
-            ibUpdate.setEnabled(false);
         }
     }
 
@@ -212,6 +208,9 @@ public class GeneralInfoActivity extends Activity
     private void SetDefaultValDeviceInfo()
     {
         tvUpdateTime.setText(R.string.tvLastSaveTime);
+
+        ibUpdate.setEnabled(false);
+        ibUpdate.setImageResource(R.mipmap.ic_bupd_disable);
 
         _sPhoneArdGenInf = null;
         _sNameAdrGenInf = null;

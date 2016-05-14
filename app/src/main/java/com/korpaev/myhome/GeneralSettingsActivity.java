@@ -261,7 +261,8 @@ public class GeneralSettingsActivity extends Activity
                         sSensorsReNameArr[numSensor] = etSensorsReNameArr[numSensor].getText().toString();
                         sensorsInfoList.get(j).set_bLocationSensorRus(sSensorsReNameArr[numSensor]);
 
-                        if (!TextUtils.isEmpty(sensorsInfoList.get(j).get_bNumRelay())) {
+                        if (!TextUtils.isEmpty(sensorsInfoList.get(j).get_bNumRelay()))
+                        {
                             int numRelay = Integer.parseInt(sensorsInfoList.get(j).get_bNumRelay());
                             numRelay -= 1;
                             sRelayReNameArr[numRelay] = etRelaysReNameArr[numRelay].getText().toString();

@@ -114,12 +114,21 @@ public class RelayManageActivity extends Activity
             if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelayRus()))
             {
                 sRelayNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelayRus();
+                tgbRelaysStateArr[numRelay].setEnabled(true);
+                chbRelaysAutoModeArr[numRelay].setEnabled(true);
             }
             else if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelay()))
             {
                 sRelayNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelay();
+                tgbRelaysStateArr[numRelay].setEnabled(true);
+                chbRelaysAutoModeArr[numRelay].setEnabled(true);
             }
-            else sRelayNameArr[numRelay] = EMPTYDATA;
+            else
+            {
+                sRelayNameArr[numRelay] = EMPTYDATA;
+                tgbRelaysStateArr[numRelay].setEnabled(false);
+                chbRelaysAutoModeArr[numRelay].setEnabled(false);
+            }
             tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
 
             bRelaysStateArr[numRelay] = relayRenamesDbs.get(numRelay).get_bStateRelay();
@@ -156,30 +165,46 @@ public class RelayManageActivity extends Activity
                 _ardPhoneNumb = devicesInfoDbs.get(i).get_phoneNumbArduino();
                 sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
 
-                //получили номер датчика
-                int numSensor = sensorsInfoList.get(i).get_hNumSensor();
-                // -1 потому что массивы с нуля а данные по номеру датчика начинаются с 1
-                numSensor -= 1;
-
-                //смотрим если есть привязка реле к датчику
-                if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bNumRelay()))
+                for (int j = 0; j < sensorsInfoList.size(); j++)
                 {
-                    //то получаем номер реле которое привязано
-                    int numRelay = Integer.parseInt(sensorsInfoList.get(numSensor).get_bNumRelay());
-                    numRelay -= 1;
+                    //получили номер датчика
+                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
+                    // -1 потому что массивы с нуля а данные по номеру датчика начинаются с 1
+                    numSensor -= 1;
 
-                    if (!TextUtils.isEmpty(sensorsInfoList.get(numRelay).get_bLocationRelayRus()))
+                    //смотрим если есть привязка реле к датчику
+                    if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bNumRelay()))
                     {
-                        sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelayRus();
+                        //то получаем номер реле которое привязано
+                        int numRelay = Integer.parseInt(sensorsInfoList.get(numSensor).get_bNumRelay());
+                        numRelay -= 1;
+
+                        if (!TextUtils.isEmpty(sensorsInfoList.get(numRelay).get_bLocationRelayRus()))
+                        {
+                            sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelayRus();
+                            tgbRelaysStateArr[numRelay].setEnabled(true);
+                            chbRelaysAutoModeArr[numRelay].setEnabled(true);
+                        }
+                        else if (!TextUtils.isEmpty(sensorsInfoList.get(numRelay).get_bLocationRelay()))
+                        {
+                            sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelay();
+                            tgbRelaysStateArr[numRelay].setEnabled(true);
+                            chbRelaysAutoModeArr[numRelay].setEnabled(true);
+                        }
+                        else
+                        {
+                            sRelayNameArr[numRelay] = EMPTYDATA;
+                            tgbRelaysStateArr[numRelay].setEnabled(false);
+                            chbRelaysAutoModeArr[numRelay].setEnabled(false);
+                        }
+                        tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
+
+                        bRelaysStateArr[numRelay] = sensorsInfoList.get(numSensor).get_bStateRelay();
+                        tgbRelaysStateArr[numRelay].setChecked(bRelaysStateArr[numRelay]);
+
+                        bRelaysAutoModeArr[numRelay] = sensorsInfoList.get(numSensor).get_bManualManageRelay();
+                        chbRelaysAutoModeArr[numRelay].setChecked(bRelaysAutoModeArr[numRelay]);
                     }
-                    else sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelay();
-                    tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
-
-                    bRelaysStateArr[numRelay] = sensorsInfoList.get(numSensor).get_bStateRelay();
-                    tgbRelaysStateArr[numRelay].setChecked(bRelaysStateArr[numRelay]);
-
-                    bRelaysAutoModeArr[numRelay] = sensorsInfoList.get(numSensor).get_bManualManageRelay();
-                    chbRelaysAutoModeArr[numRelay].setChecked(bRelaysAutoModeArr[numRelay]);
                 }
             }
         }
@@ -202,8 +227,10 @@ public class RelayManageActivity extends Activity
             tvRelaysNameArr[j].setText(sRelayNameArr[j]);
             bRelaysStateArr[j] = false;
             tgbRelaysStateArr[j].setChecked(bRelaysStateArr[j]);
+            tgbRelaysStateArr[j].setEnabled(false);
             bRelaysAutoModeArr[j] = true;
             chbRelaysAutoModeArr[j].setChecked(bRelaysAutoModeArr[j]);
+            chbRelaysAutoModeArr[j].setEnabled(false);
         }
     }
     //endregion
@@ -414,13 +441,13 @@ public class RelayManageActivity extends Activity
                         //ТЕ КОТОРЫЕ ПРИВЯЗАНы ПЕРЕПИСЫВАЕМ
                         for (int k = 0; k < COUNTRELAYS; k++)
                         {
-                            if (!TextUtils.isEmpty(sensorsInfoList.get(k).get_bNumRelay()) &&
-                                    Integer.parseInt(sensorsInfoList.get(k).get_bNumRelay()) == (k + 1))
+                            if (!TextUtils.isEmpty(sensorsInfoList.get(j).get_bNumRelay()) &&
+                                Integer.parseInt(sensorsInfoList.get(j).get_bNumRelay()) == (k + 1))
                             {
                                 bRelaysStateArr[k] = tgbRelaysStateArr[k].isChecked();
                                 sensorsInfoList.get(k).set_bStateRelay(bRelaysStateArr[k]);
                                 bRelaysAutoModeArr[k] = chbRelaysAutoModeArr[k].isChecked();
-                                sensorsInfoList.get(k).set_bManualManageRelay(bRelaysAutoModeArr[k]);
+                                sensorsInfoList.get(j).set_bManualManageRelay(bRelaysAutoModeArr[k]);
                             }
                         }
                     }
@@ -490,12 +517,5 @@ public class RelayManageActivity extends Activity
     {
         super.onResume();
         FillData();
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        WriteDataToDb();
     }
 }
