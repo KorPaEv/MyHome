@@ -60,7 +60,8 @@
                         android:layout_centerHorizontal="true" />
                 </RelativeLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -70,33 +71,29 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvSensorOneName"
                         android:id="@+id/tvSensorConfNameArdOne"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorOne"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvSensorConfNameArdOne"
-                        android:layout_toEndOf="@+id/tvSensorConfNameArdOne" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="38dp"
                         android:text="OK"
                         android:id="@+id/btSaveSensorNameArdOne"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdSensorOne" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
 
-                <RelativeLayout
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -106,33 +103,29 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvSensorTwoName"
                         android:id="@+id/tvSensorConfNameArdTwo"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorTwo"
                         android:hint="Введите имя"
-                        android:layout_alignParentTop="true"
-                        android:layout_toRightOf="@+id/tvSensorConfNameArdTwo"
-                        android:layout_toEndOf="@+id/tvSensorConfNameArdTwo" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveSensorNameArdTwo"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdSensorTwo" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
 
-                <RelativeLayout
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -142,33 +135,28 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvSensorThreeName"
                         android:id="@+id/tvSensorConfNameArdThree"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorThree"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvSensorConfNameArdThree"
-                        android:layout_toEndOf="@+id/tvSensorConfNameArdThree" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveSensorNameArdThree"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdSensorThree" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+                </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -178,33 +166,29 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvSensorFourName"
                         android:id="@+id/tvSensorConfNameArdFour"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorFour"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvSensorConfNameArdFour"
-                        android:layout_toEndOf="@+id/tvSensorConfNameArdFour" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveSensorNameArdFour"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdSensorFour" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
 
-                <RelativeLayout
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -214,31 +198,26 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvSensorFiveName"
                         android:id="@+id/tvSensorConfNameArdFive"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorFive"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvSensorConfNameArdFive"
-                        android:layout_toEndOf="@+id/tvSensorConfNameArdFive" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveSensorNameArdFive"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdSensorFive" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -260,7 +239,8 @@
                         android:layout_marginTop="0dp" />
                 </RelativeLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -270,33 +250,28 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvRelayOneName"
                         android:id="@+id/tvRelayConfNameArdOne"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayOne"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvRelayConfNameArdOne"
-                        android:layout_toEndOf="@+id/tvRelayConfNameArdOne" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveRelayNameArdOne"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdRelayOne" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+                </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -306,33 +281,28 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvRelayTwoName"
                         android:id="@+id/tvRelayConfNameArdTwo"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayTwo"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvRelayConfNameArdTwo"
-                        android:layout_toEndOf="@+id/tvRelayConfNameArdTwo" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveRelayNameArdTwo"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdRelayTwo" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+                </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -342,33 +312,28 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvRelayThreeName"
                         android:id="@+id/tvRelayConfNameArdThree"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayThree"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvRelayConfNameArdThree"
-                        android:layout_toEndOf="@+id/tvRelayConfNameArdThree" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveRelayNameArdThree"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdRelayThree" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+                </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -378,31 +343,25 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/tvRelayFourName"
                         android:id="@+id/tvRelayConfNameArdFour"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginLeft="5dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayFour"
                         android:hint="Введите имя"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvRelayConfNameArdFour"
-                        android:layout_toEndOf="@+id/tvRelayConfNameArdFour" />
+                        android:layout_weight="1" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="OK"
                         android:id="@+id/btSaveRelayNameArdFour"
                         android:onClick="SendInfToArdFromAddConf"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignBottom="@+id/eConfNameArdRelayFour" />
-                </RelativeLayout>
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp" />
+                </LinearLayout>
             </LinearLayout>
 
 

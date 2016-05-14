@@ -313,13 +313,17 @@ public class AdditionalySettingsActivity extends Activity
 
     private void WriteDbData(int idView)
     {
+        String strSms;
         for (int i = 0; i < COUNTSENSORS; i++)
         {
             if (idView != rIdSaveSensorNameArdButtonArr[i])
             {
                 continue;
             }
-            SendSms(_ardPhoneNumb, "СЮДА ФОРМИРУЕМ ТЕКСТ ПО ДАТЧИКУ КОТОРЫЙ КОНФИГУРИРУЕМ"); //Отправили смс на ардину с новым именем
+            //DALLASRENAME;1;BathRoom
+            sNewSensorNameArdArr[i] = Translit.RusToLat(etNewSensorNameArdArr[i].getText().toString());
+            strSms = "DALLASRENAME;" + String.valueOf(i) + ";" + sNewSensorNameArdArr[i];
+            SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
             WriteDbSensors(i); //Переписали БД
         }
         for (int j = 0; j < COUNTRELAYS; j++)
@@ -328,16 +332,16 @@ public class AdditionalySettingsActivity extends Activity
             {
                 continue;
             }
-            SendSms(_ardPhoneNumb, "СЮДА ФОРМИРУЕМ ТЕКСТ ПО ДАТЧИКУ КОТОРЫЙ КОНФИГУРИРУЕМ"); //Отправили смс на ардину с новым именем
+            // RELAYRENAME;4;SweemingPool
+            sNewRelayNameArdArr[j] = Translit.RusToLat(etNewRelayNameArdArr[j].getText().toString());
+            strSms = "RELAYRENAME;" + String.valueOf(j) + ";" + sNewRelayNameArdArr[j];
+            SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
             WriteDbRelays(j);
         }
     }
 
     private void WriteDbSensors(int idArray)
     {
-        //получаем значение элемента инфу которого отправляем ардуине и сохраняем по нему в БД НО В ЛАТИНИЦЕ!!ЭТО НАЧАЛЬНОЕ ИМЯ
-        sNewSensorNameArdArr[idArray] = Translit.RusToLat(etNewSensorNameArdArr[idArray].getText().toString());
-
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
         //Получаем наш объект если он уже создан и хотим редактировать
@@ -379,9 +383,6 @@ public class AdditionalySettingsActivity extends Activity
 
     private void WriteDbRelays(int idArray)
     {
-        //получаем значение элемента инфу которого отправляем ардуине и сохраняем по нему в БД НО В ЛАТИНИЦЕ!!ЭТО НАЧАЛЬНОЕ ИМЯ
-        sNewRelayNameArdArr[idArray] = Translit.RusToLat(etNewRelayNameArdArr[idArray].getText().toString());
-
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
 
@@ -424,7 +425,6 @@ public class AdditionalySettingsActivity extends Activity
                 }
             }
         }
-
         realm.commitTransaction();
     }
     //endregion

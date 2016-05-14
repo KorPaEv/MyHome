@@ -153,6 +153,7 @@ public class DevicesActivity extends Activity implements OnItemClickListener
             RealmResults<AutorizedPhonesDb> resAutorized = realm.where(AutorizedPhonesDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             RealmResults<DevicesInfoDb> resDevInfo = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
+            RealmResults<RelayRenamesDb> relayRenamesDbs = realm.where(RelayRenamesDb.class).equalTo(IDFIELDNAME, _idDeviseBase64).findAll();
             realm.beginTransaction();
             for (int i = 0; i < resDevInfo.size(); i++)
             {
@@ -167,6 +168,12 @@ public class DevicesActivity extends Activity implements OnItemClickListener
                     SensorsInfoDb sensorsInfoDb = sensorsInfoDbs.get(k);
                     sensorsInfoDb.removeFromRealm();
                     sensorsInfoDbs.clear();
+                }
+                for (int m = 0; m < relayRenamesDbs.size(); m++)
+                {
+                    RelayRenamesDb relayRenamesDb = relayRenamesDbs.get(m);
+                    relayRenamesDb.removeFromRealm();
+                    relayRenamesDbs.clear();
                 }
                 DevicesInfoDb di = resDevInfo.get(i);
                 di.removeFromRealm();

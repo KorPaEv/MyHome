@@ -129,10 +129,15 @@ public class GeneralSettingsActivity extends Activity
             {
                 sRelayNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelay();
             }
-            else sRelayNameArr[numRelay] = EMPTYDATA;
+            else sRelayNameArr[numRelay] = null;
+
+            if (TextUtils.isEmpty(sRelayNameArr[numRelay]))
+            {
+                tvRelaysNameArr[numRelay].setText(EMPTYDATA);
+            }
+            else tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
 
             sRelayReNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelayRus();
-            tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
             etRelaysReNameArr[numRelay].setText(sRelayReNameArr[numRelay]);
         }
 
@@ -187,16 +192,16 @@ public class GeneralSettingsActivity extends Activity
     {
         for (int i = 0; i < COUNTSENSORS; i++)
         {
-            sSensorsNameArr[i] = EMPTYDATA;
+            sSensorsNameArr[i] = null;
             sSensorsReNameArr[i] = null;
-            tvSensorsNameArr[i].setText(sSensorsNameArr[i]);
+            tvSensorsNameArr[i].setText(EMPTYDATA);
             etSensorsReNameArr[i].setText(sSensorsReNameArr[i]);
         }
         for (int j = 0; j < COUNTRELAYS; j++)
         {
-            sRelayNameArr[j] = EMPTYDATA;
+            sRelayNameArr[j] = null;
             sRelayReNameArr[j] = null;
-            tvRelaysNameArr[j].setText(sRelayNameArr[j]);
+            tvRelaysNameArr[j].setText(EMPTYDATA);
             etRelaysReNameArr[j].setText(sRelayReNameArr[j]);
         }
     }
@@ -227,7 +232,6 @@ public class GeneralSettingsActivity extends Activity
                     relayRenamesDb.set_idDevice(_sIdDevice);
                     sRelayReNameArr[i] = etRelaysReNameArr[i].getText().toString();
                     relayRenamesDb.set_bLocationRelayRus(sRelayReNameArr[i]);
-                    sRelayNameArr[i] = tvRelaysNameArr[i].getText().toString();
                     relayRenamesDb.set_bLocationRelay(sRelayNameArr[i]);
                     realm.copyToRealmOrUpdate(relayRenamesDb);
                 }

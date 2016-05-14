@@ -6,6 +6,7 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -322,7 +323,8 @@ public class AddDeviceActivity extends Activity
         {
             if (rootToggleB.isChecked())
             {
-                //Тут дополнительно еще отправлять смс на ардуину при включенном руте
+                //String str = CreateSmsStr();
+                SendSms(_sPhoneArduino, "ТЕКСТ ИНФЫ ОБ УСТРОЙСТВЕ");
             }
             WriteDbRaws(); //Пишем в БД если все в порядке
             SaveSharedPref();
@@ -513,6 +515,14 @@ public class AddDeviceActivity extends Activity
         }
         res = Base64.encodeToString(base64DataArr, Base64.NO_WRAP); //Получаем base64 строку
         return res.trim();
+    }
+    //endregion
+
+    //region SendSms Функция отправки смс
+    public void SendSms(String number, String message)
+    {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(number, null, message, null, null);
     }
     //endregion
 
