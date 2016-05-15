@@ -58,6 +58,7 @@ public class RelayManageActivity extends Activity
     //region Переменные и массивы для хранения значений вьюх
     private String _sIdDevice; //Это ИД девайса который может прийти с другого активити
     private String _ardPhoneNumb; //Номер ардуины
+    private String textSms; //Текст смс сообщения для ардуины
     final String[] sRelayNameArr = new String[COUNTRELAYS];
     final Boolean[] bRelaysStateArr = new Boolean[COUNTRELAYS];
     final Boolean[] bRelaysAutoModeArr = new Boolean[COUNTRELAYS];
@@ -269,11 +270,18 @@ public class RelayManageActivity extends Activity
             {
                 if (!TextUtils.isEmpty(_ardPhoneNumb))
                 {
+                    //команда №реле имя реле    вкл-выкл (автоматически выключает автоматику и переводит в ручное управление)
+                    // RELAY;  1;  ON
                     if (tgbState)
                     {
-                        SendSms(_ardPhoneNumb, "СЮДА СФОРМИРОВАТЬ ТЕКСТ СМС ДЛЯ ВКЛ РЕЛЕ");
+                        textSms = "RELAY;" + String.valueOf(tgbId) + ";ON";
+                        SendSms(_ardPhoneNumb, textSms);
                     }
-                    else SendSms(_ardPhoneNumb, "СЮДА СФОРМИРОВАТЬ ТЕКСТ СМС ДЛЯ ВЫКЛ РЕЛЕ");
+                    else
+                    {
+                        textSms = "RELAY;" + String.valueOf(tgbId) + ";OFF";
+                        SendSms(_ardPhoneNumb, textSms);
+                    }
                     bRelaysAutoModeArr[tgbId] = false; //выключаем автоматику при ручном управлении
                     chbRelaysAutoModeArr[tgbId].setChecked(bRelaysAutoModeArr[tgbId]);
                     WriteDataToDb();
@@ -349,9 +357,12 @@ public class RelayManageActivity extends Activity
             {
                 if (!TextUtils.isEmpty(_ardPhoneNumb))
                 {
+                    //             вкл автоматику
+                    // RELAYAUTO; 4;  ON
                     if (chbState)
                     {
-                        SendSms(_ardPhoneNumb, "СЮДА СФОРМИРОВАТЬ ТЕКСТ СМС ДЛЯ ВКЛ АВТОМАТИКИ НА РЕЛЕ");
+                        textSms = "RELAYAUTO;" + String.valueOf(chbId) + ";ON";
+                        SendSms(_ardPhoneNumb, textSms);
                     }
                     bRelaysAutoModeArr[chbId] = true; //выключаем автоматику при ручном управлении
                     chbRelaysAutoModeArr[chbId].setChecked(bRelaysAutoModeArr[chbId]);

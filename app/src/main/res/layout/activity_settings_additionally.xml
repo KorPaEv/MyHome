@@ -387,9 +387,11 @@
                 android:id="@+id/sectionTemperatureEdges"
                 android:visibility="gone">
 
-                <TableRow
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -406,7 +408,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="НП"
                         android:id="@+id/textView13"
-                        android:layout_column="1"
                         android:layout_marginLeft="5dp" />
 
                     <EditText
@@ -415,17 +416,23 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMinTempEdgeSensorOne"
-                        android:layout_column="2"
+                        android:textSize="12sp"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#a7c4de"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:padding="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="ВП"
-                        android:id="@+id/textView19"
-                        android:layout_column="3" />
+                        android:id="@+id/textView19" />
 
                     <EditText
                         android:layout_width="wrap_content"
@@ -433,16 +440,22 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMaxTempEdgeSensorOne"
-                        android:layout_column="4"
+                        android:textSize="12sp"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="#f9c2c2"
+                        android:padding="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ПВ"
                         android:id="@+id/chbTurnOnRelayWithSensorOne"
-                        android:layout_column="5"
                         android:textSize="12sp" />
 
                     <CheckBox
@@ -450,7 +463,6 @@
                         android:layout_height="wrap_content"
                         android:text="ОВ"
                         android:id="@+id/chbTurnOffRelayWithSensorOne"
-                        android:layout_column="6"
                         android:textSize="12sp" />
 
                     <Button
@@ -459,13 +471,15 @@
                         android:layout_height="wrap_content"
                         android:text="ok"
                         android:id="@+id/btSaveTempEdgeSensorOne"
-                        android:layout_column="7"
-                        android:textSize="12sp" />
-                </TableRow>
+                        android:textSize="12sp"
+                        android:onClick="SendInfToArdFromAddConf" />
+                </LinearLayout>
 
-                <TableRow
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -482,7 +496,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="НП"
                         android:id="@+id/textView15"
-                        android:layout_column="1"
                         android:layout_marginLeft="5dp" />
 
                     <EditText
@@ -491,17 +504,23 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMinTempEdgeSensorFour"
-                        android:layout_column="2"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#a7c4de"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="ВП"
-                        android:id="@+id/textView20"
-                        android:layout_column="3" />
+                        android:id="@+id/textView20" />
 
                     <EditText
                         android:layout_width="wrap_content"
@@ -509,16 +528,22 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMaxTempEdgeSensorFour"
-                        android:layout_column="4"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#f9c2c2"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ПВ"
                         android:id="@+id/chbTurnOnRelayWithSensorFour"
-                        android:layout_column="5"
                         android:textSize="12sp" />
 
                     <CheckBox
@@ -526,7 +551,6 @@
                         android:layout_height="wrap_content"
                         android:text="ОВ"
                         android:id="@+id/chbTurnOffRelayWithSensorFour"
-                        android:layout_column="6"
                         android:textSize="12sp" />
 
                     <Button
@@ -535,13 +559,15 @@
                         android:layout_height="wrap_content"
                         android:text="ok"
                         android:id="@+id/btSaveTempEdgeSensorFour"
-                        android:layout_column="7"
-                        android:textSize="12sp" />
-                </TableRow>
+                        android:textSize="12sp"
+                        android:onClick="SendInfToArdFromAddConf" />
+                </LinearLayout>
 
-                <TableRow
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -558,7 +584,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="НП"
                         android:id="@+id/textView16"
-                        android:layout_column="1"
                         android:layout_marginLeft="5dp" />
 
                     <EditText
@@ -567,17 +592,23 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMinTempEdgeSensorFive"
-                        android:layout_column="2"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#a7c4de"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="ВП"
-                        android:id="@+id/textView21"
-                        android:layout_column="3" />
+                        android:id="@+id/textView21" />
 
                     <EditText
                         android:layout_width="wrap_content"
@@ -585,16 +616,22 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMaxTempEdgeSensorFive"
-                        android:layout_column="4"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#f9c2c2"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ПВ"
                         android:id="@+id/chbTurnOnRelayWithSensorFive"
-                        android:layout_column="5"
                         android:textSize="12sp" />
 
                     <CheckBox
@@ -602,7 +639,6 @@
                         android:layout_height="wrap_content"
                         android:text="ОВ"
                         android:id="@+id/chbTurnOffRelayWithSensorFive"
-                        android:layout_column="6"
                         android:textSize="12sp" />
 
                     <Button
@@ -611,13 +647,15 @@
                         android:layout_height="wrap_content"
                         android:text="ok"
                         android:id="@+id/btSaveTempEdgeSensorFive"
-                        android:layout_column="7"
-                        android:textSize="12sp" />
-                </TableRow>
+                        android:textSize="12sp"
+                        android:onClick="SendInfToArdFromAddConf" />
+                </LinearLayout>
 
-                <TableRow
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -634,7 +672,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="НП"
                         android:id="@+id/textView17"
-                        android:layout_column="1"
                         android:layout_marginLeft="5dp" />
 
                     <EditText
@@ -643,17 +680,23 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMinTempEdgeSensorThree"
-                        android:layout_column="2"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#a7c4de"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="ВП"
-                        android:id="@+id/textView22"
-                        android:layout_column="3" />
+                        android:id="@+id/textView22" />
 
                     <EditText
                         android:layout_width="wrap_content"
@@ -661,16 +704,22 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMaxTempEdgeSensorThree"
-                        android:layout_column="4"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#f9c2c2"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ПВ"
                         android:id="@+id/chbTurnOnRelayWithSensorThree"
-                        android:layout_column="5"
                         android:textSize="12sp" />
 
                     <CheckBox
@@ -678,7 +727,6 @@
                         android:layout_height="wrap_content"
                         android:text="ОВ"
                         android:id="@+id/chbTurnOffRelayWithSensorThree"
-                        android:layout_column="6"
                         android:textSize="12sp" />
 
                     <Button
@@ -687,13 +735,15 @@
                         android:layout_height="wrap_content"
                         android:text="ok"
                         android:id="@+id/btSaveTempEdgeSensorThree"
-                        android:layout_column="7"
-                        android:textSize="12sp" />
-                </TableRow>
+                        android:textSize="12sp"
+                        android:onClick="SendInfToArdFromAddConf" />
+                </LinearLayout>
 
-                <TableRow
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -710,7 +760,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="НП"
                         android:id="@+id/textView18"
-                        android:layout_column="1"
                         android:layout_marginLeft="5dp" />
 
                     <EditText
@@ -719,17 +768,23 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMinTempEdgeSensorTwo"
-                        android:layout_column="2"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#a7c4de"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="ВП"
-                        android:id="@+id/textView23"
-                        android:layout_column="3" />
+                        android:id="@+id/textView23" />
 
                     <EditText
                         android:layout_width="wrap_content"
@@ -737,16 +792,22 @@
                         android:inputType="number"
                         android:ems="10"
                         android:id="@+id/etMaxTempEdgeSensorTwo"
-                        android:layout_column="4"
                         android:width="40dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_weight="0.5"
+                        android:hint="00"
+                        android:background="#f9c2c2"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:padding="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ПВ"
                         android:id="@+id/chbTurnOnRelayWithSensorTwo"
-                        android:layout_column="5"
                         android:textSize="12sp" />
 
                     <CheckBox
@@ -754,7 +815,6 @@
                         android:layout_height="wrap_content"
                         android:text="ОВ"
                         android:id="@+id/chbTurnOffRelayWithSensorTwo"
-                        android:layout_column="6"
                         android:textSize="12sp" />
 
                     <Button
@@ -763,10 +823,9 @@
                         android:layout_height="wrap_content"
                         android:text="ok"
                         android:id="@+id/btSaveTempEdgeSensorTwo"
-                        android:layout_column="7"
-                        android:textSize="12sp" />
-                </TableRow>
-
+                        android:textSize="12sp"
+                        android:onClick="SendInfToArdFromAddConf" />
+                </LinearLayout>
             </LinearLayout>
 
             <View

@@ -21,6 +21,10 @@ public class SensorsInfoRow
     private String _bPinRelay; // пин реле
     private boolean _bStateRelay; // состояние реле
     private boolean _bManualManageRelay; //автоматика
+    private int _minTempEdge; // минимальный предел температуры
+    private int _maxTempEdge; // максимальный предел температуры
+    private boolean _turnOnRelayWithSensor; // щелкать ли реле при превышении температурных порогов
+    private boolean _turnOffRelayWithSensor; // щелкать ли реле при показаниях температуры в пределах заданных границ
 
     public String getId() { return idDevice; }
     public int get_hProtocolVer() { return _hProtocolVer; }
@@ -36,6 +40,10 @@ public class SensorsInfoRow
     public String get_bPinRelay() { return _bPinRelay; }
     public boolean get_bStateRelay() { return _bStateRelay; }
     public boolean get_bManualManageRelay() { return _bManualManageRelay; }
+    public int get_minTempEdge() { return _minTempEdge; }
+    public int get_maxTempEdge() { return _maxTempEdge; }
+    public boolean get_turnOnRelayWithSensor() { return _turnOnRelayWithSensor; }
+    public boolean get_turnOffRelayWithSensor() { return _turnOffRelayWithSensor; }
 
     public void setId(String idDev) { idDevice = idDev; }
     public void set_hProtocolVer(int hProtocolVer) { _hProtocolVer = hProtocolVer; }
@@ -51,6 +59,10 @@ public class SensorsInfoRow
     public void set_bStateRelay(String bStateRelay) { _bStateRelay = Boolean.getBoolean(bStateRelay); }
     public void set_bManualManageRelay(String bManualManageRelay) { _bManualManageRelay = Boolean.getBoolean(bManualManageRelay); }
     public void set_bLocationRelayRus(String bLocationRelayRus) { this._bLocationRelayRus = bLocationRelayRus; }
+    public void set_minTempEdge(int minTempEdge) { _minTempEdge = minTempEdge; }
+    public void set_maxTempEdge(int maxTempEdge) { _maxTempEdge = maxTempEdge; }
+    public void set_turnOnRelayWithSensor(boolean turnOnRelayWithSensor) { _turnOnRelayWithSensor = turnOnRelayWithSensor; }
+    public void set_turnOffRelayWithSensor(boolean turnOffRelayWithSensor) { _turnOffRelayWithSensor = turnOffRelayWithSensor; }
 
     public void ParseSms(String smsBody)
     {

@@ -323,8 +323,15 @@ public class AddDeviceActivity extends Activity
         {
             if (rootToggleB.isChecked())
             {
-                //String str = CreateSmsStr();
-                SendSms(_sPhoneArduino, "ТЕКСТ ИНФЫ ОБ УСТРОЙСТВЕ");
+                // ADDNUM;0;+79132188583;1;1;1
+                // ADDNUM;1;+79132188583;1;1;1
+                // ADDNUM;2;+79132188583;1;1;1
+                // ADDNUM;3;+79132188583;1;1;1
+                // ADDINF;1;Ard001;22, Dimitrova 81 - 59
+                if (CheckAutorizedNums())
+                {
+                    CreateAndSendSmsStr();
+                }
             }
             WriteDbRaws(); //Пишем в БД если все в порядке
             SaveSharedPref();
@@ -332,6 +339,92 @@ public class AddDeviceActivity extends Activity
             intent = new Intent(getBaseContext(), MainActivityTabs.class);
             startActivity(intent);
         }
+    }
+
+    private boolean CheckAutorizedNums()
+    {
+        for (int i = 0; i < sAutorizePhoneArray[i].length(); i++)
+        {
+            if (!TextUtils.isEmpty(sAutorizePhoneArray[i]) && sAutorizePhoneArray[i].length() != LENPHONENUMFULL)
+            {
+                etAutorizedPhoneArr[i].setError("Введите корректный формат (+7xxxxxxxxxx)");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void CreateAndSendSmsStr()
+    {
+        String res = ""; //Результирующая строка или остаток того что не влезло в упаковку
+
+        String strInf; //Строка инфы об устройстве
+        int lenStrInf; //длинна строки инфы
+
+        String strAddNum; //Строка разрешенного номера
+        int lenStrAddNum; //длинна строки разрешенного номера
+
+        String strTmpAddN = "";
+        int lenStrTmpAddNum = 0;
+        int shiftLen = 0;
+
+        //Собираем сначала инфу об устройстве
+        strInf = "ADDINF;" +
+                _sProtocolVer + ";" +
+                Translit.RusToLat(_sNameDevice) + ";" +
+                Translit.RusToLat(_sLocationAddr);
+        lenStrInf = strInf.length();
+
+        for (int i = 0; i < sAutorizePhoneArray[i].length(); i++)
+        {
+            if (TextUtils.isEmpty(sAutorizePhoneArray[i]))
+            {
+                continue;
+            }
+
+            //Собираем строку разрешенного номера
+            strAddNum = "ADDNUM;" +
+                         String.valueOf(i) + ";" +
+                         sAutorizePhoneArray[i] + ";" +
+                         BoolToIntStr(bSendSmsRightArr[i]) + ";" +
+                         BoolToIntStr(bSendCallRightArr[i]) + ";" +
+                         BoolToIntStr(bIsAdmNumArr[i]) + "\n";
+            lenStrAddNum = strAddNum.length();
+
+            //Смотрим если длинна инфы + длинна разрешенного не влазиют в одну пачку то отправляем сначала просто инфу
+            //Но строку с разрешенным номером сохраняем в остаток
+            //Далее собираем пачку смс по разрешенным номерам аналогичным образон, но строка инфы уже не участвует ее обнуляем
+            if (lenStrAddNum + lenStrTmpAddNum + shiftLen + lenStrInf >= 140)
+            {
+                if (res == "")
+                {
+                    res = strInf;
+                }
+                SendSms(_sPhoneArduino, res);
+                lenStrInf = 0;
+                strInf = "";
+                strTmpAddN = strAddNum; //сохраняем остаток, потом дописываем этот остаток
+                lenStrTmpAddNum = strTmpAddN.length(); //вычислили длину тела временной строки
+                shiftLen = 0; // обнуляем курсор на который сдвигать для записи следующей строки по датчику
+                res = "";
+            }
+            else
+            {
+                shiftLen += lenStrTmpAddNum + lenStrAddNum;
+                res += strTmpAddN + strAddNum + strInf;
+                strInf = "";
+                strTmpAddN = "";
+            }
+        }
+        if (res != "")
+        {
+            SendSms(_sPhoneArduino, res);
+        }
+    }
+
+    public static String BoolToIntStr(boolean bVal)
+    {
+        return bVal ? "1" : "0";
     }
 
     private boolean GenIdAndCheckUniqNum()
