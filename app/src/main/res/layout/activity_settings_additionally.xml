@@ -850,198 +850,200 @@
                 android:id="@+id/sectionConfSensorsWithRelay"
                 android:visibility="gone">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/tvSensorOneName"
-                        android:id="@+id/tvRelayWithSensorManageOne"
-                        android:layout_gravity="center_vertical"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ok"
-                        android:id="@+id/btSaveRelayWithSensorOne"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="РЕЛЕ"
+                    android:id="@+id/textView24"
+                    android:layout_marginLeft="10dp" />
 
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerRelayWithSensorOne"
-                        android:layout_toRightOf="@+id/tvRelayWithSensorManageOne"
-                        android:layout_toLeftOf="@+id/btSaveRelayWithSensorOne"
-                        android:layout_toStartOf="@+id/btSaveRelayWithSensorOne"
-                        android:layout_alignTop="@+id/btSaveRelayWithSensorOne"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:spinnerMode="dropdown" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="ДАТЧИК"
+                    android:id="@+id/textView25"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
 
-                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="СМС"
+                    android:id="@+id/textView26"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="10dp" />
+            </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#cd535353" android:layout_marginTop="5dp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/tvSensorTwoName"
-                        android:id="@+id/tvRelayWithSensorManageTwo"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerRelayWithSensorTwo"
-                        android:spinnerMode="dropdown"
-                        android:layout_alignTop="@+id/btSaveRelayWithSensorTwo"
-                        android:layout_toRightOf="@+id/tvRelayWithSensorManageTwo"
-                        android:layout_toLeftOf="@+id/btSaveRelayWithSensorTwo"
-                        android:layout_toStartOf="@+id/btSaveRelayWithSensorTwo"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayOneName"
+                    android:id="@+id/tvRelayWithSensorManageOne"
+                    android:layout_marginLeft="5dp" />
 
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ok"
-                        android:id="@+id/btSaveRelayWithSensorTwo"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
-                </RelativeLayout>
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinnerRelayWithSensorOne"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_weight="1" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СМС"
+                    android:id="@+id/chbConfSmsNoticeRelayWithSensorOne"
+                    android:checked="true" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/tvSensorThreeName"
-                        android:id="@+id/tvRelayWithSensorManageThree"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ok"
+                    android:id="@+id/btSaveRelayWithSensorOne"
+                    android:layout_marginRight="5dp"
+                    android:onClick="SendInfToArdFromAddConf" />
+            </LinearLayout>
 
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerRelayWithSensorThree"
-                        android:spinnerMode="dropdown"
-                        android:layout_alignTop="@+id/btSaveRelayWithSensorThree"
-                        android:layout_toRightOf="@+id/tvRelayWithSensorManageThree"
-                        android:layout_toLeftOf="@+id/btSaveRelayWithSensorThree"
-                        android:layout_toStartOf="@+id/btSaveRelayWithSensorThree"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginLeft="10dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ok"
-                        android:id="@+id/btSaveRelayWithSensorThree"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
-                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayTwoName"
+                    android:id="@+id/tvRelayWithSensorManageTwo"
+                    android:layout_marginLeft="5dp" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinnerRelayWithSensorTwo"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/tvSensorFourName"
-                        android:id="@+id/tvRelayWithSensorManageFour"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp" />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СМС"
+                    android:id="@+id/chbConfSmsNoticeRelayWithSensorTwo"
+                    android:checked="true" />
 
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerRelayWithSensorFour"
-                        android:layout_toRightOf="@+id/tvRelayWithSensorManageFour"
-                        android:layout_marginLeft="10dp"
-                        android:layout_toStartOf="@+id/btSaveRelayWithSensorFour"
-                        android:spinnerMode="dropdown"
-                        android:layout_alignTop="@+id/btSaveRelayWithSensorFour"
-                        android:layout_toLeftOf="@+id/btSaveRelayWithSensorFour"
-                        android:layout_marginRight="10dp" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ok"
+                    android:id="@+id/btSaveRelayWithSensorTwo"
+                    android:layout_marginRight="5dp"
+                    android:onClick="SendInfToArdFromAddConf" />
+            </LinearLayout>
 
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ok"
-                        android:id="@+id/btSaveRelayWithSensorFour"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
-                </RelativeLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayThreeName"
+                    android:id="@+id/tvRelayWithSensorManageThree"
+                    android:layout_marginLeft="5dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/tvSensorFiveName"
-                        android:id="@+id/tvRelayWithSensorManageFive"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp" />
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinnerRelayWithSensorThree"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1" />
 
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerRelayWithSensorFive"
-                        android:layout_toRightOf="@+id/tvRelayWithSensorManageFive"
-                        android:layout_marginLeft="10dp"
-                        android:layout_toLeftOf="@+id/btSaveRelayWithSensorFive"
-                        android:layout_toStartOf="@+id/btSaveRelayWithSensorFive"
-                        android:spinnerMode="dropdown"
-                        android:layout_marginRight="10dp"
-                        android:layout_alignTop="@+id/btSaveRelayWithSensorFive" />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СМС"
+                    android:id="@+id/chbConfSmsNoticeRelayWithSensorThree"
+                    android:checked="true" />
 
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ok"
-                        android:id="@+id/btSaveRelayWithSensorFive"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ok"
+                    android:id="@+id/btSaveRelayWithSensorThree"
+                    android:layout_marginRight="5dp"
+                    android:onClick="SendInfToArdFromAddConf" />
+            </LinearLayout>
 
-                </RelativeLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/tvRelayFourName"
+                    android:id="@+id/tvRelayWithSensorManageFour"
+                    android:layout_marginLeft="5dp" />
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinnerRelayWithSensorFour"
+                    android:layout_marginLeft="5dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СМС"
+                    android:id="@+id/chbConfSmsNoticeRelayWithSensorFour"
+                    android:checked="true" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ok"
+                    android:id="@+id/btSaveRelayWithSensorFour"
+                    android:layout_marginRight="5dp"
+                    android:onClick="SendInfToArdFromAddConf" />
             </LinearLayout>
 
             <View

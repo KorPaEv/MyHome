@@ -30,14 +30,4 @@ public class DeviceInfoRow
     public void setAddressDevice(String addrDev) { addressDevice = addrDev; }
     public void setProtovolVerDev(int protovolV) { protovolVerDev = protovolV; }
     public void setPhoneArduino(String phoneArd) { phoneArduino = phoneArd; }
-
-    //1;Dom;Dimitrova;
-    public void ParseRow(String row)
-    {
-        String[] splitRows;
-        splitRows = row.split(";");
-        setProtovolVerDev(Integer.parseInt(splitRows[0]));
-        setNameDevice(splitRows[1]);
-        setAddressDevice(splitRows[2]);
-    }
 }
