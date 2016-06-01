@@ -39,6 +39,10 @@ public class HistoryActivity extends Activity
         // ищем наш пункт меню
         switch (itemId)
         {
+            case R.id.pref:
+                intent = new Intent(HistoryActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.about:
                 intent = new Intent(HistoryActivity.this, AboutActivity.class);
                 startActivity(intent);

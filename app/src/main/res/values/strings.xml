@@ -9,6 +9,7 @@
 
     <string name="main_inf">Контроль</string>
     <string name="conf">Конфигурация</string>
+    <string name="pref">Настройки</string>
     <string name="about">О приложении</string>
     <string name="devices">Мои устройства</string>
     <string name="history">История</string>
