@@ -62,6 +62,10 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
 
+        <activity android:name=".PrefActivity"
+            android:label="@string/pref">
+        </activity>
+
         <activity android:name=".AboutActivity"
             android:label="@string/about">
         </activity>
