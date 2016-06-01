@@ -116,6 +116,10 @@ public class DevicesActivity extends Activity implements OnItemClickListener
         // ищем наш пункт меню
         switch (itemId)
         {
+            case R.id.pref:
+                intent = new Intent(DevicesActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.about:
                 intent = new Intent(DevicesActivity.this, AboutActivity.class);
                 startActivity(intent);

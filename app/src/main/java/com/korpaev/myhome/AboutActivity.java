@@ -41,6 +41,10 @@ public class AboutActivity extends Activity
         // ищем наш пункт меню
         switch (itemId)
         {
+            case R.id.pref:
+                intent = new Intent(AboutActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.conf:
                 intent = new Intent(AboutActivity.this, SettingsActivityTabs.class);
                 startActivity(intent);
