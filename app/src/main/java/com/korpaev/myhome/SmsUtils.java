@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.provider.Telephony.Sms.Intents;
+import android.text.TextUtils;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -53,7 +54,8 @@ public final class SmsUtils
             try
             {
                 //ТУТ ПОТОМ ПЕРЕДЕЛАТЬ ЧТОБЫ ИНФА ПО ДЕВАЙСУ ТОЖЕ ПРИХОДИЛА В ФОРМАТЕ 8 БИТ!!!! СЕЙЧАС ПОКА ТАКАЯ ГРАБЛЯ!!!
-                if (sms.getMessageBody().length() > 1)
+
+                if (!TextUtils.isEmpty(sms.getMessageBody()))
                 {
                     smsBody = sms.getMessageBody();
                 }

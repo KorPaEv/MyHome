@@ -13,6 +13,7 @@ public class SensorsInfoDb extends RealmObject
     private String _bLocationSensor; // расположение датчика
     private String _bLocationSensorRus; // расположение датчика на русском для переименования
     private String _bValSensor; // значение датчика
+    private boolean _bSmsNoticeSensor; //смс оповещение по текущему датчику
     private String _bNumRelay; // номер реле
     private String _bLocationRelay; // расположение реле
     private String _bLocationRelayRus; // расположение реле на русском для переименования привязанного
@@ -23,6 +24,7 @@ public class SensorsInfoDb extends RealmObject
     private int _maxTempEdge; // максимальный предел температуры
     private boolean _turnOnRelayWithSensor; // щелкать ли реле при превышении температурных порогов
     private boolean _turnOffRelayWithSensor; // щелкать ли реле при показаниях температуры в пределах заданных границ
+    private int _gasEdge; //порог на датчик газа
 
     //Тут имена полей и имена методов get и set должны совпадать!!! Это особенность либы
     public String get_idDevice() { return _idDevice; }
@@ -34,6 +36,7 @@ public class SensorsInfoDb extends RealmObject
     public String get_bLocationSensor() { return _bLocationSensor; }
     public String get_bLocationSensorRus() { return _bLocationSensorRus; }
     public String get_bValSensor() { return _bValSensor; }
+    public boolean get_bSmsNoticeSensor() { return _bSmsNoticeSensor; }
     public String get_bNumRelay() { return _bNumRelay; }
     public String get_bLocationRelay() { return _bLocationRelay; }
     public String get_bLocationRelayRus() { return _bLocationRelayRus; }
@@ -44,6 +47,7 @@ public class SensorsInfoDb extends RealmObject
     public int get_maxTempEdge() { return _maxTempEdge; }
     public boolean get_turnOnRelayWithSensor() { return _turnOnRelayWithSensor; }
     public boolean get_turnOffRelayWithSensor() { return _turnOffRelayWithSensor; }
+    public int get_gasEdge() { return _gasEdge; }
 
     public void set_idDevice(String idDevice) { this._idDevice = idDevice; }
     public void set_hProtocolVer(int hProtocolVer) { this._hProtocolVer = hProtocolVer; }
@@ -54,6 +58,7 @@ public class SensorsInfoDb extends RealmObject
     public void set_bLocationSensor(String bLocationSensor) { this._bLocationSensor = bLocationSensor; }
     public void set_bLocationSensorRus(String bLocationSensorRus) { this._bLocationSensorRus = bLocationSensorRus; }
     public void set_bValSensor(String bValSensor) { this._bValSensor = bValSensor; }
+    public void set_bSmsNoticeSensor(boolean bSmsNoticeSensor) { this._bSmsNoticeSensor = bSmsNoticeSensor; }
     public void set_bNumRelay(String bNumRelay) { this._bNumRelay = bNumRelay; }
     public void set_bLocationRelay(String bLocationRelay) { this._bLocationRelay = bLocationRelay; }
     public void set_bLocationRelayRus(String bLocationRelayRus) { this._bLocationRelayRus = bLocationRelayRus; }
@@ -64,4 +69,5 @@ public class SensorsInfoDb extends RealmObject
     public void set_maxTempEdge(int maxTempEdge) { _maxTempEdge = maxTempEdge; }
     public void set_turnOnRelayWithSensor(boolean turnOnRelayWithSensor) { _turnOnRelayWithSensor = turnOnRelayWithSensor; }
     public void set_turnOffRelayWithSensor(boolean turnOffRelayWithSensor) { _turnOffRelayWithSensor = turnOffRelayWithSensor; }
+    public void set_gasEdge(int gasEdge) { _gasEdge = gasEdge; }
 }

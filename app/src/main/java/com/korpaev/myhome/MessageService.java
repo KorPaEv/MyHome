@@ -23,7 +23,10 @@ public class MessageService extends IntentService
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String TIMEFIELDNAME = "_hTimeStamp"; //Имя поля БД
     private final String NUMSENSORFIELDNAME = "_hNumSensor"; //Имя поля БД
+    private final String LOCRELAYRUSFIELDNAME= "_bLocationRelayRus";
+    private final String LOCSENSORRUSFIELDNAME= "_bLocationSensorRus";
     private final String NAMESHAREDPREF= "IdDevicePref";
+    private final int PACKSMSCOUNT = 6;
     //endregion
 
     //region Переменные и массивы
@@ -41,13 +44,14 @@ public class MessageService extends IntentService
     {
         //Прочитали то что передал рессивер
         Bundle extras = intent.getExtras();
+
         if(extras != null)
         {
             // получили текст и номер сообщения
             smsBody = extras.getString("sms_body");
             smsFrom = extras.getString("sms_from");
             //Парсим и пишем в БД данные смс
-            //WriteDataToDB(smsBody);
+            WriteDataToDB(smsBody, getBaseContext());
 
             //---------------------------------------ДОПИСАТЬ
             //Запускаем главный активити с переданными из БД данными
@@ -61,7 +65,7 @@ public class MessageService extends IntentService
 
     public void WriteDataToDB(String string, Context context)
     {
-        smsFrom = "+79236440918"; //ДЛЯ ТЕСТОВ
+        //smsFrom = "+79236440918"; //ДЛЯ ТЕСТОВ
 
         //Разбиваем смс на строки
         if (string.startsWith("SH", 0))
@@ -114,36 +118,73 @@ public class MessageService extends IntentService
                 relayRenamesDb.set_numRelay(Integer.parseInt(sensorsInfoRow.get_bNumRelay()));
                 relayRenamesDb.set_idDevice(idDev);
                 relayRenamesDb.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
+                relayRenamesDb.set_bLocationRelayRus("");
                 relayRenamesDb.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
-                relayRenamesDb.set_isAutomaticModeR(sensorsInfoRow.get_bManualManageRelay());
+                relayRenamesDb.set_isAutomaticModeR(!sensorsInfoRow.get_bManualManageRelay());
                 realm.copyToRealmOrUpdate(relayRenamesDb);
             }
         }
 
-        //Получаем текущее устройство по которому пришли данные
+        //Переписываем имена русские которые уже есть в БД
         RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, idDev).findAll();
+        RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idDev).findAll();
         for (int k = 0; k <  devicesInfoDbs.size(); k++)
         {
             DevicesInfoDb devicesInfoDb = devicesInfoDbs.get(k);
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() > 0)
+            {
+                if (sensorsInfoDbs.size() <= PACKSMSCOUNT)
+                {
+                    //Получаем максимальное время
+                    maxTimeStamp = sensorsInfoDbs.max(TIMEFIELDNAME).intValue();
 
-            //Вычищаем на всякий случай все записи  которые если что есть по такому же времени и номерам датчиков
-            //но время уникально вряд ли записи продублируются
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, idDev)
+                            .equalTo(TIMEFIELDNAME, maxTimeStamp)
+                            .findAll();
+                }
+                else
+                {
+                    //Получаем максимальное время
+                    maxTimeStamp = sensorsInfoDbs.max(TIMEFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, idDev)
+                            .equalTo(TIMEFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    //если у нас записей в пачке мало, то выбираем целую пачку
+                    if (sensorsInfoDbs.size() != PACKSMSCOUNT)
+                    {
+                        sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                                .lessThan(TIMEFIELDNAME, maxTimeStamp)
+                                .findAll();
+
+                        maxTimeStamp = sensorsInfoDbs.max(TIMEFIELDNAME).intValue();
+
+                        sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                                .equalTo(TIMEFIELDNAME, maxTimeStamp)
+                                .findAll();
+                    }
+                }
+            }
+
+            //старые записи необходимо сохранить в новый список русские имена которые мы раньше завели
             for (int j = 0; j < listSensorsInfo.size(); j++)
             {
-                RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class)
-                        .equalTo(IDFIELDNAME, idDev)
-                        .equalTo(TIMEFIELDNAME, listSensorsInfo.get(j).get_hTimeStamp())
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
                         .equalTo(NUMSENSORFIELDNAME, listSensorsInfo.get(j).get_hNumSensor())
+                        .notEqualTo(LOCSENSORRUSFIELDNAME, "")
+                        .or()
+                        .notEqualTo(LOCRELAYRUSFIELDNAME, "")
                         .findAll();
 
-                //Перед тем как старые записи необходимо сохранить в новый список русские имена которые мы раньше завели
                 for (int m = 0; m < sensorsInfoDbs.size(); m++)
                 {
                     listSensorsInfo.get(j).set_bLocationSensorRus(sensorsInfoDbs.get(m).get_bLocationSensorRus());
                     listSensorsInfo.get(j).set_bLocationRelayRus(sensorsInfoDbs.get(m).get_bLocationRelayRus());
                 }
-
-                sensorsInfoDbs.clear();
                 devicesInfoDb.get_stateSystemRaws().add(listSensorsInfo.get(j));
             }
         }

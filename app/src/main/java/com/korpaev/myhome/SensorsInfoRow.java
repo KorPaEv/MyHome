@@ -3,10 +3,11 @@ package com.korpaev.myhome;
 public class SensorsInfoRow
 {
     final String EMPTYDATA = "ArdNoNameS-";
-    //Формат передаваемой строки ДАЛЛАС: Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay;locationR;relayPin;pinState
-    //                           или     Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;idRelay(RN UNDEFINE)
-    //Формат передаваемой строки ГАЗ:    Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;idRelay;locationR;relayPin;stateGas
-    //                           или     Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;gasRelay(RN UNDEFINE)
+    final String EMPTYRELAYWITHSENSOR = "999";
+    //Формат передаваемой строки ДАЛЛАС: Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;smsNotice;idRelay;locationR;relayPin;pinState
+    //                           или     Pver;Timestamp;NumSensor;LenBody;locSensor;currTemp;smsNotice;idRelay(RN UNDEFINE)
+    //Формат передаваемой строки ГАЗ:    Pver;Timestamp;NumSensor;LenBody;Gas;curGasValue;smsNotice;idRelay;locationR;relayPin;stateGas
+    //                           или     Pver;Timestamp;NumSensor;LenBody;Gas;limitGas;smsNotice;gasRelay(RN UNDEFINE)
     private String idDevice;
     private int _hProtocolVer; // версия протокола
     private int _hTimeStamp; // время юниксовое - передавалось в секундах uint32
@@ -15,6 +16,7 @@ public class SensorsInfoRow
     private String _bLocationSensor; // расположение датчика
     private String _bLocationSensorRus; // расположение датчика на русском для переименования
     private String _bValSensor; // значение датчика
+    private boolean _bSmsNoticeSensor; //смс оповещение по текущему датчику
     private String _bNumRelay; // номер реле
     private String _bLocationRelay; // расположение реле
     private String _bLocationRelayRus; // расположение реле на русском для переименования привязанного
@@ -25,6 +27,7 @@ public class SensorsInfoRow
     private int _maxTempEdge; // максимальный предел температуры
     private boolean _turnOnRelayWithSensor; // щелкать ли реле при превышении температурных порогов
     private boolean _turnOffRelayWithSensor; // щелкать ли реле при показаниях температуры в пределах заданных границ
+    private int _gasEdge; //порог на датчик газа
 
     public String getId() { return idDevice; }
     public int get_hProtocolVer() { return _hProtocolVer; }
@@ -34,6 +37,7 @@ public class SensorsInfoRow
     public String get_bLocationSensor() { return _bLocationSensor; }
     public String get_bLocationSensorRus() { return _bLocationSensorRus; }
     public String get_bValSensor() { return _bValSensor; }
+    public boolean get_bSmsNoticeSensor() { return _bSmsNoticeSensor; }
     public String get_bNumRelay() { return _bNumRelay; }
     public String get_bLocationRelay() { return _bLocationRelay; }
     public String get_bLocationRelayRus() { return _bLocationRelayRus; }
@@ -44,6 +48,7 @@ public class SensorsInfoRow
     public int get_maxTempEdge() { return _maxTempEdge; }
     public boolean get_turnOnRelayWithSensor() { return _turnOnRelayWithSensor; }
     public boolean get_turnOffRelayWithSensor() { return _turnOffRelayWithSensor; }
+    public int get_gasEdge() { return _gasEdge; }
 
     public void setId(String idDev) { idDevice = idDev; }
     public void set_hProtocolVer(int hProtocolVer) { _hProtocolVer = hProtocolVer; }
@@ -53,16 +58,45 @@ public class SensorsInfoRow
     public void set_bLocationSensor(String bLocationSensor) { _bLocationSensor = bLocationSensor; }
     public void set_bLocationSensorRus(String bLocationSensorRus) { this._bLocationSensorRus = bLocationSensorRus; }
     public void set_bValSensor(String bValSensor) { _bValSensor = bValSensor; }
+
+    public void set_bSmsNoticeSensor(String bSmsNoticeSensor)
+    {
+        boolean flag = bSmsNoticeSensor.equals("1");
+        if (flag)
+        {
+            _bSmsNoticeSensor = true;
+        }
+        else _bSmsNoticeSensor = false;
+    }
+
     public void set_bNumRelay(String bNumRelay) { _bNumRelay = bNumRelay; }
     public void set_bLocationRelay(String bLocationRelay) { _bLocationRelay = bLocationRelay; }
     public void set_bPinRelay(String bPinRelay) { _bPinRelay = bPinRelay; }
-    public void set_bStateRelay(String bStateRelay) { _bStateRelay = Boolean.getBoolean(bStateRelay); }
-    public void set_bManualManageRelay(String bManualManageRelay) { _bManualManageRelay = Boolean.getBoolean(bManualManageRelay); }
+
+    public void set_bStateRelay(String bStateRelay)
+    {
+        boolean flag = bStateRelay.equals("1");
+        if (flag) {
+            this._bStateRelay = true;
+        }
+        else this._bStateRelay = false;
+    }
+
+    public void set_bManualManageRelay(String bManualManageRelay)
+    {
+        boolean flag = bManualManageRelay.equals("1");
+        if (flag) {
+            this._bManualManageRelay = true;
+        }
+        else this._bManualManageRelay = false;
+    }
+
     public void set_bLocationRelayRus(String bLocationRelayRus) { this._bLocationRelayRus = bLocationRelayRus; }
     public void set_minTempEdge(int minTempEdge) { _minTempEdge = minTempEdge; }
     public void set_maxTempEdge(int maxTempEdge) { _maxTempEdge = maxTempEdge; }
     public void set_turnOnRelayWithSensor(boolean turnOnRelayWithSensor) { _turnOnRelayWithSensor = turnOnRelayWithSensor; }
     public void set_turnOffRelayWithSensor(boolean turnOffRelayWithSensor) { _turnOffRelayWithSensor = turnOffRelayWithSensor; }
+    public void set_gasEdge(int gasEdge) { _gasEdge = gasEdge; }
 
     public void ParseSms(String smsBody)
     {
@@ -80,9 +114,13 @@ public class SensorsInfoRow
         }
         else set_bLocationSensor(splitSmsBody[4].trim());
 
-        set_bValSensor(splitSmsBody[5].trim());
+        set_bLocationSensorRus("");
+        set_bLocationRelayRus("");
 
-        if (splitSmsBody[6].trim().equals("RN"))
+        set_bValSensor(splitSmsBody[5].trim());
+        set_bSmsNoticeSensor(splitSmsBody[6].trim());
+
+        if (splitSmsBody[7].trim().equals("RN") || splitSmsBody[7].trim().equals(EMPTYRELAYWITHSENSOR))
         {
             set_bNumRelay(null);
             set_bLocationRelay(null);
@@ -92,11 +130,12 @@ public class SensorsInfoRow
         }
         else
         {
-            set_bNumRelay(splitSmsBody[6].trim());
-            set_bLocationRelay(splitSmsBody[7].trim());
-            set_bPinRelay(splitSmsBody[8].trim());
-            set_bStateRelay(splitSmsBody[9].trim());
-            set_bManualManageRelay(splitSmsBody[10].trim());
+            Integer numR = Integer.parseInt(splitSmsBody[7].trim()) + 1;
+            set_bNumRelay(String.valueOf(numR));
+            set_bLocationRelay(splitSmsBody[8].trim());
+            set_bPinRelay(splitSmsBody[9].trim());
+            set_bStateRelay(splitSmsBody[10].trim());
+            set_bManualManageRelay(splitSmsBody[11].trim());
         }
     }
 }

@@ -26,12 +26,15 @@ public class SmsRepository
         sensorsInfoDB.set_hLenBody(sensorsInfoRow.get_hLenBody());
 
         sensorsInfoDB.set_bLocationSensor(sensorsInfoRow.get_bLocationSensor());
+        sensorsInfoDB.set_bLocationSensorRus(sensorsInfoRow.get_bLocationSensorRus());
         sensorsInfoDB.set_bValSensor(sensorsInfoRow.get_bValSensor());
+        sensorsInfoDB.set_bSmsNoticeSensor(sensorsInfoRow.get_bSmsNoticeSensor());
         sensorsInfoDB.set_bNumRelay(sensorsInfoRow.get_bNumRelay());
         sensorsInfoDB.set_bLocationRelay(sensorsInfoRow.get_bLocationRelay());
+        sensorsInfoDB.set_bLocationRelayRus(sensorsInfoRow.get_bLocationRelayRus());
         sensorsInfoDB.set_bPinRelay(sensorsInfoRow.get_bPinRelay());
         sensorsInfoDB.set_bStateRelay(sensorsInfoRow.get_bStateRelay());
-        sensorsInfoDB.set_bManualManageRelay(sensorsInfoRow.get_bManualManageRelay());
+        sensorsInfoDB.set_bManualManageRelay(!sensorsInfoRow.get_bManualManageRelay());
         return sensorsInfoDB;
     }
 

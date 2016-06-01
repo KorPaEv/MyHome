@@ -3,7 +3,6 @@ package com.korpaev.myhome;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,14 +17,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class AdditionalySettingsActivity extends Activity {
@@ -35,6 +31,7 @@ public class AdditionalySettingsActivity extends Activity {
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String TIMESTAMPFIELDNAME = "_hTimeStamp";
     private final String SENSORSINFOTABLENAME = "_stateSystemRaws";
+    private final int PACKSMSCOUNT = 6;
     private final int COUNTSENSORS = 5;
     private final int COUNTRELAYS = 4;
     private final int UNDEFINED = 999;
@@ -122,12 +119,19 @@ public class AdditionalySettingsActivity extends Activity {
             R.id.btSaveRelayWithSensorTwo,
             R.id.btSaveRelayWithSensorThree,
             R.id.btSaveRelayWithSensorFour};
+    final int[] rIdSmsNoticeRelayWithSensorChbArdArr = {R.id.chbConfSmsNoticeRelayWithSensorOne,
+            R.id.chbConfSmsNoticeRelayWithSensorTwo,
+            R.id.chbConfSmsNoticeRelayWithSensorThree,
+            R.id.chbConfSmsNoticeRelayWithSensorFour};
+
+    final int rIdSpinnerSensorsForGas = R.id.spConfGasSensorWithRelays;
     //endregion
 
     //region МАССИВЫ ВЬЮХ АКТИВИТИ ИЛИ ПРОСТО ВЬЮХИ
     View tvSectionConfSensorNamesArd, vSectionConfSensorNamesArd,
-            tvSectionTemperatureEdges, vSectionTemperatureEdges,
-            tvSectionConfSensorsWithRelay, vSectionConfSensorsWithRelay;
+         tvSectionTemperatureEdges, vSectionTemperatureEdges,
+         tvSectionConfSensorsWithRelay, vSectionConfSensorsWithRelay,
+         tvSectionConfGasPref, vSectionConfGasPref;
     final TextView[] tvCurrSensorNameArdArr = new TextView[COUNTSENSORS];
     final EditText[] etNewSensorNameArdArr = new EditText[COUNTSENSORS];
     final Button[] btSaveSensorNameArdButtonArr = new Button[COUNTSENSORS];
@@ -145,7 +149,14 @@ public class AdditionalySettingsActivity extends Activity {
 
     final TextView[] tvRelayWithSensorManageNameArdArr = new TextView[COUNTRELAYS];
     final Spinner[] spSpinnerRelayWithSensorArdArr = new Spinner[COUNTRELAYS];
+    final CheckBox[] chbConfSmsNoticeRelayWithSensorArdArr = new CheckBox[COUNTRELAYS];
     final Button[] btSaveRelayWithSensorButtonArdArr = new Button[COUNTRELAYS];
+
+    TextView tvGasName;
+    EditText etGasEdge;
+    Spinner spRelayForGas;
+    CheckBox chbSmsNoticeGas;
+    Button btSaveGasPref;
     //endregion
 
     //region Переменные и массивы для хранения значений вьюх
@@ -165,25 +176,34 @@ public class AdditionalySettingsActivity extends Activity {
     final Boolean[] sTurnOffRelayWithSensorArdArr = new Boolean[COUNTSENSORS];
 
     final String[] sRelayWithSensorManageNameArdArr = new String[COUNTRELAYS];
+    final Boolean[] bConfSmsNoticeRelayWithSensorArdArr = new Boolean[COUNTRELAYS];
 
-    ArrayAdapter<String> spinnerAdapter;
-    private int _idCurrSpinner;
+    ArrayAdapter<String> spinnerAdapterForSensors;
+    ArrayAdapter<String> spinnerAdapterForRelays;
     private int _numSensorArrayElement;
+    private int _numRelayArrayElement;
+
+    private String sGasName;
+    private int iGasEdge;
+    private boolean bSmsNoticeGas;
     //endregion
 
-    private void set_idCurrSpinner(int idCurrSpinner) { _idCurrSpinner = idCurrSpinner; }
     private void set_numSensorArrayElement(int numSensorArrayElement) { _numSensorArrayElement = numSensorArrayElement; }
-    private int get_idCurrSpinner() { return _idCurrSpinner; }
+    private void set_numRelayArrayElement(int numRelayArrayElement) { _numRelayArrayElement = numRelayArrayElement; }
     private int get_numSensorArrayElement() { return _numSensorArrayElement; }
+    private int get_numRelayArrayElement() { return _numRelayArrayElement; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_additionally);
 
-        //region адаптер под спинер
-        spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sCurrSensorNameArdArr);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //region адаптеры под спинер
+        spinnerAdapterForSensors = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sCurrSensorNameArdArr);
+        spinnerAdapterForSensors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinnerAdapterForRelays = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sCurrRelayNameArdArr);
+        spinnerAdapterForRelays.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //endregion
 
         FindViews(); //Ищем вьюхи на экране и заполняем массивы объектами
@@ -232,6 +252,21 @@ public class AdditionalySettingsActivity extends Activity {
             }
         });
         //endregion
+
+        //region Оработчик раскрытия списка конфигурации датчика газа
+        tvSectionConfGasPref.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (vSectionConfGasPref.getVisibility() == View.GONE) {
+                    tvSectionConfGasPref.setBackgroundColor(0xC73B3A48);
+                    vSectionConfGasPref.setVisibility(View.VISIBLE);
+                } else {
+                    tvSectionConfGasPref.setBackgroundColor(0xFF92AE99);
+                    vSectionConfGasPref.setVisibility(View.GONE);
+                }
+            }
+        });
+        //endregion
     }
 
     private AdapterView.OnItemSelectedListener itemSpinnerSelected = new AdapterView.OnItemSelectedListener()
@@ -241,12 +276,11 @@ public class AdditionalySettingsActivity extends Activity {
         {
             for (int i = 0; i < COUNTRELAYS; i++)
             {
-                if (spinnerView.getId() != rIdSpinnerRelayWithSensorArdArr[i])
+                if (spinnerView.getId() == rIdSpinnerRelayWithSensorArdArr[i])
                 {
-                    continue;
+                    chbConfSmsNoticeRelayWithSensorArdArr[i].setChecked(bConfSmsNoticeRelayWithSensorArdArr[i]);
+                    spinnerView.setSelection(position);
                 }
-                set_idCurrSpinner(spinnerView.getId());
-                set_numSensorArrayElement(position);
             }
         }
 
@@ -258,13 +292,25 @@ public class AdditionalySettingsActivity extends Activity {
     };
 
     //region FindViews() Поиск вьюх и заполнение массивов дл этих вьюх
-    private void FindViews() {
+    private void FindViews()
+    {
+        tvGasName = (TextView)findViewById(R.id.tvConfGasSensorName);
+        etGasEdge = (EditText)findViewById(R.id.etConfGasSensorEdge);
+        spRelayForGas = (Spinner)findViewById(rIdSpinnerSensorsForGas);
+        spRelayForGas.setAdapter(spinnerAdapterForRelays);
+        spRelayForGas.setOnItemSelectedListener(itemSpinnerSelected);
+        chbSmsNoticeGas = (CheckBox)findViewById(R.id.chbSmsNoticeForGasSensorConf);
+        btSaveGasPref = (Button)findViewById(R.id.btSavePrefForGasConf);
+
         tvSectionConfSensorNamesArd = findViewById(R.id.tvSectionConfSensorNamesArd);
         vSectionConfSensorNamesArd = findViewById(R.id.sectionConfSensorNamesArd);
         tvSectionTemperatureEdges = findViewById(R.id.tvSectionTemperatureEdges);
         vSectionTemperatureEdges = findViewById(R.id.sectionTemperatureEdges);
         tvSectionConfSensorsWithRelay = findViewById(R.id.tvSectionConfSensorsWithRelay);
         vSectionConfSensorsWithRelay = findViewById(R.id.sectionConfSensorsWithRelay);
+        tvSectionConfGasPref = findViewById(R.id.tvSectionConfGasPref);
+        vSectionConfGasPref = findViewById(R.id.sectionConfGasPref);
+
         for (int i = 0; i < COUNTSENSORS; i++) {
             tvCurrSensorNameArdArr[i] = (TextView) findViewById(rIdCurrSensorNameArdArr[i]);
             etNewSensorNameArdArr[i] = (EditText) findViewById(rIdNewSensorNameArdArr[i]);
@@ -276,15 +322,17 @@ public class AdditionalySettingsActivity extends Activity {
             chbTurnOffRelayWithSensorArdArr[i] = (CheckBox) findViewById(rIdTurnOffRelayWithSensorArdArr[i]);
             btSaveTempEdgesButtonArdArr[i] = (Button) findViewById(rIdSaveTempEdgesButtonArdArr[i]);
         }
-        for (int j = 0; j < COUNTRELAYS; j++) {
-            tvCurrRelayNameArdArr[j] = (TextView) findViewById(rIdCurrRelayNameArdArr[j]);
-            etNewRelayNameArdArr[j] = (EditText) findViewById(rIdNewRelayNameArdArr[j]);
-            btSaveRelayNameArdButtonArr[j] = (Button) findViewById(rIdSaveRelayNameArdButtonArr[j]);
 
-            tvRelayWithSensorManageNameArdArr[j] = (TextView) findViewById(rIdRelayWithSensorManageArdArr[j]);
-            btSaveRelayWithSensorButtonArdArr[j] = (Button) findViewById(rIdSaveRelayWithSensorButtonArdArr[j]);
+        for (int j = 0; j < COUNTRELAYS; j++) {
+            tvCurrRelayNameArdArr[j] = (TextView)findViewById(rIdCurrRelayNameArdArr[j]);
+            etNewRelayNameArdArr[j] = (EditText)findViewById(rIdNewRelayNameArdArr[j]);
+            btSaveRelayNameArdButtonArr[j] = (Button)findViewById(rIdSaveRelayNameArdButtonArr[j]);
+
+            tvRelayWithSensorManageNameArdArr[j] = (TextView)findViewById(rIdRelayWithSensorManageArdArr[j]);
+            btSaveRelayWithSensorButtonArdArr[j] = (Button)findViewById(rIdSaveRelayWithSensorButtonArdArr[j]);
+            chbConfSmsNoticeRelayWithSensorArdArr[j] = (CheckBox)findViewById(rIdSmsNoticeRelayWithSensorChbArdArr[j]);
             spSpinnerRelayWithSensorArdArr[j] = (Spinner) findViewById(rIdSpinnerRelayWithSensorArdArr[j]);
-            spSpinnerRelayWithSensorArdArr[j].setAdapter(spinnerAdapter);
+            spSpinnerRelayWithSensorArdArr[j].setAdapter(spinnerAdapterForSensors);
             spSpinnerRelayWithSensorArdArr[j].setOnItemSelectedListener(itemSpinnerSelected);
         }
     }
@@ -309,79 +357,164 @@ public class AdditionalySettingsActivity extends Activity {
         FillSensorsName(idDev);
     }
 
-    private void GetArdPhoneNumb() {
+    private void GetArdPhoneNumb()
+    {
         RealmResults<DevicesInfoDb> devicesInfoDbs = realm.where(DevicesInfoDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-        for (int i = 0; i < devicesInfoDbs.size(); i++) {
+        for (int i = 0; i < devicesInfoDbs.size(); i++)
+        {
             _ardPhoneNumb = devicesInfoDbs.get(i).get_phoneNumbArduino();
         }
     }
 
-    private void FillSensorsName(String idDevice) {
-        RealmResults<DevicesInfoDb> devicesInfoDbs;
+    private void FillSensorsName(String idDevice)
+    {
         RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idDevice).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList;
 
-        if (sensorsInfoDbs.size() > 0) {
-            //Получаем максимальное время
-            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+        if (sensorsInfoDbs.size() > 0)
+        {
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() <= PACKSMSCOUNT)
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-            //Получаем только свежие записи по максимальному времени
-            devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                    .equalTo(IDFIELDNAME, idDevice)
-                    .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                    .findAll();
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+            }
+            else
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-            for (int i = 0; i < devicesInfoDbs.size(); i++) {
-                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
-                for (int j = 0; j < sensorsInfoList.size(); j++) {
-                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
-                    numSensor -= 1;
-                    sCurrSensorNameArdArr[numSensor] = sensorsInfoList.get(numSensor).get_bLocationSensor();
-                    tvCurrSensorNameArdArr[numSensor].setText(sCurrSensorNameArdArr[numSensor]);
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
 
-                    sSensorNameTempEdgesArdArr[numSensor] = sCurrSensorNameArdArr[numSensor];
-                    tvSensorNameTempEdgesArdArr[numSensor].setText(sSensorNameTempEdgesArdArr[numSensor]);
+                //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                if (sensorsInfoDbs.size() != PACKSMSCOUNT)
+                {
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
 
-                    if (sensorsInfoList.get(numSensor).get_minTempEdge() == 0) {
-                        sMinTempEdgesArdArr[numSensor] = UNDEFINED;
-                    } else
-                        sMinTempEdgesArdArr[numSensor] = sensorsInfoList.get(numSensor).get_minTempEdge();
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-                    if (sensorsInfoList.get(numSensor).get_maxTempEdge() == 0) {
-                        sMaxTempEdgesArdArr[numSensor] = UNDEFINED;
-                    } else
-                        sMaxTempEdgesArdArr[numSensor] = sensorsInfoList.get(numSensor).get_maxTempEdge();
-
-                    if (sMinTempEdgesArdArr[numSensor] == UNDEFINED) {
-                        etMinTempEdgesArdArr[numSensor].setText(null);
-                    } else etMinTempEdgesArdArr[numSensor].setText(sMinTempEdgesArdArr[numSensor]);
-
-                    if (sMaxTempEdgesArdArr[numSensor] == UNDEFINED) {
-                        etMaxTempEdgesArdArr[numSensor].setText(null);
-                    } else etMaxTempEdgesArdArr[numSensor].setText(sMaxTempEdgesArdArr[numSensor]);
-
-                    sTurnOnRelayWithSensorArdArr[numSensor] = sensorsInfoList.get(numSensor).get_turnOnRelayWithSensor();
-                    sTurnOffRelayWithSensorArdArr[numSensor] = sensorsInfoList.get(numSensor).get_turnOffRelayWithSensor();
-                    chbTurnOnRelayWithSensorArdArr[numSensor].setChecked(sTurnOnRelayWithSensorArdArr[numSensor]);
-                    chbTurnOffRelayWithSensorArdArr[numSensor].setChecked(sTurnOffRelayWithSensorArdArr[numSensor]);
-
-                    //смотрим если есть привязка реле к датчику
-                    if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bNumRelay())) {
-                        //то получаем номер реле которое привязано
-                        int numRelay = Integer.parseInt(sensorsInfoList.get(numSensor).get_bNumRelay());
-                        numRelay -= 1;
-
-                        sCurrRelayNameArdArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelay();
-                        tvCurrRelayNameArdArr[numRelay].setText(sCurrRelayNameArdArr[numRelay]);
-
-                        sRelayWithSensorManageNameArdArr[numRelay] = sCurrSensorNameArdArr[numRelay];
-                        tvRelayWithSensorManageNameArdArr[numRelay].setText(sRelayWithSensorManageNameArdArr[numRelay]);
-
-                        spSpinnerRelayWithSensorArdArr[numRelay].setSelection(numSensor);
-                        spSpinnerRelayWithSensorArdArr[numRelay].setBackgroundColor(0xC7C6EAEE);
-                    }
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
                 }
             }
+
+                for (int j = 0; j < sensorsInfoDbs.size(); j++)
+                {
+                    int numSensor = sensorsInfoDbs.get(j).get_hNumSensor();
+
+                    numSensor -= 1;
+
+                    if (numSensor != 5) //проверяем не датчик ли это газа - его индекс в массивах 5, но номер его во входной смс 6
+                    {
+                        sCurrSensorNameArdArr[numSensor] = sensorsInfoDbs.get(j).get_bLocationSensor();
+                        tvCurrSensorNameArdArr[numSensor].setText(sCurrSensorNameArdArr[numSensor]);
+
+                        sSensorNameTempEdgesArdArr[numSensor] = sCurrSensorNameArdArr[numSensor];
+                        tvSensorNameTempEdgesArdArr[numSensor].setText(sSensorNameTempEdgesArdArr[numSensor]);
+
+                        if (sensorsInfoDbs.get(numSensor).get_minTempEdge() == 0) {
+                            sMinTempEdgesArdArr[numSensor] = UNDEFINED;
+                        } else
+                            sMinTempEdgesArdArr[numSensor] = sensorsInfoDbs.get(j).get_minTempEdge();
+
+                        if (sensorsInfoDbs.get(numSensor).get_maxTempEdge() == 0) {
+                            sMaxTempEdgesArdArr[numSensor] = UNDEFINED;
+                        } else
+                            sMaxTempEdgesArdArr[numSensor] = sensorsInfoDbs.get(j).get_maxTempEdge();
+
+                        if (sMinTempEdgesArdArr[numSensor] == UNDEFINED) {
+                            etMinTempEdgesArdArr[numSensor].setText(null);
+                        } else
+                            etMinTempEdgesArdArr[numSensor].setText(String.valueOf(sMinTempEdgesArdArr[numSensor]));
+
+                        if (sMaxTempEdgesArdArr[numSensor] == UNDEFINED) {
+                            etMaxTempEdgesArdArr[numSensor].setText(null);
+                        } else
+                            etMaxTempEdgesArdArr[numSensor].setText(String.valueOf(sMaxTempEdgesArdArr[numSensor]));
+
+                        sTurnOnRelayWithSensorArdArr[numSensor] = sensorsInfoDbs.get(j).get_turnOnRelayWithSensor();
+                        sTurnOffRelayWithSensorArdArr[numSensor] = sensorsInfoDbs.get(j).get_turnOffRelayWithSensor();
+                        chbTurnOnRelayWithSensorArdArr[numSensor].setChecked(sTurnOnRelayWithSensorArdArr[numSensor]);
+                        chbTurnOffRelayWithSensorArdArr[numSensor].setChecked(sTurnOffRelayWithSensorArdArr[numSensor]);
+                    }
+                    else
+                    {
+                        String strLoc;
+                        sGasName = sensorsInfoDbs.get(j).get_bLocationSensor();
+
+                        if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationSensorRus()))
+                        {
+                            strLoc = sensorsInfoDbs.get(j).get_bLocationSensorRus();
+                            tvGasName.setText(strLoc);
+                        }
+                        else
+                        {
+                            tvGasName.setText(sGasName);
+                        }
+                        iGasEdge = sensorsInfoDbs.get(j).get_gasEdge();
+                        etGasEdge.setText(String.valueOf(iGasEdge));
+                        bSmsNoticeGas = sensorsInfoDbs.get(j).get_bSmsNoticeSensor();
+                        chbSmsNoticeGas.setChecked(bSmsNoticeGas);
+                    }
+                    //смотрим если есть привязка реле к датчику
+                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()))
+                    {
+                        //то получаем номер реле которое привязано
+                        int numRelay = Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay());
+                        numRelay -= 1;
+
+                        String locStr;
+
+                        GradientDrawable gd = new GradientDrawable();
+                        gd.setColor(0xFFA4ABAD);
+                        gd.setCornerRadius(7);
+
+                        if (numSensor != 5)
+                        {
+                            bConfSmsNoticeRelayWithSensorArdArr[numRelay] = sensorsInfoDbs.get(j).get_bSmsNoticeSensor();
+
+                            sCurrRelayNameArdArr[numRelay] = sensorsInfoDbs.get(j).get_bLocationRelay();
+                            tvCurrRelayNameArdArr[numRelay].setText(sCurrRelayNameArdArr[numRelay]);
+
+                            sRelayWithSensorManageNameArdArr[numRelay] = sCurrRelayNameArdArr[numRelay];
+                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationRelayRus()))
+                            {
+                                locStr = sensorsInfoDbs.get(j).get_bLocationRelayRus();
+                                tvRelayWithSensorManageNameArdArr[numRelay].setText(locStr);
+                            }
+                            else tvRelayWithSensorManageNameArdArr[numRelay].setText(sRelayWithSensorManageNameArdArr[numRelay]);
+
+                            //ЗАПОЛНЯЕМ СПИННЕР ПО ДАТЧИКАМ, меняем его цвет и тд
+                            spSpinnerRelayWithSensorArdArr[numRelay].setSelection(numSensor);
+
+                            if (Build.VERSION.SDK_INT >= 16)
+                                spSpinnerRelayWithSensorArdArr[numRelay].setBackground(gd);
+                            else spSpinnerRelayWithSensorArdArr[numRelay].setBackgroundDrawable(gd);
+                        }
+
+                        else
+                        {
+                            //ЗАПОЛНЯЕМ СПИННЕР ПО ДАТЧИКУ ГАЗА - его индекс всегда 6
+                            spRelayForGas.setSelection(numRelay);
+
+                            if (Build.VERSION.SDK_INT >= 16)
+                                spRelayForGas.setBackground(gd);
+                            else spRelayForGas.setBackgroundDrawable(gd);
+                        }
+                    }
+                }
         }
     }
 
@@ -392,14 +525,11 @@ public class AdditionalySettingsActivity extends Activity {
             //получаем номер реле
             int numRelay = relayRenamesDbs.get(i).get_numRelay();
             numRelay -= 1;
-            if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelay()))
+            String strLoc;
+            if (!TextUtils.isEmpty(relayRenamesDbs.get(i).get_bLocationRelay()))
             {
-                sCurrRelayNameArdArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelay();
+                sCurrRelayNameArdArr[numRelay] = relayRenamesDbs.get(i).get_bLocationRelay();
                 sRelayWithSensorManageNameArdArr[numRelay] = sCurrRelayNameArdArr[numRelay];
-            }
-
-            if (!TextUtils.isEmpty(sCurrRelayNameArdArr[numRelay]))
-            {
                 tvCurrRelayNameArdArr[numRelay].setText(sCurrRelayNameArdArr[numRelay]);
                 tvRelayWithSensorManageNameArdArr[numRelay].setText(sRelayWithSensorManageNameArdArr[numRelay]);
             }
@@ -408,14 +538,38 @@ public class AdditionalySettingsActivity extends Activity {
                 tvCurrRelayNameArdArr[numRelay].setText(EMPTYDATA);
                 tvRelayWithSensorManageNameArdArr[numRelay].setText(EMPTYDATA);
             }
+
+            if (!TextUtils.isEmpty(relayRenamesDbs.get(i).get_bLocationRelayRus()))
+            {
+                strLoc = relayRenamesDbs.get(i).get_bLocationRelayRus();
+                tvRelayWithSensorManageNameArdArr[numRelay].setText(strLoc);
+            }
+
         }
     }
 
     private void SetDefaultValDeviceInfo()
     {
+        GradientDrawable gd = new GradientDrawable();
+        gd.setColor(0xFF353637);
+        gd.setCornerRadius(7);
+
+        sGasName = "";
+        tvGasName.setText(EMPTYDATA);
+        iGasEdge = UNDEFINED;
+        etGasEdge.setText(null);
+        bSmsNoticeGas = true;
+        chbSmsNoticeGas.setChecked(bSmsNoticeGas);
+
+        if (Build.VERSION.SDK_INT >= 16)
+            spRelayForGas.setBackground(gd);
+        else spRelayForGas.setBackgroundDrawable(gd);
+
+        spRelayForGas.setSelection(0);
+
         for (int j = 0; j < COUNTSENSORS; j++)
         {
-            sCurrSensorNameArdArr[j] = null;
+            sCurrSensorNameArdArr[j] = "";
             tvCurrSensorNameArdArr[j].setText(EMPTYDATA);
             sNewSensorNameArdArr[j] = null;
             etNewSensorNameArdArr[j].setText(sNewSensorNameArdArr[j]);
@@ -433,12 +587,20 @@ public class AdditionalySettingsActivity extends Activity {
         }
         for (int i = 0; i < COUNTRELAYS; i++)
         {
-            sCurrRelayNameArdArr[i] = null;
+            sCurrRelayNameArdArr[i] = "";
             tvCurrRelayNameArdArr[i].setText(EMPTYDATA);
             sNewRelayNameArdArr[i] = null;
             etNewRelayNameArdArr[i].setText(sNewRelayNameArdArr[i]);
             sRelayWithSensorManageNameArdArr[i] = sCurrRelayNameArdArr[i];
             tvRelayWithSensorManageNameArdArr[i].setText(EMPTYDATA);
+            bConfSmsNoticeRelayWithSensorArdArr[i] = true;
+            chbConfSmsNoticeRelayWithSensorArdArr[i].setChecked(bConfSmsNoticeRelayWithSensorArdArr[i]);
+
+            if (Build.VERSION.SDK_INT >= 16)
+                spSpinnerRelayWithSensorArdArr[i].setBackground(gd);
+            else spSpinnerRelayWithSensorArdArr[i].setBackgroundDrawable(gd);
+
+            spSpinnerRelayWithSensorArdArr[i].setSelection(0);
         }
     }
     //endregion
@@ -449,7 +611,7 @@ public class AdditionalySettingsActivity extends Activity {
         int viewId = v.getId();
         if (CheckViews(viewId, v))
         {
-            WriteDbData(viewId);
+            WriteDbData(viewId, v);
             FillData(); //Обновили экран с новыми данными
         }
     }
@@ -464,19 +626,30 @@ public class AdditionalySettingsActivity extends Activity {
                 etNewSensorNameArdArr[i].setError("Обязательно к заполнению!");
                 return false;
             }
-            if (rIdView == rIdSaveTempEdgesButtonArdArr[i])
+            else if (rIdView == rIdSaveTempEdgesButtonArdArr[i] && _sIdDevice != null)
             {
                 return true;
+            }
+            else if (_sIdDevice == null)
+            {
+                ShowToast(v, "Отсутствует устройство!");
+                return false;
             }
         }
         for (int j = 0; j < COUNTRELAYS; j++)
         {
-            if (rIdView == rIdSaveRelayNameArdButtonArr[j] && TextUtils.isEmpty(etNewRelayNameArdArr[j].getText()))
+            if (_sIdDevice == null)
             {
+                ShowToast(v, "Отсутствует устройство!");
+                return false;
+            }
+            else if (rIdView == rIdSaveRelayNameArdButtonArr[j] &&  TextUtils.isEmpty(etNewRelayNameArdArr[j].getText()))
+            {
+                ShowToast(v, "Отсутствует устройство!");
                 etNewRelayNameArdArr[j].setError("Обязательно к заполнению!");
                 return false;
             }
-            if (rIdView == rIdSaveRelayWithSensorButtonArdArr[j] && TextUtils.isEmpty(sRelayWithSensorManageNameArdArr[j]))
+            else if (rIdView == rIdSaveRelayWithSensorButtonArdArr[j] && TextUtils.isEmpty(sRelayWithSensorManageNameArdArr[j]))
             {
                 ShowToast(v, "Не задано имя реле!");
                 return false;
@@ -485,7 +658,7 @@ public class AdditionalySettingsActivity extends Activity {
         return true;
     }
 
-    private void WriteDbData(int idView)
+    private void WriteDbData(int idView, View view)
     {
         String strSms;
         for (int i = 0; i < COUNTSENSORS; i++)
@@ -495,16 +668,18 @@ public class AdditionalySettingsActivity extends Activity {
                 //DALLASRENAME;1;BathRoom
                 sNewSensorNameArdArr[i] = Translit.RusToLat(etNewSensorNameArdArr[i].getText().toString());
                 strSms = "DALLASRENAME;" + String.valueOf(i) + ";" + sNewSensorNameArdArr[i];
-                SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
-                WriteDbSensors(i, idView); //Переписали БД
+                if (WriteDbSensors(i, idView)) //Переписали БД
+                {
+                    SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
+                }
             }
             else if (idView == rIdSaveTempEdgesButtonArdArr[i])
             {
                 if (TextUtils.isEmpty(etMinTempEdgesArdArr[i].getText().toString()))
                 {
                     sMinTempEdgesArdArr[i] = UNDEFINED;
-                } else
-                    sMinTempEdgesArdArr[i] = Integer.parseInt(etMinTempEdgesArdArr[i].getText().toString());
+                }
+                else sMinTempEdgesArdArr[i] = Integer.parseInt(etMinTempEdgesArdArr[i].getText().toString());
 
                 if (TextUtils.isEmpty(etMaxTempEdgesArdArr[i].getText().toString()))
                 {
@@ -522,8 +697,10 @@ public class AdditionalySettingsActivity extends Activity {
                         String.valueOf(sMaxTempEdgesArdArr[i]) + ";" +
                         AddDeviceActivity.BoolToIntStr(sTurnOnRelayWithSensorArdArr[i]) + ";" +
                         AddDeviceActivity.BoolToIntStr(sTurnOffRelayWithSensorArdArr[i]);
-                SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину
-                WriteDbSensors(i, idView);
+                if (WriteDbSensors(i, idView))
+                {
+                    SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину
+                }
             }
         }
         for (int j = 0; j < COUNTRELAYS; j++)
@@ -540,59 +717,232 @@ public class AdditionalySettingsActivity extends Activity {
             {
                 // DALLASPREF;  5;  idRelay;         1
                 //                   к какому реле     смс
-                strSms = "DALLASPREF;" + String.valueOf(get_numSensorArrayElement()) + ";" + String.valueOf(j) + ";";
-                SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с привязкой
-                //WriteDbSensors(i, idView);
-                //WriteDbRelays(j);
+                bConfSmsNoticeRelayWithSensorArdArr[j] = chbConfSmsNoticeRelayWithSensorArdArr[j].isChecked();
+
+                set_numRelayArrayElement(j);
+                set_numSensorArrayElement(spSpinnerRelayWithSensorArdArr[j].getSelectedItemPosition());
+
+                strSms = "DALLASPREF;" +
+                         String.valueOf(get_numSensorArrayElement()) + ";" +
+                         String.valueOf(j) + ";" +
+                         AddDeviceActivity.BoolToIntStr(bConfSmsNoticeRelayWithSensorArdArr[j]);
+
+                if (WriteDbSensors(get_numSensorArrayElement(), idView))
+                {
+                    SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с привязкой
+                }
+                else ShowToast(view, "Выбранный датчик уже привязан к другому реле...\n" +
+                                     "Или же данные по датчикам не полные!");
             }
+        }
+        //Отдельно по датчику газа проверяем
+        if (idView == btSaveGasPref.getId())
+        {
+            // GASPREF;45;1;1 или GASPREF;45;999;1
+            // Соответственно переписываем порог газа, привязка к какому реле или RN и смс оповещение
+
+            if (TextUtils.isEmpty(etGasEdge.getText().toString()))
+            {
+                iGasEdge = UNDEFINED;
+            }
+            else iGasEdge = Integer.parseInt(etGasEdge.getText().toString());
+
+            bSmsNoticeGas = chbSmsNoticeGas.isChecked();
+
+            strSms = "GASPREF;" +
+                     String.valueOf(iGasEdge) + ";" +
+                     String.valueOf(get_numRelayArrayElement()) + ";" +
+                     AddDeviceActivity.BoolToIntStr(bSmsNoticeGas);
+
+            set_numRelayArrayElement(spRelayForGas.getSelectedItemPosition());
+            set_numSensorArrayElement(5);
+            if (WriteDbSensors(get_numSensorArrayElement(), idView))
+            {
+                SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с привязкой
+            }
+            else ShowToast(view, "Текущее реле уже привязано к другому датчику...\n" +
+                                 "Или же отсутствуют данные по реле!");
         }
     }
 
-    private void WriteDbSensors(int idArray, int idView)
+    private boolean WriteDbSensors(int idArraySensors, int idView)
     {
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
         //Получаем наш объект если он уже создан и хотим редактировать
-        RealmResults<DevicesInfoDb> devicesInfoDbs;
         RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList;
+        RealmResults<RelayRenamesDb> relayRenamesDbs = realm.where(RelayRenamesDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
 
         if (sensorsInfoDbs.size() > 0)
         {
-            //Получаем максимальное время
-            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
-
-            //Получаем только свежие записи по максимальному времени
-            devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                    .equalTo(IDFIELDNAME, _sIdDevice)
-                    .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                    .findAll();
-
-            for (int i = 0; i < devicesInfoDbs.size(); i++)
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() <= PACKSMSCOUNT)
             {
-                //Получили текущий лист инфы по датчикам
-                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-                for (int j = 0; j < sensorsInfoList.size(); j++)
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+            }
+            else
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+
+                //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                if (sensorsInfoDbs.size() != PACKSMSCOUNT)
                 {
-                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
-                    numSensor -= 1;
-                    if (numSensor == idArray && idView == rIdSaveSensorNameArdButtonArr[numSensor])
-                    {
-                        //Если номер датчика совпал с номером индекса массива значит это наш датчик - переписываем имя
-                        //И если ид кнопки сохранения совпала с ид из массива по текущему датчику
-                        sensorsInfoList.get(numSensor).set_bLocationSensor(sNewSensorNameArdArr[idArray]);
-                    } else if (numSensor == idArray && idView == rIdSaveTempEdgesButtonArdArr[numSensor])
-                    {
-                        sensorsInfoList.get(numSensor).set_minTempEdge(sMinTempEdgesArdArr[idArray]);
-                        sensorsInfoList.get(numSensor).set_maxTempEdge(sMaxTempEdgesArdArr[idArray]);
-                        sensorsInfoList.get(numSensor).set_turnOnRelayWithSensor(sTurnOnRelayWithSensorArdArr[idArray]);
-                        sensorsInfoList.get(numSensor).set_turnOffRelayWithSensor(sTurnOffRelayWithSensorArdArr[idArray]);
-                    }
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
                 }
             }
+
+                //проверим целостность данных в листе - всегда должно быть 6 строк по 6 датчикам
+                if (sensorsInfoDbs.size() != 6)
+                {
+                    realm.commitTransaction();
+                    realm.close();
+                    return false;
+                }
+
+                for (int j = 0; j < sensorsInfoDbs.size(); j++)
+                {
+                    int numSensor = sensorsInfoDbs.get(j).get_hNumSensor();
+                    numSensor -= 1;
+
+                    if (numSensor != idArraySensors)
+                    {
+                        continue;
+                    }
+
+                    if (numSensor != 5)
+                    {
+                        if (idView == rIdSaveSensorNameArdButtonArr[numSensor])
+                        {
+                            //Если номер датчика совпал с номером индекса массива значит это наш датчик - переписываем имя
+                            //И если ид кнопки сохранения совпала с ид из массива по текущему датчику
+                            sensorsInfoDbs.get(j).set_bLocationSensor(sNewSensorNameArdArr[idArraySensors]);
+                        }
+                        else if (idView == rIdSaveTempEdgesButtonArdArr[numSensor])
+                        {
+                            sensorsInfoDbs.get(j).set_minTempEdge(sMinTempEdgesArdArr[idArraySensors]);
+                            sensorsInfoDbs.get(j).set_maxTempEdge(sMaxTempEdgesArdArr[idArraySensors]);
+                            sensorsInfoDbs.get(j).set_turnOnRelayWithSensor(sTurnOnRelayWithSensorArdArr[idArraySensors]);
+                            sensorsInfoDbs.get(j).set_turnOffRelayWithSensor(sTurnOffRelayWithSensorArdArr[idArraySensors]);
+                        }
+                        else if (idView == rIdSaveRelayWithSensorButtonArdArr[get_numRelayArrayElement()])
+                        {
+                            int ind = get_numRelayArrayElement();
+                            //Проверим сначала не привязан ли текущий датчик уже к иному реле
+                            for (int k = 0; k < sensorsInfoDbs.size(); k++)
+                            {
+                                if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
+                                {
+                                    int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
+                                    //тут проверяем что если текущее реле = привязанному реле на ином датчике
+                                    //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
+                                    //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
+                                    if (ind == (checkInd - 1)  && idArraySensors != k)
+                                    {
+                                        realm.commitTransaction();
+                                        realm.close();
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (relayRenamesDbs.size() > 0)
+                            {
+                                if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelay()))
+                                {
+                                    String loc = relayRenamesDbs.get(ind).get_bLocationRelay();
+                                    sensorsInfoDbs.get(j).set_bLocationRelayRus(loc);
+                                }
+                                if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelayRus()))
+                                {
+                                    String locRus = relayRenamesDbs.get(ind).get_bLocationRelayRus();
+                                    sensorsInfoDbs.get(j).set_bLocationRelayRus(locRus);
+                                }
+                                boolean stateR = relayRenamesDbs.get(ind).get_bStateRelay();
+                                sensorsInfoDbs.get(j).set_bStateRelay(stateR);
+                                boolean manualManage = relayRenamesDbs.get(ind).get_isAutomaticModeR();
+                                sensorsInfoDbs.get(j).set_bManualManageRelay(manualManage);
+                            }
+                            sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+                            sensorsInfoDbs.get(j).set_bLocationRelay(sRelayWithSensorManageNameArdArr[ind]);
+                            bConfSmsNoticeRelayWithSensorArdArr[ind] = chbConfSmsNoticeRelayWithSensorArdArr[ind].isChecked();
+                            sensorsInfoDbs.get(j).set_bSmsNoticeSensor(bConfSmsNoticeRelayWithSensorArdArr[ind]);
+                            sensorsInfoDbs.get(j).set_bManualManageRelay(true); //При привязке по умолчанию автоматика включена
+                        }
+                    }
+                    else if (idView == btSaveGasPref.getId())
+                    {
+                        int ind = get_numRelayArrayElement();
+                        //Проверим сначала не привязан ли текущий датчик уже к иному реле
+                        for (int k = 0; k < sensorsInfoDbs.size(); k++)
+                        {
+                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
+                            {
+                                int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
+                                //тут проверяем что если текущее реле = привязанному реле на ином датчике
+                                //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
+                                //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
+                                if (ind == (checkInd - 1) && idArraySensors != k)
+                                {
+                                    realm.commitTransaction();
+                                    realm.close();
+                                    return false;
+                                }
+                            }
+                        }
+                        if (TextUtils.isEmpty(spRelayForGas.getSelectedItem().toString()))
+                        {
+                            realm.commitTransaction();
+                            realm.close();
+                            return false;
+                        }
+                        if (relayRenamesDbs.size() > 0)
+                        {
+                            if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelay()))
+                            {
+                                String loc = relayRenamesDbs.get(ind).get_bLocationRelay();
+                                sensorsInfoDbs.get(j).set_bLocationRelay(loc);
+                            }
+                            if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelayRus()))
+                            {
+                                String locRus = relayRenamesDbs.get(ind).get_bLocationRelayRus();
+                                sensorsInfoDbs.get(j).set_bLocationRelayRus(locRus);
+                            }
+                            boolean stateR = relayRenamesDbs.get(ind).get_bStateRelay();
+                            sensorsInfoDbs.get(j).set_bStateRelay(stateR);
+                            boolean manualManage = relayRenamesDbs.get(ind).get_isAutomaticModeR();
+                            sensorsInfoDbs.get(j).set_bManualManageRelay(manualManage);
+                        }
+                        sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+                        bSmsNoticeGas = chbSmsNoticeGas.isChecked();
+                        sensorsInfoDbs.get(j).set_bSmsNoticeSensor(bSmsNoticeGas);
+                        sensorsInfoDbs.get(j).set_gasEdge(iGasEdge);
+                        sensorsInfoDbs.get(j).set_bManualManageRelay(true); //При привязке по умолчанию автоматика включена
+                    }
+                }
         }
         realm.commitTransaction();
+        return true;
     }
 
     private void WriteDbRelays(int idArray)
@@ -608,33 +958,57 @@ public class AdditionalySettingsActivity extends Activity {
         realm.copyToRealmOrUpdate(relayRenamesDb);
 
         //Получаем наш объект если он уже создан и хотим редактировать
-        RealmResults<DevicesInfoDb> devicesInfoDbs;
         RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList;
 
         if (sensorsInfoDbs.size() > 0)
         {
-            //Получаем максимальное время
-            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() <= PACKSMSCOUNT)
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-            //Получаем только свежие записи по максимальному времени
-            devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                    .equalTo(IDFIELDNAME, _sIdDevice)
-                    .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                    .findAll();
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+            }
+            else
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-            for (int i = 0; i < devicesInfoDbs.size(); i++) {
-                //Получили текущий лист инфы по датчикам
-                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
 
-                for (int j = 0; j < sensorsInfoList.size(); j++) {
-                    if (!TextUtils.isEmpty(sensorsInfoList.get(j).get_bNumRelay()) &&
-                            Integer.parseInt(sensorsInfoList.get(j).get_bNumRelay()) == (idArray + 1)) {
-                        //Если номер датчика совпал с номером индекса массива значит это наш датчик - переписываем имя
-                        sensorsInfoList.get(j).set_bLocationRelay(sNewRelayNameArdArr[idArray]);
-                    }
+                //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                if (sensorsInfoDbs.size() != PACKSMSCOUNT)
+                {
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
                 }
             }
+
+                for (int j = 0; j < sensorsInfoDbs.size(); j++)
+                {
+                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()) &&
+                        Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay()) == (idArray + 1))
+                    {
+                        //Если номер датчика совпал с номером индекса массива значит это наш датчик - переписываем имя
+                        sensorsInfoDbs.get(j).set_bLocationRelay(sNewRelayNameArdArr[idArray]);
+                    }
+                }
         }
         realm.commitTransaction();
     }
@@ -643,7 +1017,7 @@ public class AdditionalySettingsActivity extends Activity {
     private void ShowToast(View view, String toastText)
     {
         //создаем и отображаем текстовое уведомление
-        Toast toast = Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
 
         GradientDrawable gd = new GradientDrawable();
@@ -688,7 +1062,12 @@ public class AdditionalySettingsActivity extends Activity {
         Intent intent;
 
         // ищем наш пункт меню
-        switch (itemId) {
+        switch (itemId)
+        {
+            case R.id.pref:
+                intent = new Intent(AdditionalySettingsActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.about:
                 intent = new Intent(AdditionalySettingsActivity.this, AboutActivity.class);
                 startActivity(intent);
