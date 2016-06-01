@@ -1,9 +1,12 @@
 package com.korpaev.myhome;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +18,9 @@ import android.widget.Toast;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class GeneralInfoActivity extends Activity
@@ -31,6 +34,7 @@ public class GeneralInfoActivity extends Activity
     private final int COUNTSENSORS = 6;
     private final String EMPTYDATASENSOR = "Нет данных";
     private final String EMPTYNAMESENSOR = "Датчик №";
+    final Calendar calendar = Calendar.getInstance();
     //endregion
 
     //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ
@@ -38,6 +42,7 @@ public class GeneralInfoActivity extends Activity
     Realm realm;
     SharedPreferences sharedPref;
     TextView tvPhoneArdGenInf, tvNameAdrGenInf, tvAddressArdGenInf, tvUpdateTime;
+    View tmpView;
     //endregion
 
     //region МАССИВЫ ID ВЬЮХ АКТИВИТИ
@@ -75,14 +80,42 @@ public class GeneralInfoActivity extends Activity
         FindViews();
 
         //region Обработчик нажатия на кнопку получения данных и сохранения номера - меняем картинку при нажатии
-        ibUpdate.setOnTouchListener(new View.OnTouchListener() {
+        ibUpdate.setOnTouchListener(new View.OnTouchListener()
+        {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onTouch(View v, MotionEvent event)
+            {
                 int eventaction = event.getAction();
                 switch (eventaction) {
                     case MotionEvent.ACTION_DOWN:
                         ibUpdate.setImageResource(R.mipmap.ic_bupd_1);
-                        GetSensorsInfoButtonClick(v);
+                        tmpView = v;
+
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(GeneralInfoActivity.this);
+
+                        alertDialog.setTitle("Запросить данные...");
+                        alertDialog.setMessage("Хотите обновить информацию?");
+
+                        //region YES CLICK
+                        alertDialog.setPositiveButton("ДА", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                GetSensorsInfoButtonClick(tmpView);
+                            }
+                        });
+                        //endregion
+
+                        //region NO CLICK
+                        alertDialog.setNegativeButton("НЕТ", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                        //endregion
+                        alertDialog.show();
                         return true;
                     case MotionEvent.ACTION_UP:
                         ibUpdate.setImageResource(R.mipmap.ic_bupd);
@@ -116,9 +149,17 @@ public class GeneralInfoActivity extends Activity
     //region GetSensorsInfoButtonClick(View v) Обработка нажатия на кнопку получения инфы по датчикам
     private void GetSensorsInfoButtonClick(View v)
     {
-        MessageService ms = new MessageService();
-        String str = "SH1;1460473840;1;8;RN;15C;RN;SH1;1460473840;2;8;RN;12C;RN;SH1;1460473840;3;8;RN;0C;RN;SH1;1460473840;4;8;RN;0C;RN;SH1;1460473840;5;8;RN;0C;RN;";
-        ms.WriteDataToDB(str, getBaseContext());
+        //MessageService ms = new MessageService();
+        //String str = "SH1;1460473840;1;8;RN;15C;1;RN;SH1;1460473840;2;8;RN;12C;1;RN;SH1;1460473840;3;8;RN;0C;1;RN;SH1;1460473840;4;8;RN;0C;1;RN;SH1;1460473840;5;8;RN;0C;1;RN;";
+        //ms.WriteDataToDB(str, getBaseContext());
+        SendSms(_sPhoneArdGenInf, "STATEA");
+    }
+    //endregion
+
+    //region SendSms Функция отправки смс
+    public void SendSms(String number, String message) {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(number, null, message, null, null);
     }
     //endregion
 
@@ -143,13 +184,48 @@ public class GeneralInfoActivity extends Activity
         String timeStr = "Информация актуальна на: ";
 
         RealmResults<DevicesInfoDb> devicesInfoDbs;
-        RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idRow).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList;
+        RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).findAll();
 
         if (sensorsInfoDbs.size() > 0)
         {
-            //Получаем максимальное время
-            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() <= COUNTSENSORS)
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, idRow)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+            }
+            else
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, idRow)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+
+                //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                if (sensorsInfoDbs.size() != COUNTSENSORS)
+                {
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, idRow)
+                            .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, idRow)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+                }
+
+            }
 
             tvUpdateTime.setText(timeStr + GetUpdateTime(maxTimeStamp));
 
@@ -169,20 +245,19 @@ public class GeneralInfoActivity extends Activity
                 tvNameAdrGenInf.setText(_sNameAdrGenInf);
                 tvAddressArdGenInf.setText(_sAddressArdGenInf);
 
-                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
-                for (int j = 0; j < sensorsInfoList.size(); j++)
+                for (int j = 0; j < sensorsInfoDbs.size(); j++)
                 {
-                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
+                    int numSensor = sensorsInfoDbs.get(j).get_hNumSensor();
                     numSensor -= 1;
-                    if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bLocationSensorRus()))
+                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationSensorRus()))
                     {
-                        sSensorsNameArr[numSensor] = sensorsInfoList.get(numSensor).get_bLocationSensorRus();
+                        sSensorsNameArr[numSensor] = sensorsInfoDbs.get(j).get_bLocationSensorRus();
                     }
-                    else sSensorsNameArr[numSensor] = sensorsInfoList.get(numSensor).get_bLocationSensor();
+                    else sSensorsNameArr[numSensor] = sensorsInfoDbs.get(j).get_bLocationSensor();
                     tvSensorsNameArr[numSensor].setText(sSensorsNameArr[numSensor]);
 
-                    sSensorsValArr[j] = sensorsInfoList.get(j).get_bValSensor();
-                    tvSensorsValArr[j].setText(sSensorsValArr[j]);
+                    sSensorsValArr[numSensor] = sensorsInfoDbs.get(j).get_bValSensor();
+                    tvSensorsValArr[numSensor].setText(sSensorsValArr[numSensor]);
                 }
             }
         }
@@ -231,6 +306,11 @@ public class GeneralInfoActivity extends Activity
 
     public String GetUpdateTime(int timeStamp)
     {
+
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String strDate = sdf.format(calendar.getTime());
+//        return strDate;
+
         Date date;
         SimpleDateFormat sdf;
         //Посмотрим что лежит в БД после записи данных
@@ -264,6 +344,10 @@ public class GeneralInfoActivity extends Activity
 
         // ищем наш пункт меню
         switch (itemId) {
+            case R.id.pref:
+                intent = new Intent(GeneralInfoActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.about:
                 intent = new Intent(GeneralInfoActivity.this, AboutActivity.class);
                 startActivity(intent);

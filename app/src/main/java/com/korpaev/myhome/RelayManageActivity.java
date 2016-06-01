@@ -30,6 +30,7 @@ public class RelayManageActivity extends Activity
     private final String TIMESTAMPFIELDNAME = "_hTimeStamp";
     private final String SENSORSINFOTABLENAME = "_stateSystemRaws";
     private final int COUNTRELAYS = 4;
+    private final int COUNTSENSORS = 6;
     //endregion
     //region ОБЪЯВЛЯЕМ ОБЪЕКТЫ И КНОПКИ
     Realm realm;
@@ -114,13 +115,13 @@ public class RelayManageActivity extends Activity
             numRelay -= 1;
             if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelayRus()))
             {
-                sRelayNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelayRus();
+                sRelayNameArr[numRelay] = relayRenamesDbs.get(i).get_bLocationRelayRus();
                 tgbRelaysStateArr[numRelay].setEnabled(true);
                 chbRelaysAutoModeArr[numRelay].setEnabled(true);
             }
-            else if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelay()))
+            else if (!TextUtils.isEmpty(relayRenamesDbs.get(i).get_bLocationRelay()))
             {
-                sRelayNameArr[numRelay] = relayRenamesDbs.get(numRelay).get_bLocationRelay();
+                sRelayNameArr[numRelay] = relayRenamesDbs.get(i).get_bLocationRelay();
                 tgbRelaysStateArr[numRelay].setEnabled(true);
                 chbRelaysAutoModeArr[numRelay].setEnabled(true);
             }
@@ -132,10 +133,10 @@ public class RelayManageActivity extends Activity
             }
             tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
 
-            bRelaysStateArr[numRelay] = relayRenamesDbs.get(numRelay).get_bStateRelay();
+            bRelaysStateArr[numRelay] = relayRenamesDbs.get(i).get_bStateRelay();
             tgbRelaysStateArr[numRelay].setChecked(bRelaysStateArr[numRelay]);
 
-            bRelaysAutoModeArr[numRelay] = relayRenamesDbs.get(numRelay).get_isAutomaticModeR();
+            bRelaysAutoModeArr[numRelay] = relayRenamesDbs.get(i).get_isAutomaticModeR();
             chbRelaysAutoModeArr[numRelay].setChecked(bRelaysAutoModeArr[numRelay]);
         }
 
@@ -146,49 +147,71 @@ public class RelayManageActivity extends Activity
 
     private void SetRelaysState()
     {
-        RealmResults<DevicesInfoDb> devicesInfoDbs;
         RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-        RealmList<SensorsInfoDb> sensorsInfoList;
 
         if (sensorsInfoDbs.size() > 0)
         {
-            //Получаем максимальное время
-            int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
-
-            //Получаем только свежие записи по максимальному времени
-            devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                    .equalTo(IDFIELDNAME, _sIdDevice)
-                    .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                    .findAll();
-
-            for (int i = 0; i < devicesInfoDbs.size(); i++)
+            int maxTimeStamp = 0;
+            if (sensorsInfoDbs.size() <= COUNTSENSORS)
             {
-                _ardPhoneNumb = devicesInfoDbs.get(i).get_phoneNumbArduino();
-                sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-                for (int j = 0; j < sensorsInfoList.size(); j++)
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+            }
+            else
+            {
+                //Получаем максимальное время
+                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(IDFIELDNAME, _sIdDevice)
+                        .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                        .findAll();
+
+                //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                if (sensorsInfoDbs.size() != COUNTSENSORS)
+                {
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+                }
+            }
+
+                for (int j = 0; j < sensorsInfoDbs.size(); j++)
                 {
                     //получили номер датчика
-                    int numSensor = sensorsInfoList.get(j).get_hNumSensor();
+                    int numSensor = sensorsInfoDbs.get(j).get_hNumSensor();
                     // -1 потому что массивы с нуля а данные по номеру датчика начинаются с 1
                     numSensor -= 1;
 
                     //смотрим если есть привязка реле к датчику
-                    if (!TextUtils.isEmpty(sensorsInfoList.get(numSensor).get_bNumRelay()))
+                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()))
                     {
                         //то получаем номер реле которое привязано
-                        int numRelay = Integer.parseInt(sensorsInfoList.get(numSensor).get_bNumRelay());
+                        int numRelay = Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay());
                         numRelay -= 1;
 
-                        if (!TextUtils.isEmpty(sensorsInfoList.get(numRelay).get_bLocationRelayRus()))
+                        if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationRelayRus()))
                         {
-                            sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelayRus();
+                            sRelayNameArr[numRelay] = sensorsInfoDbs.get(j).get_bLocationRelayRus();
                             tgbRelaysStateArr[numRelay].setEnabled(true);
                             chbRelaysAutoModeArr[numRelay].setEnabled(true);
                         }
-                        else if (!TextUtils.isEmpty(sensorsInfoList.get(numRelay).get_bLocationRelay()))
+                        else if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationRelay()))
                         {
-                            sRelayNameArr[numRelay] = sensorsInfoList.get(numRelay).get_bLocationRelay();
+                            sRelayNameArr[numRelay] = sensorsInfoDbs.get(j).get_bLocationRelay();
                             tgbRelaysStateArr[numRelay].setEnabled(true);
                             chbRelaysAutoModeArr[numRelay].setEnabled(true);
                         }
@@ -200,14 +223,13 @@ public class RelayManageActivity extends Activity
                         }
                         tvRelaysNameArr[numRelay].setText(sRelayNameArr[numRelay]);
 
-                        bRelaysStateArr[numRelay] = sensorsInfoList.get(numSensor).get_bStateRelay();
+                        bRelaysStateArr[numRelay] = sensorsInfoDbs.get(j).get_bStateRelay();
                         tgbRelaysStateArr[numRelay].setChecked(bRelaysStateArr[numRelay]);
 
-                        bRelaysAutoModeArr[numRelay] = sensorsInfoList.get(numSensor).get_bManualManageRelay();
+                        bRelaysAutoModeArr[numRelay] = sensorsInfoDbs.get(j).get_bManualManageRelay();
                         chbRelaysAutoModeArr[numRelay].setChecked(bRelaysAutoModeArr[numRelay]);
                     }
                 }
-            }
         }
     }
 
@@ -416,53 +438,74 @@ public class RelayManageActivity extends Activity
             //Причем пока не сконфигурировано ардуино или не получена инфа по смс, этот список будет пуст
             //таблица заполняется только в 2 случаях - инфа по смс или конфигурирование из приложения ардуины
             RealmResults<RelayRenamesDb> relayRenamesDbs = realm.where(RelayRenamesDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-            if (relayRenamesDbs.size() > 0)
+
+            for (int i = 0; i < relayRenamesDbs.size(); i++)
             {
-                for (int i = 0; i < COUNTRELAYS; i++)
-                {
-                    relayRenamesDbs.get(i).set_numRelay(i + 1);
-                    relayRenamesDbs.get(i).set_idDevice(_sIdDevice);
-                    bRelaysStateArr[i] = tgbRelaysStateArr[i].isChecked();
-                    relayRenamesDbs.get(i).set_bStateRelay(bRelaysStateArr[i]);
-                    bRelaysAutoModeArr[i] = chbRelaysAutoModeArr[i].isChecked();
-                    relayRenamesDbs.get(i).set_isAutomaticModeR(bRelaysAutoModeArr[i]);
-                }
+                relayRenamesDbs.get(i).set_numRelay(i + 1);
+                relayRenamesDbs.get(i).set_idDevice(_sIdDevice);
+                bRelaysStateArr[i] = tgbRelaysStateArr[i].isChecked();
+                relayRenamesDbs.get(i).set_bStateRelay(bRelaysStateArr[i]);
+                bRelaysAutoModeArr[i] = chbRelaysAutoModeArr[i].isChecked();
+                relayRenamesDbs.get(i).set_isAutomaticModeR(bRelaysAutoModeArr[i]);
             }
 
-            RealmResults<DevicesInfoDb> devicesInfoDbs;
+
             RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, _sIdDevice).findAll();
-            RealmList<SensorsInfoDb> sensorsInfoList;
             if (sensorsInfoDbs.size() > 0)
             {
-                //Получаем максимальное время
-                int maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
-
-                //Получаем только свежие записи по максимальному времени
-                devicesInfoDbs = realm.where(DevicesInfoDb.class)
-                        .equalTo(IDFIELDNAME, _sIdDevice)
-                        .equalTo(SENSORSINFOTABLENAME + "." + TIMESTAMPFIELDNAME, maxTimeStamp)
-                        .findAll();
-
-                for (int i = 0; i < devicesInfoDbs.size(); i++)
+                int maxTimeStamp = 0;
+                if (sensorsInfoDbs.size() <= COUNTSENSORS)
                 {
-                    sensorsInfoList = devicesInfoDbs.get(i).get_stateSystemRaws();
+                    //Получаем максимальное время
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
 
-                    for (int j = 0; j < sensorsInfoList.size(); j++)
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+                }
+                else
+                {
+                    //Получаем максимальное время
+                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                            .equalTo(IDFIELDNAME, _sIdDevice)
+                            .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                            .findAll();
+
+                    //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
+                    if (sensorsInfoDbs.size() != COUNTSENSORS)
+                    {
+                        sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                                .equalTo(IDFIELDNAME, _sIdDevice)
+                                .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
+                                .findAll();
+
+                        maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+
+                        sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                                .equalTo(IDFIELDNAME, _sIdDevice)
+                                .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
+                                .findAll();
+                    }
+                }
+
+                    for (int j = 0; j < sensorsInfoDbs.size(); j++)
                     {
                         //ТЕ КОТОРЫЕ ПРИВЯЗАНы ПЕРЕПИСЫВАЕМ
                         for (int k = 0; k < COUNTRELAYS; k++)
                         {
-                            if (!TextUtils.isEmpty(sensorsInfoList.get(j).get_bNumRelay()) &&
-                                Integer.parseInt(sensorsInfoList.get(j).get_bNumRelay()) == (k + 1))
+                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()) &&
+                                Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay()) == (k + 1))
                             {
                                 bRelaysStateArr[k] = tgbRelaysStateArr[k].isChecked();
-                                sensorsInfoList.get(k).set_bStateRelay(bRelaysStateArr[k]);
+                                sensorsInfoDbs.get(k).set_bStateRelay(bRelaysStateArr[k]);
                                 bRelaysAutoModeArr[k] = chbRelaysAutoModeArr[k].isChecked();
-                                sensorsInfoList.get(j).set_bManualManageRelay(bRelaysAutoModeArr[k]);
+                                sensorsInfoDbs.get(j).set_bManualManageRelay(bRelaysAutoModeArr[k]);
                             }
                         }
                     }
-                }
             }
             realm.commitTransaction();
         }
@@ -509,6 +552,10 @@ public class RelayManageActivity extends Activity
         // ищем наш пункт меню
         switch (itemId)
         {
+            case R.id.pref:
+                intent = new Intent(RelayManageActivity.this, PrefActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.about:
                 intent = new Intent(RelayManageActivity.this, AboutActivity.class);
                 startActivity(intent);
