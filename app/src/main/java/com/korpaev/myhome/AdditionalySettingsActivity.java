@@ -23,14 +23,15 @@ import android.widget.Toast;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.internal.Context;
 
 public class AdditionalySettingsActivity extends Activity {
     //region КОНСТАНТЫ
     private final String EMPTYDATA = "Не задано";
     private final String NAMESHAREDPREF = "IdDevicePref";
     private final String IDFIELDNAME = "_idDevice"; //Имя поля БД
+    private final String NUMRELAYFIELDNAME = "_numRelay";
     private final String TIMESTAMPFIELDNAME = "_hTimeStamp";
-    private final String SENSORSINFOTABLENAME = "_stateSystemRaws";
     private final int PACKSMSCOUNT = 6;
     private final int COUNTSENSORS = 5;
     private final int COUNTRELAYS = 4;
@@ -115,14 +116,18 @@ public class AdditionalySettingsActivity extends Activity {
             R.id.spinnerRelayWithSensorTwo,
             R.id.spinnerRelayWithSensorThree,
             R.id.spinnerRelayWithSensorFour};
-    final int[] rIdSaveRelayWithSensorButtonArdArr = {R.id.btSaveRelayWithSensorOne,
-            R.id.btSaveRelayWithSensorTwo,
-            R.id.btSaveRelayWithSensorThree,
-            R.id.btSaveRelayWithSensorFour};
     final int[] rIdSmsNoticeRelayWithSensorChbArdArr = {R.id.chbConfSmsNoticeRelayWithSensorOne,
             R.id.chbConfSmsNoticeRelayWithSensorTwo,
             R.id.chbConfSmsNoticeRelayWithSensorThree,
             R.id.chbConfSmsNoticeRelayWithSensorFour};
+    final int[] rIdSaveRelayWithSensorButtonArdArr = {R.id.btSaveRelayWithSensorOne,
+            R.id.btSaveRelayWithSensorTwo,
+            R.id.btSaveRelayWithSensorThree,
+            R.id.btSaveRelayWithSensorFour};
+    final int[] rIdCancelRelayWithSensorButtonArdArr = {R.id.btCancelRelayWithSensorOne,
+            R.id.btCancelRelayWithSensorTwo,
+            R.id.btCancelRelayWithSensorThree,
+            R.id.btCancelRelayWithSensorFour};
 
     final int rIdSpinnerSensorsForGas = R.id.spConfGasSensorWithRelays;
     //endregion
@@ -151,12 +156,13 @@ public class AdditionalySettingsActivity extends Activity {
     final Spinner[] spSpinnerRelayWithSensorArdArr = new Spinner[COUNTRELAYS];
     final CheckBox[] chbConfSmsNoticeRelayWithSensorArdArr = new CheckBox[COUNTRELAYS];
     final Button[] btSaveRelayWithSensorButtonArdArr = new Button[COUNTRELAYS];
+    final Button[] btCancelRelayWithSensorButtonArdArr = new Button[COUNTRELAYS];
 
     TextView tvGasName;
     EditText etGasEdge;
     Spinner spRelayForGas;
     CheckBox chbSmsNoticeGas;
-    Button btSaveGasPref;
+    Button btSaveGasPref, btCancelGasPref;
     //endregion
 
     //region Переменные и массивы для хранения значений вьюх
@@ -186,6 +192,8 @@ public class AdditionalySettingsActivity extends Activity {
     private String sGasName;
     private int iGasEdge;
     private boolean bSmsNoticeGas;
+
+    private boolean _isCancelFlag; //Флаг что была нажата кнопка отвязки по датчикам
     //endregion
 
     private void set_numSensorArrayElement(int numSensorArrayElement) { _numSensorArrayElement = numSensorArrayElement; }
@@ -274,11 +282,56 @@ public class AdditionalySettingsActivity extends Activity {
         @Override
         public void onItemSelected(AdapterView<?> spinnerView, View adapterView, int position, long id)
         {
+            GradientDrawable gd = new GradientDrawable();
+            gd.setColor(0xFF353637);
+            gd.setCornerRadius(7);
+            int numRelayWithS;
+
             for (int i = 0; i < COUNTRELAYS; i++)
             {
                 if (spinnerView.getId() == rIdSpinnerRelayWithSensorArdArr[i])
                 {
+                    if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(position).get_bNumRelay()))
+                    {
+                        numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(position).get_bNumRelay()) - 1;
+
+                        if (numRelayWithS == i)
+                        {
+                            gd.setColor(0xFFA4ABAD);
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= 16)
+                    {
+                        spinnerView.setBackground(gd);
+                    }
+                    else
+                    {
+                        spinnerView.setBackgroundDrawable(gd);
+                    }
+
                     chbConfSmsNoticeRelayWithSensorArdArr[i].setChecked(bConfSmsNoticeRelayWithSensorArdArr[i]);
+                    spinnerView.setSelection(position);
+                }
+                if (spinnerView.getId() == spRelayForGas.getId())
+                {
+                    if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(5).get_bNumRelay()))
+                    {
+                        numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(5).get_bNumRelay()) - 1;
+
+                        if (numRelayWithS == i)
+                        {
+                            gd.setColor(0xFFA4ABAD);
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= 16)
+                    {
+                        spinnerView.setBackground(gd);
+                    }
+                    else
+                    {
+                        spinnerView.setBackgroundDrawable(gd);
+                    }
+                    chbSmsNoticeGas.setChecked(bSmsNoticeGas);
                     spinnerView.setSelection(position);
                 }
             }
@@ -301,6 +354,7 @@ public class AdditionalySettingsActivity extends Activity {
         spRelayForGas.setOnItemSelectedListener(itemSpinnerSelected);
         chbSmsNoticeGas = (CheckBox)findViewById(R.id.chbSmsNoticeForGasSensorConf);
         btSaveGasPref = (Button)findViewById(R.id.btSavePrefForGasConf);
+        btCancelGasPref = (Button)findViewById(R.id.btCancelPrefForGasConf);
 
         tvSectionConfSensorNamesArd = findViewById(R.id.tvSectionConfSensorNamesArd);
         vSectionConfSensorNamesArd = findViewById(R.id.sectionConfSensorNamesArd);
@@ -311,7 +365,8 @@ public class AdditionalySettingsActivity extends Activity {
         tvSectionConfGasPref = findViewById(R.id.tvSectionConfGasPref);
         vSectionConfGasPref = findViewById(R.id.sectionConfGasPref);
 
-        for (int i = 0; i < COUNTSENSORS; i++) {
+        for (int i = 0; i < COUNTSENSORS; i++)
+        {
             tvCurrSensorNameArdArr[i] = (TextView) findViewById(rIdCurrSensorNameArdArr[i]);
             etNewSensorNameArdArr[i] = (EditText) findViewById(rIdNewSensorNameArdArr[i]);
             btSaveSensorNameArdButtonArr[i] = (Button) findViewById(rIdSaveSensorNameArdButtonArr[i]);
@@ -323,13 +378,15 @@ public class AdditionalySettingsActivity extends Activity {
             btSaveTempEdgesButtonArdArr[i] = (Button) findViewById(rIdSaveTempEdgesButtonArdArr[i]);
         }
 
-        for (int j = 0; j < COUNTRELAYS; j++) {
+        for (int j = 0; j < COUNTRELAYS; j++)
+        {
             tvCurrRelayNameArdArr[j] = (TextView)findViewById(rIdCurrRelayNameArdArr[j]);
             etNewRelayNameArdArr[j] = (EditText)findViewById(rIdNewRelayNameArdArr[j]);
             btSaveRelayNameArdButtonArr[j] = (Button)findViewById(rIdSaveRelayNameArdButtonArr[j]);
 
             tvRelayWithSensorManageNameArdArr[j] = (TextView)findViewById(rIdRelayWithSensorManageArdArr[j]);
             btSaveRelayWithSensorButtonArdArr[j] = (Button)findViewById(rIdSaveRelayWithSensorButtonArdArr[j]);
+            btCancelRelayWithSensorButtonArdArr[j] = (Button)findViewById(rIdCancelRelayWithSensorButtonArdArr[j]);
             chbConfSmsNoticeRelayWithSensorArdArr[j] = (CheckBox)findViewById(rIdSmsNoticeRelayWithSensorChbArdArr[j]);
             spSpinnerRelayWithSensorArdArr[j] = (Spinner) findViewById(rIdSpinnerRelayWithSensorArdArr[j]);
             spSpinnerRelayWithSensorArdArr[j].setAdapter(spinnerAdapterForSensors);
@@ -366,19 +423,20 @@ public class AdditionalySettingsActivity extends Activity {
         }
     }
 
+    RealmResults<SensorsInfoDb> sensorsInfoDbsGlobal;
     private void FillSensorsName(String idDevice)
     {
-        RealmResults<SensorsInfoDb> sensorsInfoDbs = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idDevice).findAll();
+        sensorsInfoDbsGlobal = realm.where(SensorsInfoDb.class).equalTo(IDFIELDNAME, idDevice).findAll();
 
-        if (sensorsInfoDbs.size() > 0)
+        if (sensorsInfoDbsGlobal.size() > 0)
         {
             int maxTimeStamp = 0;
-            if (sensorsInfoDbs.size() <= PACKSMSCOUNT)
+            if (sensorsInfoDbsGlobal.size() <= PACKSMSCOUNT)
             {
                 //Получаем максимальное время
-                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+                maxTimeStamp = sensorsInfoDbsGlobal.max(TIMESTAMPFIELDNAME).intValue();
 
-                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                sensorsInfoDbsGlobal = realm.where(SensorsInfoDb.class)
                         .equalTo(IDFIELDNAME, _sIdDevice)
                         .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
                         .findAll();
@@ -386,53 +444,53 @@ public class AdditionalySettingsActivity extends Activity {
             else
             {
                 //Получаем максимальное время
-                maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+                maxTimeStamp = sensorsInfoDbsGlobal.max(TIMESTAMPFIELDNAME).intValue();
 
-                sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                sensorsInfoDbsGlobal = realm.where(SensorsInfoDb.class)
                         .equalTo(IDFIELDNAME, _sIdDevice)
                         .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
                         .findAll();
 
                 //если у нас записей в пачке мало, то выбираем целую пачку и отображаем ее
-                if (sensorsInfoDbs.size() != PACKSMSCOUNT)
+                if (sensorsInfoDbsGlobal.size() != PACKSMSCOUNT)
                 {
-                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                    sensorsInfoDbsGlobal = realm.where(SensorsInfoDb.class)
                             .equalTo(IDFIELDNAME, _sIdDevice)
                             .lessThan(TIMESTAMPFIELDNAME, maxTimeStamp)
                             .findAll();
 
-                    maxTimeStamp = sensorsInfoDbs.max(TIMESTAMPFIELDNAME).intValue();
+                    maxTimeStamp = sensorsInfoDbsGlobal.max(TIMESTAMPFIELDNAME).intValue();
 
-                    sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                    sensorsInfoDbsGlobal = realm.where(SensorsInfoDb.class)
                             .equalTo(IDFIELDNAME, _sIdDevice)
                             .equalTo(TIMESTAMPFIELDNAME, maxTimeStamp)
                             .findAll();
                 }
             }
 
-                for (int j = 0; j < sensorsInfoDbs.size(); j++)
+                for (int j = 0; j < sensorsInfoDbsGlobal.size(); j++)
                 {
-                    int numSensor = sensorsInfoDbs.get(j).get_hNumSensor();
+                    int numSensor = sensorsInfoDbsGlobal.get(j).get_hNumSensor();
 
                     numSensor -= 1;
 
                     if (numSensor != 5) //проверяем не датчик ли это газа - его индекс в массивах 5, но номер его во входной смс 6
                     {
-                        sCurrSensorNameArdArr[numSensor] = sensorsInfoDbs.get(j).get_bLocationSensor();
+                        sCurrSensorNameArdArr[numSensor] = sensorsInfoDbsGlobal.get(j).get_bLocationSensor();
                         tvCurrSensorNameArdArr[numSensor].setText(sCurrSensorNameArdArr[numSensor]);
 
                         sSensorNameTempEdgesArdArr[numSensor] = sCurrSensorNameArdArr[numSensor];
                         tvSensorNameTempEdgesArdArr[numSensor].setText(sSensorNameTempEdgesArdArr[numSensor]);
 
-                        if (sensorsInfoDbs.get(numSensor).get_minTempEdge() == 0) {
+                        if (sensorsInfoDbsGlobal.get(numSensor).get_minTempEdge() == 0) {
                             sMinTempEdgesArdArr[numSensor] = UNDEFINED;
                         } else
-                            sMinTempEdgesArdArr[numSensor] = sensorsInfoDbs.get(j).get_minTempEdge();
+                            sMinTempEdgesArdArr[numSensor] = sensorsInfoDbsGlobal.get(j).get_minTempEdge();
 
-                        if (sensorsInfoDbs.get(numSensor).get_maxTempEdge() == 0) {
+                        if (sensorsInfoDbsGlobal.get(numSensor).get_maxTempEdge() == 0) {
                             sMaxTempEdgesArdArr[numSensor] = UNDEFINED;
                         } else
-                            sMaxTempEdgesArdArr[numSensor] = sensorsInfoDbs.get(j).get_maxTempEdge();
+                            sMaxTempEdgesArdArr[numSensor] = sensorsInfoDbsGlobal.get(j).get_maxTempEdge();
 
                         if (sMinTempEdgesArdArr[numSensor] == UNDEFINED) {
                             etMinTempEdgesArdArr[numSensor].setText(null);
@@ -444,35 +502,35 @@ public class AdditionalySettingsActivity extends Activity {
                         } else
                             etMaxTempEdgesArdArr[numSensor].setText(String.valueOf(sMaxTempEdgesArdArr[numSensor]));
 
-                        sTurnOnRelayWithSensorArdArr[numSensor] = sensorsInfoDbs.get(j).get_turnOnRelayWithSensor();
-                        sTurnOffRelayWithSensorArdArr[numSensor] = sensorsInfoDbs.get(j).get_turnOffRelayWithSensor();
+                        sTurnOnRelayWithSensorArdArr[numSensor] = sensorsInfoDbsGlobal.get(j).get_turnOnRelayWithSensor();
+                        sTurnOffRelayWithSensorArdArr[numSensor] = sensorsInfoDbsGlobal.get(j).get_turnOffRelayWithSensor();
                         chbTurnOnRelayWithSensorArdArr[numSensor].setChecked(sTurnOnRelayWithSensorArdArr[numSensor]);
                         chbTurnOffRelayWithSensorArdArr[numSensor].setChecked(sTurnOffRelayWithSensorArdArr[numSensor]);
                     }
                     else
                     {
                         String strLoc;
-                        sGasName = sensorsInfoDbs.get(j).get_bLocationSensor();
+                        sGasName = sensorsInfoDbsGlobal.get(j).get_bLocationSensor();
 
-                        if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationSensorRus()))
+                        if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(j).get_bLocationSensorRus()))
                         {
-                            strLoc = sensorsInfoDbs.get(j).get_bLocationSensorRus();
+                            strLoc = sensorsInfoDbsGlobal.get(j).get_bLocationSensorRus();
                             tvGasName.setText(strLoc);
                         }
                         else
                         {
                             tvGasName.setText(sGasName);
                         }
-                        iGasEdge = sensorsInfoDbs.get(j).get_gasEdge();
+                        iGasEdge = sensorsInfoDbsGlobal.get(j).get_gasEdge();
                         etGasEdge.setText(String.valueOf(iGasEdge));
-                        bSmsNoticeGas = sensorsInfoDbs.get(j).get_bSmsNoticeSensor();
+                        bSmsNoticeGas = sensorsInfoDbsGlobal.get(j).get_bSmsNoticeSensor();
                         chbSmsNoticeGas.setChecked(bSmsNoticeGas);
                     }
                     //смотрим если есть привязка реле к датчику
-                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()))
+                    if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(j).get_bNumRelay()))
                     {
                         //то получаем номер реле которое привязано
-                        int numRelay = Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay());
+                        int numRelay = Integer.parseInt(sensorsInfoDbsGlobal.get(j).get_bNumRelay());
                         numRelay -= 1;
 
                         String locStr;
@@ -483,15 +541,15 @@ public class AdditionalySettingsActivity extends Activity {
 
                         if (numSensor != 5)
                         {
-                            bConfSmsNoticeRelayWithSensorArdArr[numRelay] = sensorsInfoDbs.get(j).get_bSmsNoticeSensor();
+                            bConfSmsNoticeRelayWithSensorArdArr[numRelay] = sensorsInfoDbsGlobal.get(j).get_bSmsNoticeSensor();
 
-                            sCurrRelayNameArdArr[numRelay] = sensorsInfoDbs.get(j).get_bLocationRelay();
+                            sCurrRelayNameArdArr[numRelay] = sensorsInfoDbsGlobal.get(j).get_bLocationRelay();
                             tvCurrRelayNameArdArr[numRelay].setText(sCurrRelayNameArdArr[numRelay]);
 
                             sRelayWithSensorManageNameArdArr[numRelay] = sCurrRelayNameArdArr[numRelay];
-                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bLocationRelayRus()))
+                            if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(j).get_bLocationRelayRus()))
                             {
-                                locStr = sensorsInfoDbs.get(j).get_bLocationRelayRus();
+                                locStr = sensorsInfoDbsGlobal.get(j).get_bLocationRelayRus();
                                 tvRelayWithSensorManageNameArdArr[numRelay].setText(locStr);
                             }
                             else tvRelayWithSensorManageNameArdArr[numRelay].setText(sRelayWithSensorManageNameArdArr[numRelay]);
@@ -608,17 +666,17 @@ public class AdditionalySettingsActivity extends Activity {
     //region SendInfToArdFromAddConf(View v) Функция отправки инфы на ардуину по кнопкам
     public void SendInfToArdFromAddConf(View v)
     {
-        int viewId = v.getId();
-        if (CheckViews(viewId, v))
+        if (CheckViews(v))
         {
-            WriteDbData(viewId, v);
+            WriteDbData(v);
             FillData(); //Обновили экран с новыми данными
         }
     }
 
     //Проверка валидности введенных данных вьюх
-    private boolean CheckViews(int rIdView, View v)
+    private boolean CheckViews(View v)
     {
+        int rIdView = v.getId();
         for (int i = 0; i < COUNTSENSORS; i++)
         {
             if (rIdView == rIdSaveSensorNameArdButtonArr[i] && TextUtils.isEmpty(etNewSensorNameArdArr[i].getText()))
@@ -649,7 +707,8 @@ public class AdditionalySettingsActivity extends Activity {
                 etNewRelayNameArdArr[j].setError("Обязательно к заполнению!");
                 return false;
             }
-            else if (rIdView == rIdSaveRelayWithSensorButtonArdArr[j] && TextUtils.isEmpty(sRelayWithSensorManageNameArdArr[j]))
+            else if ((rIdView == rIdSaveRelayWithSensorButtonArdArr[j] || rIdView == rIdCancelRelayWithSensorButtonArdArr[j])
+                     && TextUtils.isEmpty(sRelayWithSensorManageNameArdArr[j]))
             {
                 ShowToast(v, "Не задано имя реле!");
                 return false;
@@ -658,9 +717,12 @@ public class AdditionalySettingsActivity extends Activity {
         return true;
     }
 
-    private void WriteDbData(int idView, View view)
+    private void WriteDbData(View view)
     {
+        int idView = view.getId();
         String strSms;
+        _isCancelFlag = false;
+
         for (int i = 0; i < COUNTSENSORS; i++)
         {
             if (idView == rIdSaveSensorNameArdButtonArr[i])
@@ -668,7 +730,7 @@ public class AdditionalySettingsActivity extends Activity {
                 //DALLASRENAME;1;BathRoom
                 sNewSensorNameArdArr[i] = Translit.RusToLat(etNewSensorNameArdArr[i].getText().toString());
                 strSms = "DALLASRENAME;" + String.valueOf(i) + ";" + sNewSensorNameArdArr[i];
-                if (WriteDbSensors(i, idView)) //Переписали БД
+                if (WriteDbSensors(i, view, _isCancelFlag)) //Переписали БД
                 {
                     SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
                 }
@@ -697,7 +759,7 @@ public class AdditionalySettingsActivity extends Activity {
                         String.valueOf(sMaxTempEdgesArdArr[i]) + ";" +
                         AddDeviceActivity.BoolToIntStr(sTurnOnRelayWithSensorArdArr[i]) + ";" +
                         AddDeviceActivity.BoolToIntStr(sTurnOffRelayWithSensorArdArr[i]);
-                if (WriteDbSensors(i, idView))
+                if (WriteDbSensors(i, view, _isCancelFlag))
                 {
                     SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину
                 }
@@ -713,33 +775,41 @@ public class AdditionalySettingsActivity extends Activity {
                 SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с новым именем
                 WriteDbRelays(j);
             }
-            else if (idView == rIdSaveRelayWithSensorButtonArdArr[j])
+            else if (idView == rIdSaveRelayWithSensorButtonArdArr[j] ||
+                     idView == rIdCancelRelayWithSensorButtonArdArr[j])
             {
                 // DALLASPREF;  5;  idRelay;         1
                 //                   к какому реле     смс
+                String strNumRelay;
                 bConfSmsNoticeRelayWithSensorArdArr[j] = chbConfSmsNoticeRelayWithSensorArdArr[j].isChecked();
 
                 set_numRelayArrayElement(j);
                 set_numSensorArrayElement(spSpinnerRelayWithSensorArdArr[j].getSelectedItemPosition());
 
+                if (idView == rIdCancelRelayWithSensorButtonArdArr[j])
+                {
+                    _isCancelFlag = true;
+                    strNumRelay = String.valueOf(UNDEFINED);
+                }
+                else strNumRelay = String.valueOf(get_numRelayArrayElement());
+
                 strSms = "DALLASPREF;" +
                          String.valueOf(get_numSensorArrayElement()) + ";" +
-                         String.valueOf(j) + ";" +
+                         strNumRelay + ";" +
                          AddDeviceActivity.BoolToIntStr(bConfSmsNoticeRelayWithSensorArdArr[j]);
 
-                if (WriteDbSensors(get_numSensorArrayElement(), idView))
+                if (WriteDbSensors(get_numSensorArrayElement(), view, _isCancelFlag))
                 {
                     SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с привязкой
                 }
-                else ShowToast(view, "Выбранный датчик уже привязан к другому реле...\n" +
-                                     "Или же данные по датчикам не полные!");
             }
         }
         //Отдельно по датчику газа проверяем
-        if (idView == btSaveGasPref.getId())
+        if (idView == btSaveGasPref.getId() || idView == btCancelGasPref.getId())
         {
             // GASPREF;45;1;1 или GASPREF;45;999;1
             // Соответственно переписываем порог газа, привязка к какому реле или RN и смс оповещение
+            String strNumRelay;
 
             if (TextUtils.isEmpty(etGasEdge.getText().toString()))
             {
@@ -749,24 +819,31 @@ public class AdditionalySettingsActivity extends Activity {
 
             bSmsNoticeGas = chbSmsNoticeGas.isChecked();
 
-            strSms = "GASPREF;" +
-                     String.valueOf(iGasEdge) + ";" +
-                     String.valueOf(get_numRelayArrayElement()) + ";" +
-                     AddDeviceActivity.BoolToIntStr(bSmsNoticeGas);
-
             set_numRelayArrayElement(spRelayForGas.getSelectedItemPosition());
             set_numSensorArrayElement(5);
-            if (WriteDbSensors(get_numSensorArrayElement(), idView))
+
+            if (idView == btCancelGasPref.getId())
+            {
+                _isCancelFlag = true;
+                strNumRelay = String.valueOf(UNDEFINED);
+            }
+            else strNumRelay = String.valueOf(get_numRelayArrayElement());
+
+            strSms = "GASPREF;" +
+                     String.valueOf(iGasEdge) + ";" +
+                     strNumRelay + ";" +
+                     AddDeviceActivity.BoolToIntStr(bSmsNoticeGas);
+
+            if (WriteDbSensors(get_numSensorArrayElement(), view, _isCancelFlag))
             {
                 SendSms(_ardPhoneNumb, strSms); //Отправили смс на ардину с привязкой
             }
-            else ShowToast(view, "Текущее реле уже привязано к другому датчику...\n" +
-                                 "Или же отсутствуют данные по реле!");
         }
     }
 
-    private boolean WriteDbSensors(int idArraySensors, int idView)
+    private boolean WriteDbSensors(int idArraySensors, View v, boolean isCancelFlag)
     {
+        int idView = v.getId();
         realm = Realm.getInstance(getBaseContext());
         realm.beginTransaction();
         //Получаем наш объект если он уже создан и хотим редактировать
@@ -816,6 +893,7 @@ public class AdditionalySettingsActivity extends Activity {
                 //проверим целостность данных в листе - всегда должно быть 6 строк по 6 датчикам
                 if (sensorsInfoDbs.size() != 6)
                 {
+                    ShowToast(v, "Нарушена целостность данных...\nПовторите запрос на главном экране!");
                     realm.commitTransaction();
                     realm.close();
                     return false;
@@ -846,26 +924,46 @@ public class AdditionalySettingsActivity extends Activity {
                             sensorsInfoDbs.get(j).set_turnOnRelayWithSensor(sTurnOnRelayWithSensorArdArr[idArraySensors]);
                             sensorsInfoDbs.get(j).set_turnOffRelayWithSensor(sTurnOffRelayWithSensorArdArr[idArraySensors]);
                         }
-                        else if (idView == rIdSaveRelayWithSensorButtonArdArr[get_numRelayArrayElement()])
+                        else if (idView == rIdSaveRelayWithSensorButtonArdArr[get_numRelayArrayElement()] ||
+                                 idView == rIdCancelRelayWithSensorButtonArdArr[get_numRelayArrayElement()])
                         {
                             int ind = get_numRelayArrayElement();
-                            //Проверим сначала не привязан ли текущий датчик уже к иному реле
-                            for (int k = 0; k < sensorsInfoDbs.size(); k++)
+
+                            if (!isCancelFlag)
                             {
-                                if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
+                                //сначала проверим есть ли у текущего датчика привязанное реле
+                                //если есть привязка то кинем уведомление что надо отвязать сначала реле от привязанного датчика
+                                //второе условие проверяет не пытаемся ли мы отправить повторно инфу по выбранному привязанному датчику - это разрешено
+                                if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()) &&
+                                        (Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay()) - 1) != ind)
                                 {
-                                    int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
-                                    //тут проверяем что если текущее реле = привязанному реле на ином датчике
-                                    //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
-                                    //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
-                                    if (ind == (checkInd - 1)  && idArraySensors != k)
+                                    ShowToast(v, "Необходимо освободить текущий датчик от реле!");
+                                    realm.commitTransaction();
+                                    realm.close();
+                                    return false;
+                                }
+
+                                //Проверим не привязан ли текущий датчик уже к иному реле
+                                for (int k = 0; k < sensorsInfoDbs.size(); k++)
+                                {
+                                    if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
                                     {
-                                        realm.commitTransaction();
-                                        realm.close();
-                                        return false;
+                                        int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
+                                        //тут проверяем что если текущее реле = привязанному реле на ином датчике
+                                        //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
+                                        //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
+                                        if (ind == (checkInd - 1) && idArraySensors != k) {
+                                            ShowToast(v, "Текущее реле уже привязано к другому датчику!");
+                                            //realm.commitTransaction();
+                                            realm.close();
+                                            return false;
+                                        }
                                     }
                                 }
                             }
+
+                            //Далее заполним табличку по датчикам для привязанных релюх из таблички по релюхам,
+                            //потому что там уже могут быть данные по состояням реле по именам русским и тд
                             if (relayRenamesDbs.size() > 0)
                             {
                                 if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelay()))
@@ -883,57 +981,96 @@ public class AdditionalySettingsActivity extends Activity {
                                 boolean manualManage = relayRenamesDbs.get(ind).get_isAutomaticModeR();
                                 sensorsInfoDbs.get(j).set_bManualManageRelay(manualManage);
                             }
-                            sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+
+                            //теперь допишем привязку по выранному датчику для текущего реле
+                            if (isCancelFlag)
+                            {
+                                sensorsInfoDbs.get(j).set_bNumRelay(null);
+                                sRelayWithSensorManageNameArdArr[ind] = "";
+                            }
+                            else sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+
                             sensorsInfoDbs.get(j).set_bLocationRelay(sRelayWithSensorManageNameArdArr[ind]);
                             bConfSmsNoticeRelayWithSensorArdArr[ind] = chbConfSmsNoticeRelayWithSensorArdArr[ind].isChecked();
                             sensorsInfoDbs.get(j).set_bSmsNoticeSensor(bConfSmsNoticeRelayWithSensorArdArr[ind]);
                             sensorsInfoDbs.get(j).set_bManualManageRelay(true); //При привязке по умолчанию автоматика включена
                         }
                     }
-                    else if (idView == btSaveGasPref.getId())
+                    else if (idView == btSaveGasPref.getId() || idView == btCancelGasPref.getId())
                     {
                         int ind = get_numRelayArrayElement();
-                        //Проверим сначала не привязан ли текущий датчик уже к иному реле
-                        for (int k = 0; k < sensorsInfoDbs.size(); k++)
+
+                        if (!isCancelFlag)
                         {
-                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
+                            //сначала проверим есть ли у текущего датчика привязанное реле
+                            //если есть привязка то кинем уведомление что надо отвязать сначала реле от привязанного датчика
+                            //второе условие проверяет не пытаемся ли мы отправить повторно инфу по выбранному привязанному датчику - это разрешено
+                            if (!TextUtils.isEmpty(sensorsInfoDbs.get(j).get_bNumRelay()) &&
+                                    (Integer.parseInt(sensorsInfoDbs.get(j).get_bNumRelay()) - 1) != ind)
                             {
-                                int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
-                                //тут проверяем что если текущее реле = привязанному реле на ином датчике
-                                //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
-                                //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
-                                if (ind == (checkInd - 1) && idArraySensors != k)
+                                ShowToast(v, "Необходимо освободить текущий датчик от реле!");
+                                realm.commitTransaction();
+                                realm.close();
+                                return false;
+                            }
+
+                            //Проверим сначала не привязан ли текущий датчик уже к иному реле
+                            for (int k = 0; k < sensorsInfoDbs.size(); k++)
+                            {
+                                if (!TextUtils.isEmpty(sensorsInfoDbs.get(k).get_bNumRelay()))
                                 {
-                                    realm.commitTransaction();
-                                    realm.close();
-                                    return false;
+                                    int checkInd = Integer.parseInt(sensorsInfoDbs.get(k).get_bNumRelay());
+                                    //тут проверяем что если текущее реле = привязанному реле на ином датчике
+                                    //++ не берем в расчет текущий датчик - его не проверяем сам на себя, чтобы не вывалиться в ошибку
+                                    //если выбранное реле на нем уже и привязано - пропускаем текущий датчик на проверку
+                                    if (ind == (checkInd - 1) && idArraySensors != k) {
+                                        ShowToast(v, "Текущее реле уже привязано к другому датчику!");
+                                        realm.commitTransaction();
+                                        realm.close();
+                                        return false;
+                                    }
                                 }
                             }
                         }
+
                         if (TextUtils.isEmpty(spRelayForGas.getSelectedItem().toString()))
                         {
+                            ShowToast(v, "Отсутствуют данные по реле!");
                             realm.commitTransaction();
                             realm.close();
                             return false;
                         }
-                        if (relayRenamesDbs.size() > 0)
+
+                        for (int m = 0; m < relayRenamesDbs.size(); m++)
                         {
-                            if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelay()))
+                            if (relayRenamesDbs.get(m).get_numRelay() != ind + 1)
                             {
-                                String loc = relayRenamesDbs.get(ind).get_bLocationRelay();
+                                continue;
+                            }
+
+                            if (!TextUtils.isEmpty(relayRenamesDbs.get(m).get_bLocationRelay()))
+                            {
+                                String loc = relayRenamesDbs.get(m).get_bLocationRelay();
                                 sensorsInfoDbs.get(j).set_bLocationRelay(loc);
                             }
-                            if (!TextUtils.isEmpty(relayRenamesDbs.get(ind).get_bLocationRelayRus()))
+                            if (!TextUtils.isEmpty(relayRenamesDbs.get(m).get_bLocationRelayRus()))
                             {
-                                String locRus = relayRenamesDbs.get(ind).get_bLocationRelayRus();
+                                String locRus = relayRenamesDbs.get(m).get_bLocationRelayRus();
                                 sensorsInfoDbs.get(j).set_bLocationRelayRus(locRus);
                             }
-                            boolean stateR = relayRenamesDbs.get(ind).get_bStateRelay();
+                            boolean stateR = relayRenamesDbs.get(m).get_bStateRelay();
                             sensorsInfoDbs.get(j).set_bStateRelay(stateR);
-                            boolean manualManage = relayRenamesDbs.get(ind).get_isAutomaticModeR();
+                            boolean manualManage = relayRenamesDbs.get(m).get_isAutomaticModeR();
                             sensorsInfoDbs.get(j).set_bManualManageRelay(manualManage);
                         }
-                        sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+
+                        //теперь допишем привязку по выранному датчику для текущего реле
+                        if (isCancelFlag)
+                        {
+                            sensorsInfoDbs.get(j).set_bNumRelay(null);
+                        }
+                        else sensorsInfoDbs.get(j).set_bNumRelay(String.valueOf(ind + 1));
+
                         bSmsNoticeGas = chbSmsNoticeGas.isChecked();
                         sensorsInfoDbs.get(j).set_bSmsNoticeSensor(bSmsNoticeGas);
                         sensorsInfoDbs.get(j).set_gasEdge(iGasEdge);

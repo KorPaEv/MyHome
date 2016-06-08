@@ -246,9 +246,11 @@ public class GeneralSettingsActivity extends Activity
             //ВОТ ТУТ НАДО СНАЧАЛА ЗАПИСАТЬ ВСЕ РЕНЭЙМЫ В ТАБЛИЦУ ПО РЕЛЮХАМ, ПОТОМ ТЕ КОТОРЫЕ ПРИВЯЗАНЯ ПЕРЕПИШУТСЯ САМИ!!!
             for (int i = 0; i < relayRenamesDbs.size(); i++)
             {
-                sRelayReNameArr[i] = etRelaysReNameArr[i].getText().toString();
-                relayRenamesDbs.get(i).set_bLocationRelayRus(sRelayReNameArr[i]);
-                relayRenamesDbs.get(i).set_bLocationRelay(sRelayNameArr[i]);
+                int numR = relayRenamesDbs.get(i).get_numRelay();
+                numR -= 1;
+                sRelayReNameArr[numR] = etRelaysReNameArr[numR].getText().toString();
+                relayRenamesDbs.get(i).set_bLocationRelayRus(sRelayReNameArr[numR]);
+                relayRenamesDbs.get(i).set_bLocationRelay(sRelayNameArr[numR]);
             }
 
             //Получаем наш объект если он уже создан и хотим редактировать

@@ -113,7 +113,7 @@ public class RelayManageActivity extends Activity
             //получаем номер реле
             int numRelay = relayRenamesDbs.get(i).get_numRelay();
             numRelay -= 1;
-            if (!TextUtils.isEmpty(relayRenamesDbs.get(numRelay).get_bLocationRelayRus()))
+            if (!TextUtils.isEmpty(relayRenamesDbs.get(i).get_bLocationRelayRus()))
             {
                 sRelayNameArr[numRelay] = relayRenamesDbs.get(i).get_bLocationRelayRus();
                 tgbRelaysStateArr[numRelay].setEnabled(true);

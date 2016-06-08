@@ -174,14 +174,20 @@ public class MessageService extends IntentService
             for (int j = 0; j < listSensorsInfo.size(); j++)
             {
                 sensorsInfoDbs = realm.where(SensorsInfoDb.class)
+                        .equalTo(TIMEFIELDNAME, maxTimeStamp)
                         .equalTo(NUMSENSORFIELDNAME, listSensorsInfo.get(j).get_hNumSensor())
-                        .notEqualTo(LOCSENSORRUSFIELDNAME, "")
-                        .or()
-                        .notEqualTo(LOCRELAYRUSFIELDNAME, "")
+                        //.notEqualTo(LOCSENSORRUSFIELDNAME, "")
+                        //.or()
+                        //.notEqualTo(LOCRELAYRUSFIELDNAME, "")
                         .findAll();
 
                 for (int m = 0; m < sensorsInfoDbs.size(); m++)
                 {
+                    listSensorsInfo.get(j).set_bLocationSensor(sensorsInfoDbs.get(m).get_bLocationSensor());
+                    listSensorsInfo.get(j).set_bLocationRelay(sensorsInfoDbs.get(m).get_bLocationRelay());
+                    listSensorsInfo.get(j).set_minTempEdge(sensorsInfoDbs.get(m).get_minTempEdge());
+                    listSensorsInfo.get(j).set_maxTempEdge(sensorsInfoDbs.get(m).get_maxTempEdge());
+                    listSensorsInfo.get(j).set_gasEdge(sensorsInfoDbs.get(m).get_gasEdge());
                     listSensorsInfo.get(j).set_bLocationSensorRus(sensorsInfoDbs.get(m).get_bLocationSensorRus());
                     listSensorsInfo.get(j).set_bLocationRelayRus(sensorsInfoDbs.get(m).get_bLocationRelayRus());
                 }

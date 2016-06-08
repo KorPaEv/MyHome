@@ -78,7 +78,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorOne"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -110,7 +111,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorTwo"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -142,7 +144,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorThree"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -173,7 +176,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorFour"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -205,7 +209,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdSensorFive"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -257,7 +262,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayOne"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -288,7 +294,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayTwo"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -319,7 +326,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayThree"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -350,7 +358,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/eConfNameArdRelayFour"
                         android:hint="Введите имя"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:inputType="textCapSentences" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
@@ -924,8 +933,16 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ok"
+                        android:text="V"
                         android:id="@+id/btSaveRelayWithSensorOne"
+                        android:onClick="SendInfToArdFromAddConf" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="X"
+                        android:id="@+id/btCancelRelayWithSensorOne"
                         android:layout_marginRight="5dp"
                         android:onClick="SendInfToArdFromAddConf" />
                 </LinearLayout>
@@ -963,8 +980,16 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ok"
+                        android:text="V"
                         android:id="@+id/btSaveRelayWithSensorTwo"
+                        android:onClick="SendInfToArdFromAddConf" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="X"
+                        android:id="@+id/btCancelRelayWithSensorTwo"
                         android:layout_marginRight="5dp"
                         android:onClick="SendInfToArdFromAddConf" />
                 </LinearLayout>
@@ -1002,8 +1027,16 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ok"
+                        android:text="V"
                         android:id="@+id/btSaveRelayWithSensorThree"
+                        android:onClick="SendInfToArdFromAddConf" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="X"
+                        android:id="@+id/btCancelRelayWithSensorThree"
                         android:layout_marginRight="5dp"
                         android:onClick="SendInfToArdFromAddConf" />
                 </LinearLayout>
@@ -1041,11 +1074,20 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ok"
+                        android:text="V"
                         android:id="@+id/btSaveRelayWithSensorFour"
+                        android:onClick="SendInfToArdFromAddConf" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="X"
+                        android:id="@+id/btCancelRelayWithSensorFour"
                         android:layout_marginRight="5dp"
                         android:onClick="SendInfToArdFromAddConf" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <View
@@ -1124,8 +1166,16 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ok"
+                        android:text="V"
                         android:id="@+id/btSavePrefForGasConf"
+                        android:onClick="SendInfToArdFromAddConf" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="X"
+                        android:id="@+id/btCancelPrefForGasConf"
                         android:layout_marginRight="5dp"
                         android:onClick="SendInfToArdFromAddConf" />
                 </LinearLayout>
