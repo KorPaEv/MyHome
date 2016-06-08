@@ -16,9 +16,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -188,7 +189,7 @@ public class GeneralInfoActivity extends Activity
 
         if (sensorsInfoDbs.size() > 0)
         {
-            int maxTimeStamp = 0;
+            long maxTimeStamp = 0;
             if (sensorsInfoDbs.size() <= COUNTSENSORS)
             {
                 //Получаем максимальное время
@@ -304,20 +305,14 @@ public class GeneralInfoActivity extends Activity
         }
     }
 
-    public String GetUpdateTime(int timeStamp)
+    public String GetUpdateTime(long timeStamp)
     {
 
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String strDate = sdf.format(calendar.getTime());
-//        return strDate;
-
-        Date date;
-        SimpleDateFormat sdf;
-        //Посмотрим что лежит в БД после записи данных
-        RealmResults<SensorsInfoDb> results = realm.where(SensorsInfoDb.class).findAll();
-        date = new Date(timeStamp * 1000L); // *1000 is to convert seconds to milliseconds
-        sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        return sdf.format(date);
+        Date date = new Date(timeStamp * 1000L); // *1000 is to convert seconds to milliseconds
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyy HH:mm:ss"); // the format of your date
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT-0")); // give a timezone reference for formating (see comment at the bottom
+        String formattedDate = sdf.format(date);
+        return formattedDate;
     }
     //endregion
 
