@@ -287,52 +287,55 @@ public class AdditionalySettingsActivity extends Activity {
             gd.setCornerRadius(7);
             int numRelayWithS;
 
-            for (int i = 0; i < COUNTRELAYS; i++)
+            if (sensorsInfoDbsGlobal.size() > 0)
             {
-                if (spinnerView.getId() == rIdSpinnerRelayWithSensorArdArr[i])
+                for (int i = 0; i < COUNTRELAYS; i++)
                 {
-                    if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(position).get_bNumRelay()))
+                    if (spinnerView.getId() == rIdSpinnerRelayWithSensorArdArr[i])
                     {
-                        numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(position).get_bNumRelay()) - 1;
-
-                        if (numRelayWithS == i)
+                        if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(position).get_bNumRelay()))
                         {
-                            gd.setColor(0xFFA4ABAD);
+                            numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(position).get_bNumRelay()) - 1;
+
+                            if (numRelayWithS == i)
+                            {
+                                gd.setColor(0xFFA4ABAD);
+                            }
                         }
-                    }
-                    if (Build.VERSION.SDK_INT >= 16)
-                    {
-                        spinnerView.setBackground(gd);
-                    }
-                    else
-                    {
-                        spinnerView.setBackgroundDrawable(gd);
-                    }
-
-                    chbConfSmsNoticeRelayWithSensorArdArr[i].setChecked(bConfSmsNoticeRelayWithSensorArdArr[i]);
-                    spinnerView.setSelection(position);
-                }
-                if (spinnerView.getId() == spRelayForGas.getId())
-                {
-                    if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(5).get_bNumRelay()))
-                    {
-                        numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(5).get_bNumRelay()) - 1;
-
-                        if (numRelayWithS == i)
+                        if (Build.VERSION.SDK_INT >= 16)
                         {
-                            gd.setColor(0xFFA4ABAD);
+                            spinnerView.setBackground(gd);
                         }
+                        else
+                        {
+                            spinnerView.setBackgroundDrawable(gd);
+                        }
+
+                        chbConfSmsNoticeRelayWithSensorArdArr[i].setChecked(bConfSmsNoticeRelayWithSensorArdArr[i]);
+                        spinnerView.setSelection(position);
                     }
-                    if (Build.VERSION.SDK_INT >= 16)
+                    if (spinnerView.getId() == spRelayForGas.getId())
                     {
-                        spinnerView.setBackground(gd);
+                        if (!TextUtils.isEmpty(sensorsInfoDbsGlobal.get(5).get_bNumRelay()))
+                        {
+                            numRelayWithS = Integer.parseInt(sensorsInfoDbsGlobal.get(5).get_bNumRelay()) - 1;
+
+                            if (numRelayWithS == i)
+                            {
+                                gd.setColor(0xFFA4ABAD);
+                            }
+                        }
+                        if (Build.VERSION.SDK_INT >= 16)
+                        {
+                            spinnerView.setBackground(gd);
+                        }
+                        else
+                        {
+                            spinnerView.setBackgroundDrawable(gd);
+                        }
+                        chbSmsNoticeGas.setChecked(bSmsNoticeGas);
+                        spinnerView.setSelection(position);
                     }
-                    else
-                    {
-                        spinnerView.setBackgroundDrawable(gd);
-                    }
-                    chbSmsNoticeGas.setChecked(bSmsNoticeGas);
-                    spinnerView.setSelection(position);
                 }
             }
         }

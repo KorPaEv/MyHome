@@ -7,9 +7,8 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:id="@+id/listViewDevices"
-        android:layout_above="@+id/newDeviceButton"
         android:layout_weight="1" />
 
     <Button

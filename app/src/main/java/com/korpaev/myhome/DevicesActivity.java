@@ -19,7 +19,6 @@ import io.realm.RealmResults;
 
 public class DevicesActivity extends Activity implements OnItemClickListener
 {
-
     final String IDFIELDNAME = "_idDevice"; //Имя поля БД
     private final String NAMESHAREDPREF = "IdDevicePref";
 

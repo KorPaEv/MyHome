@@ -9,16 +9,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class DeviceInfoAdapter extends BaseAdapter
+public class HistoryAdapter extends BaseAdapter
 {
     Context ctx;
     LayoutInflater lInflater;
-    ArrayList<DeviceInfoRow> objects;
+    ArrayList<HistoryRow> objects;
 
-    DeviceInfoAdapter(Context context, ArrayList<DeviceInfoRow> deviceInfoRow)
+    HistoryAdapter(Context context, ArrayList<HistoryRow> historyRow)
     {
         ctx = context;
-        objects = deviceInfoRow;
+        objects = historyRow;
         lInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -46,19 +46,20 @@ public class DeviceInfoAdapter extends BaseAdapter
         View view = convertView;
         if (view == null)
         {
-            view = lInflater.inflate(R.layout.activity_devices_row, parent, false);
+            view = lInflater.inflate(R.layout.activity_history_row, parent, false);
         }
 
-        DeviceInfoRow dir = getDeviceInfoRow(position);
+        HistoryRow historyRow = getHistoryRow(position);
 
         // заполняем View в пункте списка данными
-        ((TextView) view.findViewById(R.id.deviceInfoRowName)).setText(dir.getNameDevice());
+        ((TextView) view.findViewById(R.id.tvHistoryRowDate)).setText(historyRow.getDateTime());
+        ((TextView) view.findViewById(R.id.tvHistoryRowMessage)).setText(historyRow.getSmsBody());
         return view;
     }
 
     // товар по позиции
-    DeviceInfoRow getDeviceInfoRow(int position)
+    HistoryRow getHistoryRow(int position)
     {
-        return ((DeviceInfoRow)getItem(position));
+        return ((HistoryRow)getItem(position));
     }
 }

@@ -15,13 +15,13 @@ public class MessageReceiver extends WakefulBroadcastReceiver
     {
         // Передаем текущий context классу и выключаем звук - далее что то делаем и включаем его.
         soundManage = new SoundManage(context);
-        soundManage.SetSoundOff();
 
         //Проверяем что нам пришла смс
         longSms = SmsUtils.extractFromIntent(context, intent);
 
         if (longSms != null)
         {
+            soundManage.SetSoundOff();
             String message = longSms.getMessage();
             if (message != null && (message.startsWith("SH", 0)))
             {
